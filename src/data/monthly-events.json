@@ -1,0 +1,40 @@
+{
+  "month": "2025-12",
+  "updated": "2025-12-01",
+  "highlights": [
+    {
+      "name": "Geminid Meteor Shower",
+      "dates": "Dec 13-14",
+      "description": "One of the best meteor showers of the year. Up to 150 multicolored meteors per hour. Best viewing after midnight.",
+      "type": "meteor_shower"
+    },
+    {
+      "name": "Ursid Meteor Shower",
+      "dates": "Dec 21-22",
+      "description": "Minor shower with 5-10 meteors per hour. Peaks on the winter solstice.",
+      "type": "meteor_shower"
+    },
+    {
+      "name": "Jupiter",
+      "dates": "All month",
+      "description": "Bright and visible most of the night in Taurus. Look for its four largest moons with binoculars.",
+      "type": "planet"
+    },
+    {
+      "name": "Saturn",
+      "dates": "All month",
+      "description": "Visible in the evening sky in Aquarius. Sets around midnight.",
+      "type": "planet"
+    },
+    {
+      "name": "Venus",
+      "dates": "All month",
+      "description": "Brilliant evening star in the west after sunset. Unmistakably bright.",
+      "type": "planet"
+    }
+  ],
+  "moonPhase": {
+    "newMoon": "Dec 1",
+    "fullMoon": "Dec 15"
+  }
+}

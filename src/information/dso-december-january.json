@@ -1,0 +1,974 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-04",
+    "coverage": ["December", "January"],
+    "total_objects": 12,
+    "notes": "Master DSO data for December-January stargazing guide"
+  },
+  "objects": [
+    {
+      "id": "M42",
+      "names": {
+        "primary": "Orion Nebula",
+        "catalog": ["NGC 1976", "LBN 974"],
+        "other": ["Great Nebula in Orion"]
+      },
+      "coordinates": {
+        "ra": "05h 35m 17.3s",
+        "ra_decimal": 5.588,
+        "dec": "-05° 23′ 28″",
+        "dec_decimal": -5.391
+      },
+      "physical": {
+        "type": "Emission Nebula",
+        "type_short": "EN",
+        "constellation": "Orion",
+        "magnitude_visual": 4.0,
+        "surface_brightness": 13.0,
+        "size_arcmin": "85 × 60",
+        "distance_ly": 1344
+      },
+      "visibility": {
+        "best_months": ["December", "January", "February"],
+        "peak_month": "January",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Find Orion's Belt — three bright stars in a row, unmistakable in the winter sky. Drop your gaze straight down about one fist-width to find the 'sword' hanging below the belt. M42 is the fuzzy middle 'star' of the sword — it looks distinctly non-stellar even to the naked eye.",
+        "constellation_context": "In Orion's Sword, below the Belt",
+        "star_hop": [
+          {"step": 1, "instruction": "Locate Orion's Belt — the three bright stars Alnitak, Alnilam, and Mintaka forming a straight line"},
+          {"step": 2, "instruction": "Look about 3° south (one finger-width at arm's length) to find the Sword asterism"},
+          {"step": 3, "instruction": "M42 is the middle object of the Sword — noticeably fuzzy, not a point of light"}
+        ],
+        "nearby_bright_stars": ["Alnitak (Belt, east)", "Rigel (SW)", "Betelgeuse (NE)"]
+      },
+      "observation": {
+        "naked_eye": "Fuzzy patch clearly visible on any clear night. On dark nights, you may perceive the elongated shape stretching north-south.",
+        "binoculars": "Gray-green glow with obvious extent. The 'wings' of the nebula become apparent, spreading outward from a brighter core. Stunning even in 7×50s.",
+        "small_telescope": "Trapezium — four young stars at the nebula's heart — becomes visible. Wings extend dramatically. Color typically gray-green; some observers report hints of pink at the edges with larger apertures.",
+        "large_telescope": "Intricate dark lanes and rifts thread through the nebulosity. The Trapezium resolves to 6+ stars. Ripples and waves of gas extend far beyond the main body.",
+        "best_magnification": "Low to medium (25-60×) for overall structure, higher for Trapezium detail"
+      },
+      "science": {
+        "short_description": "Active stellar nursery where new stars are being born right now — the closest large star-forming region to Earth.",
+        "full_description": "The Orion Nebula is essentially a cosmic maternity ward, only 1,344 light-years away. The Trapezium stars at its core are less than 2 million years old (compared to our Sun's 4.6 billion years). The nebula glows because ultraviolet radiation from these hot young stars ionizes the surrounding hydrogen gas. Within the nebula, protoplanetary disks around newborn stars have been photographed — solar systems in the making.",
+        "interesting_facts": [
+          "Visible to the naked eye since antiquity, but not recognized as a nebula until 1610",
+          "The Trapezium stars are only about 300,000 years old",
+          "Contains over 700 stars in various stages of formation",
+          "Part of a much larger molecular cloud spanning most of Orion"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "Extremely bright core can blow out highlights. Consider HDR compositing."
+      },
+      "stellarium": {
+        "skysource_id": "M42",
+        "default_fov": 10,
+        "views": {
+          "context": {"description": "Orion constellation", "fov": 50, "center": "Orion"},
+          "medium": {"description": "Orion's Sword region", "fov": 15, "center": "M42"},
+          "detail": {"description": "M42 close-up", "fov": 3, "center": "M42"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2006/01/1826-Image.html",
+          "credit": "NASA, ESA, M. Robberto (STScI/ESA) and the Hubble Space Telescope Orion Treasury Project Team",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M43", "NGC 1977 (Running Man)", "Horsehead Nebula", "Flame Nebula"]
+    },
+    {
+      "id": "M45",
+      "names": {
+        "primary": "Pleiades",
+        "catalog": ["Melotte 22"],
+        "other": ["Seven Sisters", "Subaru"]
+      },
+      "coordinates": {
+        "ra": "03h 47m 00s",
+        "ra_decimal": 3.783,
+        "dec": "+24° 07′ 00″",
+        "dec_decimal": 24.117
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Taurus",
+        "magnitude_visual": 1.6,
+        "size_arcmin": "110",
+        "distance_ly": 444
+      },
+      "visibility": {
+        "best_months": ["November", "December", "January"],
+        "peak_month": "December",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Look high in the east-southeast on December evenings. Find the bright orange star Aldebaran (the Bull's eye), then continue in the same direction — the Pleiades are the unmistakable fuzzy cluster about 15° northwest. They look like a tiny dipper shape or a small cloud of stars.",
+        "constellation_context": "On the shoulder of Taurus the Bull",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Orion (easy landmark)"},
+          {"step": 2, "instruction": "Follow Orion's Belt up and to the right to bright orange Aldebaran"},
+          {"step": 3, "instruction": "Continue in the same direction another 15° to reach the Pleiades — a compact cluster unmistakable to the naked eye"}
+        ],
+        "nearby_bright_stars": ["Aldebaran (SE)", "Capella (N)"]
+      },
+      "observation": {
+        "naked_eye": "Most people see 6-7 stars; keen eyes under dark skies can spot 10-14. The cluster appears as a tiny 'dipper' shape. Test your eyesight!",
+        "binoculars": "Absolutely stunning — dozens of blue-white stars fill the field. Best view of the Pleiades is often with binoculars or low-power scopes. On exceptional nights, hints of nebulosity may appear around Merope.",
+        "small_telescope": "Individual stars resolve beautifully. The reflection nebulosity (Maia Nebula, Merope Nebula) may become visible with averted vision. Use lowest power for best framing.",
+        "large_telescope": "Actually less impressive — the cluster is too spread out. Larger apertures do reveal more nebulosity around the brighter stars.",
+        "best_magnification": "Low (15-25×) — the cluster spans 2° and is best appreciated with wide fields"
+      },
+      "science": {
+        "short_description": "The nearest and most famous star cluster, known since prehistory. A true family of stars born together about 100 million years ago.",
+        "full_description": "The Pleiades are a true open cluster — about 1,000 stars gravitationally bound together, born from the same molecular cloud roughly 100 million years ago. The blue reflection nebulae around the brightest stars are unrelated to the cluster's formation; the stars are simply passing through an interstellar dust cloud. The cluster has been important to cultures worldwide — it marks the new year in several calendars and appears in myths from Greek to Māori to Japanese.",
+        "interesting_facts": [
+          "The car company Subaru is named after the Pleiades (Subaru means 'united' in Japanese)",
+          "Ancient eyes could see more stars before modern light pollution",
+          "The stars are slowly drifting apart and will disperse in about 250 million years",
+          "Mentioned in Homer, the Bible, and astronomical records from every ancient civilization"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 135,
+        "ideal_focal_length_mm": "200-300",
+        "notes": "Wide field target. Long exposures reveal beautiful blue reflection nebulae."
+      },
+      "stellarium": {
+        "skysource_id": "M45",
+        "default_fov": 8,
+        "views": {
+          "context": {"description": "Taurus region", "fov": 40, "center": "Taurus"},
+          "medium": {"description": "Pleiades cluster", "fov": 8, "center": "M45"},
+          "detail": {"description": "Core stars", "fov": 3, "center": "M45"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/AURA Caltech",
+          "search_url": "https://hubblesite.org/contents/media/images/2004/20/1562-Image.html",
+          "credit": "NASA, ESA, AURA/Caltech, Palomar Observatory",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["Hyades", "Aldebaran"]
+    },
+    {
+      "id": "M31",
+      "names": {
+        "primary": "Andromeda Galaxy",
+        "catalog": ["NGC 224"],
+        "other": ["Great Andromeda Nebula"]
+      },
+      "coordinates": {
+        "ra": "00h 42m 44s",
+        "ra_decimal": 0.712,
+        "dec": "+41° 16′ 09″",
+        "dec_decimal": 41.269
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Andromeda",
+        "magnitude_visual": 3.4,
+        "size_arcmin": "190 × 60",
+        "distance_ly": 2537000
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Find the W-shape of Cassiopeia high overhead. The second 'V' of the W points like an arrow toward Andromeda. Follow this line about 15° to reach M31 — a faint elongated smudge visible on dark nights. Alternatively, find the Great Square of Pegasus and star-hop from its northeast corner.",
+        "constellation_context": "In Andromeda, between Cassiopeia and Pegasus",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Cassiopeia's W shape high in the north"},
+          {"step": 2, "instruction": "Use the deeper V of the W as an arrow pointing toward Andromeda"},
+          {"step": 3, "instruction": "Find the star Mirach (β And), then hop to μ And, then slightly further to M31"}
+        ],
+        "nearby_bright_stars": ["Mirach (β And)", "Alpheratz (α And)", "Schedar (α Cas)"]
+      },
+      "observation": {
+        "naked_eye": "Appears as a faint, elongated smudge about 3° long — that's six full moons end to end! The farthest object visible to the unaided eye.",
+        "binoculars": "The bright central core is obvious, with the disk extending outward. Dark dust lanes may be glimpsed. Satellite galaxies M32 and M110 become visible.",
+        "small_telescope": "Core and inner regions show well, but the outer arms are too faint and extended. Look for the dark dust lane crossing in front of the core. Best at low power.",
+        "large_telescope": "Dark lanes become more prominent. Individual star clouds and associations may be glimpsed in the outer arms under excellent conditions.",
+        "best_magnification": "Lowest possible — M31 is huge (3°+ across) and best seen with widest field"
+      },
+      "science": {
+        "short_description": "Our nearest large galactic neighbor — a spiral galaxy containing roughly one trillion stars, on a collision course with the Milky Way.",
+        "full_description": "The Andromeda Galaxy is the most distant object visible to the naked eye — the light you see left 2.5 million years ago, when early humans were just appearing on Earth. It's a barred spiral galaxy similar to our Milky Way, containing about one trillion stars. Andromeda is approaching us at 110 km/s (250,000 mph) and will collide with our galaxy in about 4.5 billion years, eventually merging into a single giant elliptical galaxy astronomers have nicknamed 'Milkomeda.'",
+        "interesting_facts": [
+          "Light from M31 has traveled 2.5 million years to reach your eyes",
+          "If M31 were brighter, it would span 6× the width of the full Moon",
+          "Contains about 1 trillion stars vs. the Milky Way's 200-400 billion",
+          "First recognized as a galaxy (not a nebula) in 1924 by Edwin Hubble"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner-intermediate",
+        "min_focal_length_mm": 100,
+        "ideal_focal_length_mm": "200-500",
+        "notes": "Very large target. Mosaic may be needed for full extent. Excellent beginner galaxy."
+      },
+      "stellarium": {
+        "skysource_id": "M31",
+        "default_fov": 6,
+        "views": {
+          "context": {"description": "Andromeda/Cassiopeia region", "fov": 50, "center": "Andromeda"},
+          "medium": {"description": "M31 with satellites", "fov": 6, "center": "M31"},
+          "detail": {"description": "M31 core", "fov": 2, "center": "M31"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/JPL-Caltech",
+          "search_url": "https://www.nasa.gov/mission_pages/galex/pia15416.html",
+          "credit": "NASA/JPL-Caltech",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M32", "M110", "NGC 206"]
+    },
+    {
+      "id": "NGC869_NGC884",
+      "names": {
+        "primary": "Double Cluster",
+        "catalog": ["NGC 869", "NGC 884", "Caldwell 14"],
+        "other": ["h and χ Persei", "Sword Handle"]
+      },
+      "coordinates": {
+        "ra": "02h 20m 00s",
+        "ra_decimal": 2.333,
+        "dec": "+57° 08′ 00″",
+        "dec_decimal": 57.133
+      },
+      "physical": {
+        "type": "Open Cluster (double)",
+        "type_short": "OC+OC",
+        "constellation": "Perseus",
+        "magnitude_visual": 3.7,
+        "size_arcmin": "60 (combined)",
+        "distance_ly": 7500
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December", "January"],
+        "peak_month": "December",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Draw an imaginary line between Cassiopeia and Perseus — the Double Cluster lies roughly halfway between, appearing as a hazy patch. Specifically, extend a line from γ Cassiopeiae (middle star of the W) through δ Cas, and continue about twice that distance.",
+        "constellation_context": "Between Cassiopeia and Perseus",
+        "star_hop": [
+          {"step": 1, "instruction": "Locate Cassiopeia's W shape"},
+          {"step": 2, "instruction": "From the middle star (γ Cas), draw a line through δ Cas (next star in the W)"},
+          {"step": 3, "instruction": "Continue this line about 8° to find a fuzzy patch — this is the Double Cluster"}
+        ],
+        "nearby_bright_stars": ["Mirfak (α Per)", "Ruchbah (δ Cas)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a misty patch between Cassiopeia and Perseus. Under dark skies, you may sense it's elongated or 'double.'",
+        "binoculars": "Spectacular! Two distinct clusters of stars fill the field, each rich with dozens of blue-white stars. One of the finest binocular objects in the entire sky.",
+        "small_telescope": "Resolves into hundreds of individual stars. Note the slight color difference — NGC 869 has a more compact core, while NGC 884 is looser with a few red giant stars visible.",
+        "large_telescope": "Individual stars beautifully resolved, but the clusters become too large to fit in one field. Use low power for best view.",
+        "best_magnification": "Low (25-40×) to fit both clusters in one field of view"
+      },
+      "science": {
+        "short_description": "A pair of young star clusters born together, drifting through space side by side — one of the finest deep-sky sights in the northern sky.",
+        "full_description": "These twin clusters are true siblings, born from the same giant molecular cloud about 14 million years ago. They're only a few hundred light-years apart in space and are physically associated, traveling together through the galaxy. Each cluster contains several hundred stars, making this one of the most star-rich regions easily visible from Earth. The clusters belong to the Perseus OB1 association and are approaching us at about 22 km/s.",
+        "interesting_facts": [
+          "Known since antiquity — mentioned by Hipparchus in 130 BC",
+          "The clusters are only about 14 million years old (very young!)",
+          "At 7,500 light-years away, among the most distant objects visible to naked eye",
+          "Contains several red supergiant stars despite the clusters' youth"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "300-500",
+        "notes": "Colorful star field. Some red giants add nice contrast to blue-white stars."
+      },
+      "stellarium": {
+        "skysource_id": "NGC869",
+        "default_fov": 4,
+        "views": {
+          "context": {"description": "Cassiopeia-Perseus region", "fov": 30, "center": "Perseus"},
+          "medium": {"description": "Both clusters", "fov": 4, "center": "NGC869"},
+          "detail": {"description": "NGC 869 close-up", "fov": 1.5, "center": "NGC869"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESA/Hubble",
+          "search_url": "https://esahubble.org/images/?search=double+cluster",
+          "credit": "ESA/Hubble & NASA",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["Stock 2", "IC 1805 (Heart Nebula)"]
+    },
+    {
+      "id": "M1",
+      "names": {
+        "primary": "Crab Nebula",
+        "catalog": ["NGC 1952"],
+        "other": ["Taurus A"]
+      },
+      "coordinates": {
+        "ra": "05h 34m 31.9s",
+        "ra_decimal": 5.575,
+        "dec": "+22° 00′ 52″",
+        "dec_decimal": 22.014
+      },
+      "physical": {
+        "type": "Supernova Remnant",
+        "type_short": "SNR",
+        "constellation": "Taurus",
+        "magnitude_visual": 8.4,
+        "size_arcmin": "6 × 4",
+        "distance_ly": 6500
+      },
+      "visibility": {
+        "best_months": ["December", "January", "February"],
+        "peak_month": "January",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "M1 is not visible to the naked eye. Locate it by finding Zeta Tauri — the star marking the tip of Taurus's southern horn. M1 lies just 1° northwest of this star.",
+        "constellation_context": "Near the tip of Taurus's southern horn",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Orion, then locate Aldebaran (bright orange star to the upper right)"},
+          {"step": 2, "instruction": "The horns of Taurus extend from Aldebaran toward Orion. Find Zeta Tauri at the tip of the southern horn"},
+          {"step": 3, "instruction": "M1 is just 1° northwest of Zeta Tauri — look for a small, slightly elongated glow"}
+        ],
+        "nearby_bright_stars": ["Zeta Tauri (1° SE)", "Elnath (β Tau, N)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Challenging — appears as a very faint, small smudge near Zeta Tauri. 10×50 or larger recommended.",
+        "small_telescope": "A distinct oval glow becomes apparent. No detail visible, but the non-stellar nature is clear. Use medium power (50-100×).",
+        "large_telescope": "Filamentary structure begins to emerge with 10\"+ apertures under excellent conditions. An OIII filter may help reveal detail.",
+        "best_magnification": "Medium to high (75-150×) as the nebula is small"
+      },
+      "science": {
+        "short_description": "The expanding debris from a star that exploded in 1054 AD — witnessed and recorded by Chinese and other astronomers almost 1,000 years ago.",
+        "full_description": "The Crab Nebula is the remnant of a supernova that exploded on July 4, 1054 AD. Chinese astronomers recorded a 'guest star' so bright it was visible in daylight for 23 days and remained visible at night for nearly two years. At its heart lies a pulsar — a rapidly spinning neutron star only 20 km across — rotating 30 times per second and emitting beams of radiation like a cosmic lighthouse. The nebula is still expanding at about 1,500 km/s.",
+        "interesting_facts": [
+          "The supernova was recorded by Chinese, Japanese, Arab, and possibly Native American observers",
+          "The nebula is expanding visibly — comparisons of photos decades apart show growth",
+          "The central pulsar was the first to be observed optically",
+          "The nebula is a strong source of X-rays and radio waves"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "Small target requiring longer focal length. SHO palette reveals amazing filament detail."
+      },
+      "stellarium": {
+        "skysource_id": "M1",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Taurus horns region", "fov": 20, "center": "Zeta Tau"},
+          "medium": {"description": "M1 location", "fov": 5, "center": "M1"},
+          "detail": {"description": "M1 close-up", "fov": 0.5, "center": "M1"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2017/21/4034-Image.html",
+          "credit": "NASA, ESA, J. Hester and A. Loll (Arizona State University)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["Crab Pulsar"]
+    },
+    {
+      "id": "M78",
+      "names": {
+        "primary": "M78",
+        "catalog": ["NGC 2068"],
+        "other": ["Casper the Friendly Ghost Nebula"]
+      },
+      "coordinates": {
+        "ra": "05h 46m 46.7s",
+        "ra_decimal": 5.779,
+        "dec": "+00° 00′ 50″",
+        "dec_decimal": 0.014
+      },
+      "physical": {
+        "type": "Reflection Nebula",
+        "type_short": "RN",
+        "constellation": "Orion",
+        "magnitude_visual": 8.3,
+        "size_arcmin": "8 × 6",
+        "distance_ly": 1600
+      },
+      "visibility": {
+        "best_months": ["December", "January", "February"],
+        "peak_month": "January",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "M78 is not visible to the naked eye. Find it by starting at Alnitak (the easternmost star of Orion's Belt), then look about 2.5° northeast.",
+        "constellation_context": "Northeast of Orion's Belt",
+        "star_hop": [
+          {"step": 1, "instruction": "Identify Orion's Belt — three stars in a row"},
+          {"step": 2, "instruction": "Locate Alnitak, the leftmost (easternmost) belt star"},
+          {"step": 3, "instruction": "Move about 2.5° (half a binocular field) northeast to find M78's faint glow"}
+        ],
+        "nearby_bright_stars": ["Alnitak (Belt star, SW)", "Betelgeuse (NW)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Challenging — may appear as a very faint hazy spot under dark skies",
+        "small_telescope": "A comet-like glow with two embedded stars visible (the illuminating stars). The nebula appears slightly bluish-gray.",
+        "large_telescope": "More nebulosity visible, including nearby NGC 2071. The 'comet' shape becomes more pronounced with good conditions.",
+        "best_magnification": "Low to medium (40-80×)"
+      },
+      "science": {
+        "short_description": "A reflection nebula where starlight bounces off clouds of interstellar dust — part of the vast Orion Molecular Cloud complex.",
+        "full_description": "Unlike emission nebulae which glow from ionized gas, reflection nebulae shine by scattering starlight off microscopic dust particles. M78 is illuminated primarily by two 10th-magnitude stars (HD 38563A and HD 38563B). It's part of the same vast molecular cloud complex that includes the Orion Nebula, Horsehead Nebula, and Flame Nebula — a giant stellar nursery spawning new stars.",
+        "interesting_facts": [
+          "Brightest reflection nebula in the sky",
+          "Contains 45 known T Tauri stars (very young, variable stars)",
+          "The blue color comes from dust scattering shorter wavelengths more efficiently",
+          "Part of the Orion B molecular cloud"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "Blue reflection nebula responds well to RGB imaging. Often captured along with NGC 2071."
+      },
+      "stellarium": {
+        "skysource_id": "M78",
+        "default_fov": 3,
+        "views": {
+          "context": {"description": "Orion's Belt region", "fov": 15, "center": "Alnitak"},
+          "medium": {"description": "M78 area", "fov": 5, "center": "M78"},
+          "detail": {"description": "M78 close-up", "fov": 1, "center": "M78"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso1105a/",
+          "credit": "ESO/Igor Chekalin",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["NGC 2071", "NGC 2067", "Orion Molecular Cloud"]
+    },
+    {
+      "id": "B33",
+      "names": {
+        "primary": "Horsehead Nebula",
+        "catalog": ["Barnard 33"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "05h 40m 59s",
+        "ra_decimal": 5.683,
+        "dec": "-02° 27′ 30″",
+        "dec_decimal": -2.458
+      },
+      "physical": {
+        "type": "Dark Nebula",
+        "type_short": "DN",
+        "constellation": "Orion",
+        "magnitude_visual": null,
+        "size_arcmin": "6 × 4",
+        "distance_ly": 1500
+      },
+      "visibility": {
+        "best_months": ["December", "January", "February"],
+        "peak_month": "January",
+        "difficulty": "challenging",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "large_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "The Horsehead itself is not visible without optical aid and filters. It's located just south of Alnitak (easternmost belt star of Orion), silhouetted against the emission nebula IC 434.",
+        "constellation_context": "Just south of Alnitak in Orion's Belt",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Orion's Belt and identify Alnitak (easternmost star)"},
+          {"step": 2, "instruction": "Look immediately south of Alnitak (about 0.5°) for the bright star Sigma Orionis"},
+          {"step": 3, "instruction": "The Horsehead is east of Sigma Ori, silhouetted against the faint glow of IC 434"}
+        ],
+        "nearby_bright_stars": ["Alnitak (N)", "Sigma Orionis (W)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Not visible (too faint, requires contrast from emission nebula)",
+        "small_telescope": "Very challenging. Requires dark skies, an H-beta filter, and patience. The dark notch of the horse's head may be glimpsed against IC 434's glow.",
+        "large_telescope": "An H-beta filter is essential. With 12\"+ aperture, the distinctive horse-head silhouette becomes apparent against the faint pink glow of IC 434.",
+        "best_magnification": "Low to medium (40-80×) with H-beta filter",
+        "special_equipment": "H-beta narrowband filter strongly recommended"
+      },
+      "science": {
+        "short_description": "An iconic dark nebula — a pillar of dense gas and dust sculpted by radiation from nearby hot stars, silhouetted against glowing hydrogen gas.",
+        "full_description": "The Horsehead is not glowing — it's a dark cloud of dust and gas that blocks light from the emission nebula IC 434 behind it. The 'horse head' shape is sculpted by the intense radiation from Sigma Orionis and other hot stars nearby, slowly eroding the cloud. Within the Horsehead, new stars are forming, protected from the harsh stellar radiation. In about 5 million years, the distinctive shape will be eroded away entirely.",
+        "interesting_facts": [
+          "First recorded in 1888 on a photographic plate — too faint for visual discovery",
+          "One of the most photographed objects in the sky despite being so difficult to see",
+          "The 'horse head' is about 3.5 light-years tall",
+          "Contains a newly forming star in its 'forehead' region"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate-advanced",
+        "min_focal_length_mm": 400,
+        "ideal_focal_length_mm": "800-1500",
+        "notes": "H-alpha data essential. Popular target for narrowband imaging. Often captured with Flame Nebula."
+      },
+      "stellarium": {
+        "skysource_id": "IC434",
+        "default_fov": 3,
+        "views": {
+          "context": {"description": "Belt to Sword region", "fov": 10, "center": "Alnitak"},
+          "medium": {"description": "Alnitak/Flame/Horsehead area", "fov": 3, "center": "IC434"},
+          "detail": {"description": "Horsehead close-up", "fov": 1, "center": "IC434"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/Hubble Heritage Team",
+          "search_url": "https://hubblesite.org/contents/media/images/2013/12/3165-Image.html",
+          "credit": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["IC 434", "NGC 2024 (Flame Nebula)", "Alnitak", "Sigma Orionis"]
+    },
+    {
+      "id": "M35",
+      "names": {
+        "primary": "M35",
+        "catalog": ["NGC 2168"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "06h 08m 54s",
+        "ra_decimal": 6.148,
+        "dec": "+24° 20′ 00″",
+        "dec_decimal": 24.333
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Gemini",
+        "magnitude_visual": 5.1,
+        "size_arcmin": "28",
+        "distance_ly": 2800
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "January",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Locate the twin stars Castor and Pollux (heads of Gemini), then follow the line of Gemini down to the 'feet.' M35 is near the foot star Propus (η Gem), appearing as a hazy patch.",
+        "constellation_context": "At the foot of Gemini, near the Taurus border",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Castor and Pollux — the bright twin stars of Gemini"},
+          {"step": 2, "instruction": "Follow the constellation downward (toward Orion) to the feet"},
+          {"step": 3, "instruction": "M35 is about 2° NW of Propus (η Geminorum), appearing as a fuzzy patch"}
+        ],
+        "nearby_bright_stars": ["Propus (η Gem)", "1 Gem", "Tejat (μ Gem)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a hazy patch under good conditions, similar in appearance to a tailless comet.",
+        "binoculars": "Excellent — resolves into dozens of stars scattered across a rich field. One of the finest binocular clusters.",
+        "small_telescope": "Over 100 stars visible, arranged in curving chains. Note the faint companion cluster NGC 2158 nearby (2,158 ly more distant!).",
+        "large_telescope": "NGC 2158 becomes a highlight — a much more distant, compact cluster appearing as a grainy patch beside M35.",
+        "best_magnification": "Low (25-50×) to appreciate full extent and see NGC 2158 in same field"
+      },
+      "science": {
+        "short_description": "A rich open cluster at the foot of Gemini, paired in the same view with a much more distant cluster — a stunning 3D perspective.",
+        "full_description": "M35 contains about 200 stars in a volume roughly 24 light-years across, making it one of the more populous open clusters. At 150 million years old, it's middle-aged for an open cluster. The nearby cluster NGC 2158 appears right beside M35 in the same telescopic field but is 5× more distant (16,000 light-years) — a wonderful demonstration of cosmic depth perception.",
+        "interesting_facts": [
+          "The pairing of M35 and NGC 2158 creates a striking depth contrast",
+          "Contains several yellow and orange giant stars among the blue-white members",
+          "Was independently discovered by Philippe de Chéseaux, John Bevis, and Charles Messier",
+          "The cluster is moving toward us at about 5 km/s"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "300-500",
+        "notes": "Frame to include NGC 2158 for dramatic near/far comparison."
+      },
+      "stellarium": {
+        "skysource_id": "M35",
+        "default_fov": 3,
+        "views": {
+          "context": {"description": "Gemini constellation", "fov": 25, "center": "Gemini"},
+          "medium": {"description": "M35 and NGC 2158", "fov": 3, "center": "M35"},
+          "detail": {"description": "M35 close-up", "fov": 1, "center": "M35"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=M35",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["NGC 2158", "IC 2157"]
+    },
+    {
+      "id": "NGC2237",
+      "names": {
+        "primary": "Rosette Nebula",
+        "catalog": ["NGC 2237", "NGC 2238", "NGC 2239", "NGC 2246", "Caldwell 49"],
+        "other": ["Skull Nebula"]
+      },
+      "coordinates": {
+        "ra": "06h 33m 45s",
+        "ra_decimal": 6.563,
+        "dec": "+04° 59′ 54″",
+        "dec_decimal": 4.998
+      },
+      "physical": {
+        "type": "Emission Nebula",
+        "type_short": "EN",
+        "constellation": "Monoceros",
+        "magnitude_visual": 9.0,
+        "size_arcmin": "80 × 60",
+        "distance_ly": 5200
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "The nebula itself is not visible to naked eye. Find it in Monoceros, east of Orion. The central star cluster NGC 2244 may be glimpsed with naked eye under dark skies.",
+        "constellation_context": "In Monoceros, east of Orion and south of Procyon",
+        "star_hop": [
+          {"step": 1, "instruction": "Locate Betelgeuse (Orion's upper left shoulder)"},
+          {"step": 2, "instruction": "Move about 10° east (left) into Monoceros"},
+          {"step": 3, "instruction": "Look for the rectangular pattern of NGC 2244's bright stars — the Rosette surrounds this cluster"}
+        ],
+        "nearby_bright_stars": ["Betelgeuse (W)", "Procyon (N)"]
+      },
+      "observation": {
+        "naked_eye": "The star cluster NGC 2244 may be glimpsed; the nebula itself is invisible",
+        "binoculars": "The cluster NGC 2244 is easy. The nebula requires very dark skies and averted vision — look for a faint circular glow around the cluster.",
+        "small_telescope": "An OIII or UHC filter helps reveal the nebula's circular shape. The central hole (blown out by stellar winds) may be glimpsed.",
+        "large_telescope": "With filters, the 'rose' structure becomes apparent — glowing petals of gas surrounding the dark central cavity.",
+        "best_magnification": "Low (25-40×) — the nebula is over 1° across",
+        "special_equipment": "OIII or UHC filter strongly recommended"
+      },
+      "science": {
+        "short_description": "A giant flower-shaped emission nebula with a young star cluster at its heart — the cluster's stellar winds have blown a hole in the center.",
+        "full_description": "The Rosette Nebula is a giant stellar nursery about 130 light-years in diameter. At its center, the young star cluster NGC 2244 (only 4 million years old) has blown a cavity 50 light-years across through its intense radiation and stellar winds. The nebula contains enough gas to make about 10,000 Sun-mass stars. New stars are actively forming in the compressed edges of the expanding cavity.",
+        "interesting_facts": [
+          "The nebula contains about 10,000 solar masses of gas",
+          "The central cluster has only existed for about 4 million years",
+          "The 'rose' shape is created by stellar winds sculpting the gas",
+          "Multiple NGC numbers because different parts were catalogued separately"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "400-600",
+        "notes": "Excellent H-alpha target. Large enough for shorter focal lengths. One of the most photogenic nebulae."
+      },
+      "stellarium": {
+        "skysource_id": "NGC2237",
+        "default_fov": 4,
+        "views": {
+          "context": {"description": "Monoceros region", "fov": 20, "center": "Monoceros"},
+          "medium": {"description": "Rosette full extent", "fov": 4, "center": "NGC2237"},
+          "detail": {"description": "NGC 2244 cluster", "fov": 1.5, "center": "NGC2244"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/JPL-Caltech/UCLA",
+          "search_url": "https://www.jpl.nasa.gov/images/pia13005-rosette-nebula",
+          "credit": "NASA/JPL-Caltech/UCLA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 2244", "Cone Nebula", "Christmas Tree Cluster"]
+    },
+    {
+      "id": "M41",
+      "names": {
+        "primary": "M41",
+        "catalog": ["NGC 2287"],
+        "other": ["Little Beehive Cluster"]
+      },
+      "coordinates": {
+        "ra": "06h 46m 00s",
+        "ra_decimal": 6.767,
+        "dec": "-20° 46′ 00″",
+        "dec_decimal": -20.767
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Canis Major",
+        "magnitude_visual": 4.5,
+        "size_arcmin": "38",
+        "distance_ly": 2300
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Find Sirius — the brightest star in the night sky. M41 lies exactly 4° south of Sirius, easily visible to the naked eye as a fuzzy patch.",
+        "constellation_context": "In Canis Major, directly south of Sirius",
+        "star_hop": [
+          {"step": 1, "instruction": "Locate Sirius — impossible to miss, it's the brightest star in the sky"},
+          {"step": 2, "instruction": "Look 4° directly south (about one binocular field)"},
+          {"step": 3, "instruction": "M41 appears as a hazy patch, easily visible to naked eye under decent conditions"}
+        ],
+        "nearby_bright_stars": ["Sirius (N)", "Mirzam (β CMa, W)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a dim, fuzzy patch directly south of brilliant Sirius. Known since antiquity.",
+        "binoculars": "Excellent view — dozens of stars resolved against rich Milky Way background. Note the orange star near the center.",
+        "small_telescope": "About 100 stars visible, spread over an area larger than the full Moon. Several orange giant stars provide nice color contrast.",
+        "large_telescope": "Beautiful but spreads too wide for high-power views. Stick to low magnification.",
+        "best_magnification": "Low (25-50×)"
+      },
+      "science": {
+        "short_description": "A bright open cluster just south of Sirius, possibly observed by Aristotle in 325 BC — making it one of the first deep-sky objects ever recorded.",
+        "full_description": "M41 contains about 100 stars in a volume roughly 25 light-years across. At 190 million years old, it's mature enough to have evolved several red giant stars, which provide striking color contrast against the blue-white cluster members. The cluster may have been noted by Aristotle around 325 BC as 'a cloudy spot' near Sirius, which would make it one of the earliest recorded observations of a deep-sky object.",
+        "interesting_facts": [
+          "Possibly observed by Aristotle in 325 BC",
+          "Contains several K-type orange giant stars, including one near the center",
+          "The cluster is receding from us at about 34 km/s",
+          "Easy to find because of its proximity to Sirius"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "300-400",
+        "notes": "Colorful cluster with orange giants. Include Sirius for dramatic composition (but watch for diffraction spikes)."
+      },
+      "stellarium": {
+        "skysource_id": "M41",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Sirius region", "fov": 15, "center": "Sirius"},
+          "medium": {"description": "M41 full extent", "fov": 2, "center": "M41"},
+          "detail": {"description": "Cluster core", "fov": 0.75, "center": "M41"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/?search=M41",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["Sirius", "NGC 2360", "NGC 2362"]
+    },
+    {
+      "id": "NGC2392",
+      "names": {
+        "primary": "Eskimo Nebula",
+        "catalog": ["NGC 2392", "Caldwell 39"],
+        "other": ["Clown Face Nebula", "Lion Nebula"]
+      },
+      "coordinates": {
+        "ra": "07h 29m 10.8s",
+        "ra_decimal": 7.486,
+        "dec": "+20° 54′ 42″",
+        "dec_decimal": 20.912
+      },
+      "physical": {
+        "type": "Planetary Nebula",
+        "type_short": "PN",
+        "constellation": "Gemini",
+        "magnitude_visual": 9.2,
+        "size_arcmin": "0.8",
+        "distance_ly": 6500
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "moderate",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Gemini between Pollux and Wasat (δ Gem).",
+        "constellation_context": "In Gemini, southeast of Pollux",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Pollux and Castor, the twin bright stars of Gemini"},
+          {"step": 2, "instruction": "Locate Wasat (δ Gem), about 8° southeast of Pollux"},
+          {"step": 3, "instruction": "NGC 2392 is about 2° east-southeast of Wasat — look for a small blue-green 'star' that doesn't quite focus to a point"}
+        ],
+        "nearby_bright_stars": ["Wasat (δ Gem)", "Pollux (NW)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "May appear as a slightly fuzzy star — difficult to distinguish from stars",
+        "small_telescope": "Appears as a distinct blue-green disk at 50-100×. The central star (mag 10.5) is visible. Noticeably 'softer' than surrounding stars.",
+        "large_telescope": "At high power (200×+), the double-shell structure may become visible — the 'face' surrounded by the 'fur parka hood.'",
+        "best_magnification": "High (100-300×) — small object benefits from magnification"
+      },
+      "science": {
+        "short_description": "A planetary nebula showing the outer layers of a dying Sun-like star — a preview of our own Sun's fate in 5 billion years.",
+        "full_description": "The Eskimo Nebula is the expelled outer layers of a Sun-like star nearing the end of its life. The central star has shed its outer atmosphere, which now forms the glowing shells we see. The inner 'face' is a bubble of material being driven outward by intense radiation. The outer 'hood' is older material ejected earlier. The central star, now a hot white dwarf, illuminates the expanding gas with intense ultraviolet radiation.",
+        "interesting_facts": [
+          "The nebula is expanding at 90 km/s",
+          "Formed only about 10,000 years ago — young for a planetary nebula",
+          "The central star is extremely hot — about 40,000 K",
+          "Named for its resemblance to a face surrounded by a fur parka hood"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 1000,
+        "ideal_focal_length_mm": "2000+",
+        "notes": "Small target requiring long focal length. Lucky imaging or short exposures help reveal structure."
+      },
+      "stellarium": {
+        "skysource_id": "NGC2392",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Gemini constellation", "fov": 20, "center": "Gemini"},
+          "medium": {"description": "NGC 2392 location", "fov": 3, "center": "NGC2392"},
+          "detail": {"description": "Nebula close-up", "fov": 0.2, "center": "NGC2392"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2000/07/943-Image.html",
+          "credit": "NASA, Andrew Fruchter and the ERO Team",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 2371-2 (Gemini Nebula)", "Abell 21 (Medusa Nebula)"]
+    },
+    {
+      "id": "Castor",
+      "names": {
+        "primary": "Castor",
+        "catalog": ["α Geminorum", "HIP 36850"],
+        "other": ["Alpha Gem"]
+      },
+      "coordinates": {
+        "ra": "07h 34m 35.9s",
+        "ra_decimal": 7.576,
+        "dec": "+31° 53′ 18″",
+        "dec_decimal": 31.888
+      },
+      "physical": {
+        "type": "Multiple Star System",
+        "type_short": "**",
+        "constellation": "Gemini",
+        "magnitude_visual": 1.58,
+        "size_arcmin": null,
+        "distance_ly": 51
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Castor is the northern of the two bright 'twin' stars of Gemini, easily visible high in the winter sky. It's slightly fainter and whiter than its neighbor Pollux (which has an orange tint).",
+        "constellation_context": "Head of the northern twin in Gemini",
+        "star_hop": [
+          {"step": 1, "instruction": "Look east-northeast of Orion for two bright stars close together — these are the Gemini twins"},
+          {"step": 2, "instruction": "Castor is the northern (upper) star, slightly fainter and whiter"},
+          {"step": 3, "instruction": "Pollux is the southern star with a slight orange tint — magnitude 1.1"}
+        ],
+        "nearby_bright_stars": ["Pollux (S)", "Mebsuta (ε Gem, SW)", "Capella (NW)"]
+      },
+      "observation": {
+        "naked_eye": "Bright white star, second brightest in Gemini after Pollux",
+        "binoculars": "Appears as single bright star — the components are too close to split",
+        "small_telescope": "At 60×+, Castor splits into two stars (A and B) separated by about 5 arcseconds. A is magnitude 1.9, B is magnitude 3.0. Beautiful color contrast.",
+        "large_telescope": "Castor C (magnitude 9.8) becomes visible about 73 arcseconds away. Each of the three visible stars is itself a spectroscopic binary — six stars total!",
+        "best_magnification": "Medium (75-150×) to cleanly split the AB pair"
+      },
+      "science": {
+        "short_description": "A spectacular sextuple star system — six stars bound together gravitationally, appearing as a single bright 'star' to the naked eye.",
+        "full_description": "What appears as a single bright star is actually six stars in three pairs. Castor A and B (visible in small telescopes) orbit each other every 467 years. Each of these is itself a spectroscopic binary with orbital periods of 9.2 and 2.9 days. Castor C, a faint red dwarf pair 73 arcseconds away, orbits the inner system with a period of roughly 14,000 years. Each of those red dwarfs is also a binary! This makes Castor one of the most complex multiple star systems known.",
+        "interesting_facts": [
+          "Six stars total — three gravitationally bound pairs",
+          "Despite being 'α Geminorum,' Castor is actually fainter than Pollux (β Gem)",
+          "The AB pair has been observed since 1718, completing about 65% of one orbit since then",
+          "Castor C stars are both flare stars (BY Draconis variables)"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 1000,
+        "ideal_focal_length_mm": "2000+",
+        "notes": "Challenging to cleanly separate the close AB pair without overexposing."
+      },
+      "stellarium": {
+        "skysource_id": "Castor",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Gemini constellation", "fov": 25, "center": "Gemini"},
+          "medium": {"description": "Castor and Pollux", "fov": 5, "center": "Castor"},
+          "detail": {"description": "Castor system", "fov": 0.5, "center": "Castor"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Custom diagram",
+          "search_url": null,
+          "credit": "System diagram showing six-star configuration",
+          "license": "To create"
+        }
+      },
+      "related_objects": ["Pollux", "Wasat (δ Gem)"]
+    }
+  ]
+}

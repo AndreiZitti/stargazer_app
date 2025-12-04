@@ -1,0 +1,271 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2025-12-04",
+    "source": "timeanddate.com",
+    "timezone": "Times approximate for Central European Time (CET). Original data from US Eastern, add ~6 hours.",
+    "notes": "Phase dates are exact worldwide; times vary by timezone"
+  },
+  "2025": {
+    "december": {
+      "first_quarter": "2025-11-29",
+      "full_moon": {
+        "date": "2025-12-04",
+        "name": "Cold Moon",
+        "time_utc": "23:14"
+      },
+      "last_quarter": "2025-12-11",
+      "new_moon": "2025-12-20",
+      "full_moon_2": {
+        "date": "2025-12-30",
+        "name": "Blue Moon",
+        "time_utc": "22:27",
+        "notes": "Second full moon in calendar month"
+      },
+      "dark_sky_windows": [
+        {
+          "start": "2025-12-16",
+          "end": "2025-12-24",
+          "quality": "excellent"
+        }
+      ],
+      "special_events": []
+    }
+  },
+  "2026": {
+    "january": {
+      "last_quarter": "2026-01-03",
+      "new_moon": "2026-01-11",
+      "first_quarter": "2026-01-18",
+      "full_moon": {
+        "date": "2026-01-25",
+        "name": "Wolf Moon"
+      },
+      "dark_sky_windows": [
+        {
+          "start": "2026-01-07",
+          "end": "2026-01-15",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "february": {
+      "last_quarter": "2026-02-01",
+      "new_moon": "2026-02-09",
+      "first_quarter": "2026-02-17",
+      "full_moon": {
+        "date": "2026-02-24",
+        "name": "Snow Moon"
+      },
+      "dark_sky_windows": [
+        {
+          "start": "2026-02-05",
+          "end": "2026-02-13",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "march": {
+      "last_quarter": "2026-03-03",
+      "new_moon": "2026-03-11",
+      "first_quarter": "2026-03-19",
+      "full_moon": {
+        "date": "2026-03-25",
+        "name": "Worm Moon"
+      },
+      "dark_sky_windows": [
+        {
+          "start": "2026-03-07",
+          "end": "2026-03-15",
+          "quality": "excellent"
+        }
+      ],
+      "special_events": [
+        {
+          "type": "Total Lunar Eclipse",
+          "date": "2026-03-03",
+          "visible_europe": true
+        }
+      ]
+    },
+    "april": {
+      "last_quarter": "2026-04-01",
+      "new_moon": "2026-04-10",
+      "first_quarter": "2026-04-17",
+      "full_moon": {
+        "date": "2026-04-24",
+        "name": "Pink Moon"
+      },
+      "dark_sky_windows": [
+        {
+          "start": "2026-04-06",
+          "end": "2026-04-14",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "may": {
+      "last_quarter": "2026-05-01",
+      "new_moon": {
+        "date": "2026-05-10",
+        "notes": "Super New Moon"
+      },
+      "first_quarter": "2026-05-16",
+      "full_moon": {
+        "date": "2026-05-24",
+        "name": "Flower Moon"
+      },
+      "last_quarter_2": "2026-05-31",
+      "dark_sky_windows": [
+        {
+          "start": "2026-05-06",
+          "end": "2026-05-14",
+          "quality": "excellent"
+        }
+      ],
+      "special_events": [
+        {
+          "type": "Blue Moon",
+          "date": "2026-05-31",
+          "notes": "Second full moon in calendar month; also Micro Full Moon"
+        }
+      ]
+    },
+    "june": {
+      "new_moon": {
+        "date": "2026-06-08",
+        "notes": "Super New Moon"
+      },
+      "first_quarter": "2026-06-14",
+      "full_moon": {
+        "date": "2026-06-22",
+        "name": "Strawberry Moon",
+        "notes": "Micro Full Moon"
+      },
+      "last_quarter": "2026-06-29",
+      "dark_sky_windows": [
+        {
+          "start": "2026-06-04",
+          "end": "2026-06-12",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "july": {
+      "new_moon": "2026-07-07",
+      "first_quarter": "2026-07-14",
+      "full_moon": {
+        "date": "2026-07-21",
+        "name": "Buck Moon"
+      },
+      "last_quarter": "2026-07-29",
+      "dark_sky_windows": [
+        {
+          "start": "2026-07-03",
+          "end": "2026-07-11",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "august": {
+      "new_moon": "2026-08-05",
+      "first_quarter": "2026-08-12",
+      "full_moon": {
+        "date": "2026-08-19",
+        "name": "Sturgeon Moon"
+      },
+      "last_quarter": "2026-08-28",
+      "dark_sky_windows": [
+        {
+          "start": "2026-08-01",
+          "end": "2026-08-09",
+          "quality": "excellent"
+        }
+      ],
+      "special_events": [
+        {
+          "type": "Partial Lunar Eclipse",
+          "date": "2026-08-28",
+          "visible_europe": true
+        }
+      ]
+    },
+    "september": {
+      "new_moon": "2026-09-04",
+      "first_quarter": "2026-09-10",
+      "full_moon": {
+        "date": "2026-09-18",
+        "name": "Harvest Moon"
+      },
+      "last_quarter": "2026-09-26",
+      "dark_sky_windows": [
+        {
+          "start": "2026-08-31",
+          "end": "2026-09-08",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "october": {
+      "new_moon": "2026-10-03",
+      "first_quarter": "2026-10-10",
+      "full_moon": {
+        "date": "2026-10-18",
+        "name": "Hunter's Moon"
+      },
+      "last_quarter": "2026-10-26",
+      "dark_sky_windows": [
+        {
+          "start": "2026-09-29",
+          "end": "2026-10-07",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "november": {
+      "new_moon": "2026-11-01",
+      "first_quarter": "2026-11-09",
+      "full_moon": {
+        "date": "2026-11-17",
+        "name": "Beaver Moon"
+      },
+      "last_quarter": "2026-11-24",
+      "new_moon_2": "2026-12-01",
+      "dark_sky_windows": [
+        {
+          "start": "2026-10-28",
+          "end": "2026-11-05",
+          "quality": "excellent"
+        },
+        {
+          "start": "2026-11-27",
+          "end": "2026-12-05",
+          "quality": "excellent"
+        }
+      ]
+    },
+    "december": {
+      "new_moon": "2026-12-01",
+      "first_quarter": "2026-12-08",
+      "full_moon": {
+        "date": "2026-12-17",
+        "name": "Cold Moon",
+        "notes": "Super Full Moon"
+      },
+      "last_quarter": "2026-12-23",
+      "new_moon_2": "2026-12-30",
+      "dark_sky_windows": [
+        {
+          "start": "2026-11-27",
+          "end": "2026-12-05",
+          "quality": "excellent"
+        },
+        {
+          "start": "2026-12-26",
+          "end": "2027-01-03",
+          "quality": "excellent"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,440 @@
+{
+  "metadata": {
+    "version": "1.1",
+    "created": "2025-12-04",
+    "updated": "2025-12-04",
+    "source": "International Meteor Organization (IMO)",
+    "notes": "Complete visual meteor shower list. 110+ established showers exist, but only ~14 produce worthwhile visual rates from Central Europe. Dates are fixed; moon interference must be calculated annually.",
+    "total_showers": 14
+  },
+  "showers": [
+    {
+      "id": "quadrantids",
+      "name": "Quadrantids",
+      "peak_date": "January 3-4",
+      "active_period": {
+        "start": "December 28",
+        "end": "January 12"
+      },
+      "zhr": 120,
+      "zhr_notes": "Sharp peak lasting only ~6 hours",
+      "speed_km_s": 41,
+      "speed_description": "Medium",
+      "radiant": {
+        "constellation": "Boötes",
+        "ra": "15h 18m",
+        "dec": "+49° 36′",
+        "notes": "Near the defunct constellation Quadrans Muralis"
+      },
+      "parent_body": "2003 EH1 (asteroid, possibly extinct comet)",
+      "moon_interference_2026": {
+        "phase": "Waxing gibbous (85%)",
+        "rating": "moderate",
+        "notes": "Moon sets around 4am, best viewing in pre-dawn hours"
+      },
+      "moon_interference_2027": {
+        "phase": "Waning crescent (25%)",
+        "rating": "low",
+        "notes": "Excellent conditions - minimal moonlight"
+      },
+      "best_viewing": {
+        "time": "Pre-dawn (2am-6am)",
+        "direction": "Radiant rises late; meteors visible all over sky after midnight",
+        "notes": "Peak is very sharp - timing is crucial. Best rates only last a few hours."
+      },
+      "description": "One of the best annual showers but often overlooked due to cold January weather and its sharp, easy-to-miss peak. When caught at maximum, rates can rival the Perseids. The meteors are often bright blue, with some fireballs.",
+      "photography_tips": "Fast peak means you need to be ready on the right night. Use wide-angle lens pointed away from Moon if present."
+    },
+    {
+      "id": "lyrids",
+      "name": "Lyrids",
+      "peak_date": "April 22-23",
+      "active_period": {
+        "start": "April 14",
+        "end": "April 30"
+      },
+      "zhr": 18,
+      "zhr_notes": "Occasional outbursts to 100+",
+      "speed_km_s": 49,
+      "speed_description": "Medium-fast",
+      "radiant": {
+        "constellation": "Lyra",
+        "ra": "18h 04m",
+        "dec": "+34° 00′",
+        "notes": "Near bright star Vega"
+      },
+      "parent_body": "Comet C/1861 G1 (Thatcher)",
+      "moon_interference_2026": null,
+      "moon_interference_2027": null,
+      "best_viewing": {
+        "time": "After midnight until dawn",
+        "direction": "Lyra rises in late evening; best rates after midnight",
+        "notes": "One of the oldest known meteor showers - observed for 2,700 years"
+      },
+      "description": "An ancient shower observed since 687 BC. Usually produces about 18 meteors per hour but has occasional outbursts. Lyrids are known for bright meteors and occasional fireballs.",
+      "photography_tips": "Point camera toward Vega region after midnight. Spring nights can still be cold - dress warmly."
+    },
+    {
+      "id": "eta_aquariids",
+      "name": "Eta Aquariids",
+      "peak_date": "May 5-6",
+      "active_period": {
+        "start": "April 19",
+        "end": "May 28"
+      },
+      "zhr": 50,
+      "zhr_notes": "Rates vary; better from Southern Hemisphere",
+      "speed_km_s": 66,
+      "speed_description": "Fast",
+      "radiant": {
+        "constellation": "Aquarius",
+        "ra": "22h 32m",
+        "dec": "-01° 00′",
+        "notes": "Low on horizon from northern latitudes"
+      },
+      "parent_body": "Comet 1P/Halley",
+      "moon_interference_2026": null,
+      "moon_interference_2027": null,
+      "best_viewing": {
+        "time": "Pre-dawn (3am-5am)",
+        "direction": "Look east toward Aquarius in the hour before dawn",
+        "notes": "Radiant is low from Europe - many meteors lost below horizon"
+      },
+      "description": "Debris from Halley's Comet produces fast meteors in early May. From European latitudes, the radiant is low, so expect 10-30 meteors per hour rather than the full ZHR. Many meteors appear as 'earthgrazers' skimming the atmosphere.",
+      "photography_tips": "Low radiant means long meteor trails. Point camera east at low altitude."
+    },
+    {
+      "id": "delta_aquariids",
+      "name": "Southern Delta Aquariids",
+      "peak_date": "July 30-31",
+      "active_period": {
+        "start": "July 12",
+        "end": "August 23"
+      },
+      "zhr": 25,
+      "zhr_notes": "Broad peak over several days",
+      "speed_km_s": 41,
+      "speed_description": "Medium",
+      "radiant": {
+        "constellation": "Aquarius",
+        "ra": "22h 36m",
+        "dec": "-16° 00′",
+        "notes": "Better from southern latitudes"
+      },
+      "parent_body": "96P/Machholz (likely)",
+      "moon_interference_2026": null,
+      "moon_interference_2027": null,
+      "best_viewing": {
+        "time": "After midnight",
+        "direction": "South toward Aquarius",
+        "notes": "Often overlooked but provides steady summer meteors"
+      },
+      "description": "A reliable summer shower that peaks just before the Perseids. From southern Europe, rates are better than from northern locations. Meteors are medium-speed and often faint.",
+      "photography_tips": "Can photograph alongside early Perseids for a two-radiant composite."
+    },
+    {
+      "id": "perseids",
+      "name": "Perseids",
+      "peak_date": "August 12-13",
+      "active_period": {
+        "start": "July 17",
+        "end": "August 24"
+      },
+      "zhr": 100,
+      "zhr_notes": "Consistently high rates; occasional outbursts to 150+",
+      "speed_km_s": 59,
+      "speed_description": "Fast",
+      "radiant": {
+        "constellation": "Perseus",
+        "ra": "03h 04m",
+        "dec": "+58° 00′",
+        "notes": "Circumpolar from most of Europe - visible all night"
+      },
+      "parent_body": "Comet 109P/Swift-Tuttle",
+      "moon_interference_2026": {
+        "phase": "Waning crescent (15%)",
+        "rating": "low",
+        "notes": "Excellent conditions - thin moon rises late"
+      },
+      "moon_interference_2027": {
+        "phase": "New Moon",
+        "rating": "none",
+        "notes": "Perfect conditions - no moonlight"
+      },
+      "best_viewing": {
+        "time": "All night, best after midnight",
+        "direction": "Radiant is circumpolar from Europe - meteors visible in all directions",
+        "notes": "Warm summer nights make this the most popular shower"
+      },
+      "description": "The most popular meteor shower thanks to warm August nights, reliable rates, and a high percentage of bright meteors. The parent comet has a 133-year orbit and last visited in 1992. Perseids are known for bright, fast meteors with persistent trains.",
+      "photography_tips": "Point camera anywhere in the sky - meteors will appear in all directions. Warm nights allow longer imaging sessions."
+    },
+    {
+      "id": "orionids",
+      "name": "Orionids",
+      "peak_date": "October 21-22",
+      "active_period": {
+        "start": "October 2",
+        "end": "November 7"
+      },
+      "zhr": 20,
+      "zhr_notes": "Variable; broad peak",
+      "speed_km_s": 66,
+      "speed_description": "Fast",
+      "radiant": {
+        "constellation": "Orion",
+        "ra": "06h 20m",
+        "dec": "+16° 00′",
+        "notes": "Near Betelgeuse"
+      },
+      "parent_body": "Comet 1P/Halley",
+      "moon_interference_2026": null,
+      "moon_interference_2027": null,
+      "best_viewing": {
+        "time": "After midnight until dawn",
+        "direction": "Orion rises late evening - best rates in pre-dawn hours",
+        "notes": "Second shower from Halley's Comet (with Eta Aquariids)"
+      },
+      "description": "The autumn counterpart to the Eta Aquariids - both come from Halley's Comet. Orionids are very fast meteors with many bright examples and persistent trains. The broad peak allows good viewing over several nights.",
+      "photography_tips": "Fast meteors mean bright trails. Point toward Orion after midnight."
+    },
+    {
+      "id": "leonids",
+      "name": "Leonids",
+      "peak_date": "November 17-18",
+      "active_period": {
+        "start": "November 6",
+        "end": "November 30"
+      },
+      "zhr": 15,
+      "zhr_notes": "Usually low; famous for rare storm years (1833, 1966, 2001)",
+      "speed_km_s": 71,
+      "speed_description": "Very fast",
+      "radiant": {
+        "constellation": "Leo",
+        "ra": "10h 12m",
+        "dec": "+22° 00′",
+        "notes": "In the 'sickle' of Leo"
+      },
+      "parent_body": "Comet 55P/Tempel-Tuttle",
+      "moon_interference_2026": null,
+      "moon_interference_2027": null,
+      "best_viewing": {
+        "time": "After midnight until dawn",
+        "direction": "Leo rises around midnight in mid-November",
+        "notes": "Next potential storm: late 2030s when Earth passes near comet orbit"
+      },
+      "description": "Usually modest, the Leonids are famous for occasional spectacular meteor storms - the 1833 storm (100,000+ per hour) helped establish meteors as astronomical phenomena. The next potential storm isn't expected until the late 2030s. Even in normal years, Leonids are among the fastest meteors visible.",
+      "photography_tips": "Very fast meteors create short, bright trails. May need shorter exposures."
+    },
+    {
+      "id": "geminids",
+      "name": "Geminids",
+      "peak_date": "December 13-14",
+      "active_period": {
+        "start": "December 4",
+        "end": "December 20"
+      },
+      "zhr": 150,
+      "zhr_notes": "Highest rates of any annual shower; increasing slightly each year",
+      "speed_km_s": 35,
+      "speed_description": "Slow",
+      "radiant": {
+        "constellation": "Gemini",
+        "ra": "07h 28m",
+        "dec": "+32° 00′",
+        "notes": "Near Castor"
+      },
+      "parent_body": "3200 Phaethon (asteroid)",
+      "moon_interference_2026": {
+        "phase": "Waning gibbous (55%)",
+        "rating": "moderate",
+        "notes": "Moon rises ~11pm; best viewing in evening before moonrise (8pm-11pm)"
+      },
+      "moon_interference_2027": {
+        "phase": "Waxing crescent (10%)",
+        "rating": "minimal",
+        "notes": "Excellent conditions - thin moon sets early"
+      },
+      "best_viewing": {
+        "time": "Evening through dawn (Gemini rises mid-evening)",
+        "direction": "Look anywhere in the sky; meteors radiate from near Castor",
+        "notes": "Unlike most showers, good rates begin in early evening"
+      },
+      "description": "The king of meteor showers. The Geminids produce the highest reliable rates of any annual shower and are active for several nights around peak. Meteors are medium-speed, bright, and often colorful (yellow/white/green/blue). Uniquely, the parent body is an asteroid, not a comet. Cold December nights are the only drawback.",
+      "photography_tips": "Slow meteors allow longer exposures. Evening activity means you don't have to stay up late. Dress very warmly!"
+    },
+    {
+      "id": "ursids",
+      "name": "Ursids",
+      "peak_date": "December 22-23",
+      "active_period": {
+        "start": "December 17",
+        "end": "December 26"
+      },
+      "zhr": 10,
+      "zhr_notes": "Usually modest; occasional outbursts to 50+",
+      "speed_km_s": 33,
+      "speed_description": "Slow",
+      "radiant": {
+        "constellation": "Ursa Minor",
+        "ra": "14h 28m",
+        "dec": "+76° 00′",
+        "notes": "Near Beta UMi (Kochab)"
+      },
+      "parent_body": "Comet 8P/Tuttle",
+      "moon_interference_2026": {
+        "phase": "Waxing crescent (12%)",
+        "rating": "minimal",
+        "notes": "Excellent conditions - dark skies"
+      },
+      "moon_interference_2027": {
+        "phase": "Waxing gibbous (90%)",
+        "rating": "high",
+        "notes": "Poor conditions - bright moon all night"
+      },
+      "best_viewing": {
+        "time": "All night (circumpolar radiant)",
+        "direction": "Look toward Ursa Minor (Little Dipper) / Polaris region",
+        "notes": "Often overshadowed by Geminids a week earlier; coincides with winter solstice"
+      },
+      "description": "A minor but reliable shower occurring near the winter solstice. The circumpolar radiant means meteors can be seen all night from European latitudes. Rates are usually low, but occasional outbursts have produced 50+ per hour. A nice bonus after the main Geminid show.",
+      "photography_tips": "Circumpolar radiant means you can photograph all night. Low rates mean patience is required."
+    },
+    {
+      "id": "alpha_capricornids",
+      "name": "Alpha Capricornids",
+      "peak_date": "July 30-31",
+      "active_period": {
+        "start": "July 3",
+        "end": "August 15"
+      },
+      "zhr": 5,
+      "zhr_notes": "Low rates but many bright fireballs!",
+      "speed_km_s": 23,
+      "speed_description": "Slow",
+      "radiant": {
+        "constellation": "Capricornus",
+        "ra": "20h 28m",
+        "dec": "-10° 00′",
+        "notes": "Active same time as Southern Delta Aquariids"
+      },
+      "parent_body": "Comet 169P/NEAT",
+      "best_viewing": {
+        "time": "After midnight",
+        "direction": "South toward Capricornus/Aquarius",
+        "notes": "Worth watching despite low rates due to spectacular fireballs"
+      },
+      "description": "A minor shower by numbers, but famous for producing spectacular bright fireballs. The slow-moving meteors often leave persistent trains. Active at the same time as the Southern Delta Aquariids, so a good night for meteor watching overall.",
+      "photography_tips": "Slow meteors and frequent fireballs make this an excellent photography target despite low rates."
+    },
+    {
+      "id": "aurigids",
+      "name": "Aurigids",
+      "peak_date": "September 1",
+      "active_period": {
+        "start": "August 28",
+        "end": "September 5"
+      },
+      "zhr": 6,
+      "zhr_notes": "Occasional outbursts to 30-40",
+      "speed_km_s": 66,
+      "speed_description": "Fast",
+      "radiant": {
+        "constellation": "Auriga",
+        "ra": "05h 36m",
+        "dec": "+39° 00′",
+        "notes": "Near bright star Capella"
+      },
+      "parent_body": "Comet C/1911 N1 (Kiess)",
+      "best_viewing": {
+        "time": "After midnight until dawn",
+        "direction": "Auriga rises after midnight; best rates pre-dawn",
+        "notes": "Short peak; outbursts possible but unpredictable"
+      },
+      "description": "A minor shower that occasionally produces surprising outbursts. The 2007 outburst reached ZHR of 130. Fast meteors from a radiant near the bright star Capella. Worth monitoring in early September.",
+      "photography_tips": "Fast meteors create bright short trails. Be prepared for potential outburst activity."
+    },
+    {
+      "id": "draconids",
+      "name": "Draconids",
+      "peak_date": "October 8-9",
+      "active_period": {
+        "start": "October 6",
+        "end": "October 10"
+      },
+      "zhr": 5,
+      "zhr_notes": "Usually very weak; historic storms in 1933, 1946 (thousands/hour)",
+      "speed_km_s": 20,
+      "speed_description": "Very slow",
+      "radiant": {
+        "constellation": "Draco",
+        "ra": "17h 28m",
+        "dec": "+56° 00′",
+        "notes": "Near the head of Draco; circumpolar from Europe"
+      },
+      "parent_body": "Comet 21P/Giacobini-Zinner",
+      "best_viewing": {
+        "time": "Evening hours (unusual!)",
+        "direction": "Look toward Draco in the northwest after sunset",
+        "notes": "Best in evening unlike most showers; radiant sets after midnight"
+      },
+      "description": "Usually a very weak shower, but historically produced spectacular meteor storms when Earth passed close to fresh comet debris. The 1933 and 1946 storms produced thousands of meteors per hour. Exceptionally slow-moving meteors. Always worth checking in case of unexpected outburst.",
+      "photography_tips": "Very slow meteors. Evening activity (unusual). Monitor IMO alerts for potential outbursts."
+    },
+    {
+      "id": "southern_taurids",
+      "name": "Southern Taurids",
+      "peak_date": "October 10-11",
+      "active_period": {
+        "start": "September 10",
+        "end": "November 20"
+      },
+      "zhr": 5,
+      "zhr_notes": "Low rates spread over long period; many fireballs",
+      "speed_km_s": 27,
+      "speed_description": "Slow",
+      "radiant": {
+        "constellation": "Taurus",
+        "ra": "03h 32m",
+        "dec": "+09° 00′",
+        "notes": "Part of the Taurid Complex associated with Comet Encke"
+      },
+      "parent_body": "Comet 2P/Encke",
+      "best_viewing": {
+        "time": "After midnight",
+        "direction": "Taurus rises in late evening; best after midnight",
+        "notes": "Extended activity period; look for fireballs throughout October-November"
+      },
+      "description": "Part of the Taurid Complex, a broad stream of debris from Comet Encke. While rates are low, the Southern Taurids are famous for producing bright fireballs and bolides. The extended activity period means Taurid fireballs can appear throughout October and November.",
+      "photography_tips": "Long activity period allows many photography opportunities. Watch for bright fireballs."
+    },
+    {
+      "id": "northern_taurids",
+      "name": "Northern Taurids",
+      "peak_date": "November 12-13",
+      "active_period": {
+        "start": "October 20",
+        "end": "December 10"
+      },
+      "zhr": 5,
+      "zhr_notes": "Low rates; many fireballs; 7-year enhancement cycle",
+      "speed_km_s": 29,
+      "speed_description": "Slow",
+      "radiant": {
+        "constellation": "Taurus",
+        "ra": "03h 52m",
+        "dec": "+22° 00′",
+        "notes": "Slightly north of Southern Taurids radiant"
+      },
+      "parent_body": "Comet 2P/Encke",
+      "best_viewing": {
+        "time": "After midnight",
+        "direction": "Taurus is well-placed all night in November",
+        "notes": "Combined with Southern Taurids, October-November has consistent fireball activity"
+      },
+      "description": "The northern branch of the Taurid Complex. Like the Southern Taurids, rates are low but fireballs are common. Some years show enhanced activity ('Taurid swarm years') with increased fireball rates. The slow-moving meteors are easy to spot and photograph.",
+      "photography_tips": "Slow meteors ideal for photography. November nights offer long darkness hours."
+    }
+  ]
+}
