@@ -172,14 +172,33 @@ export default function Home() {
     }
   };
 
-  const handleSavedPlaceClick = (place: SavedPlace) => {
+  const handleSavedPlaceClick = async (place: SavedPlace) => {
+    // Center map on the saved place
     setMapCenter([place.lat, place.lng]);
     setMapZoom(12);
-    setLocationName(place.name);
-    setSearchLocation({ lat: place.lat, lng: place.lng });
-    // Clear any existing spots when navigating to a saved place
-    setSpots([]);
-    setShowSpots(false);
+
+    // Fetch tonight's weather for this place
+    let tonight: TonightForecast | null = null;
+    try {
+      const res = await fetch(`/api/weather/tonight?lat=${place.lat}&lng=${place.lng}`);
+      const data = await res.json();
+      tonight = data.tonight;
+    } catch {
+      // Weather fetch failed, continue without it
+    }
+
+    // Open trip modal with saved place as destination
+    setTripModal({
+      isOpen: true,
+      destination: {
+        lat: place.lat,
+        lng: place.lng,
+        name: place.name,
+        bortle: place.bortle,
+        label: place.label,
+      },
+      tonight,
+    });
   };
 
   const handleOnboardingComplete = (lat: number, lng: number, name?: string) => {
