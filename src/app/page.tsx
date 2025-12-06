@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Map from "@/components/Map";
+import MapComponent from "@/components/Map";
 import MapSearchBar from "@/components/MapSearchBar";
 import UserSidebar from "@/components/UserSidebar";
 import OnboardingModal from "@/components/OnboardingModal";
 import SaveToast from "@/components/SaveToast";
-import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace } from "@/lib/types";
+import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace, TonightForecast } from "@/lib/types";
+import TripPlanModal from "@/components/TripPlanModal";
+import SpotWeatherBadge from "@/components/SpotWeatherBadge";
 
 interface ContextMenuSpot {
   lat: number;
@@ -59,6 +61,26 @@ export default function Home() {
     lng: number;
   } | null>(null);
 
+  // Weather state for spots
+  const [spotWeather, setSpotWeather] = useState<Map<string, TonightForecast>>(new Map());
+
+  // Trip modal state
+  const [tripModal, setTripModal] = useState<{
+    isOpen: boolean;
+    destination: {
+      lat: number;
+      lng: number;
+      name?: string;
+      bortle?: number;
+      label?: string;
+    } | null;
+    tonight: TonightForecast | null;
+  }>({
+    isOpen: false,
+    destination: null,
+    tonight: null,
+  });
+
   // Check if user has completed onboarding
   useEffect(() => {
     const hasOnboarded = localStorage.getItem("stargazer_onboarded");
@@ -86,6 +108,7 @@ export default function Home() {
 
     setIsLoadingSpots(true);
     setShowSpots(true);
+    setSpotWeather(new Map());
 
     try {
       const response = await fetch(`/api/spots?lat=${location.lat}&lng=${location.lng}`);
@@ -97,6 +120,20 @@ export default function Home() {
         // Zoom out to show all spots if we have results
         if (data.spots.length > 0) {
           setMapZoom(7);
+
+          // Fetch weather for all spots in parallel
+          const weatherPromises = data.spots.map(async (spot: ScoredSpot) => {
+            const res = await fetch(`/api/weather/tonight?lat=${spot.lat}&lng=${spot.lng}`);
+            const weatherData = await res.json();
+            return { key: `${spot.lat}_${spot.lng}`, weather: weatherData.tonight };
+          });
+
+          const weatherResults = await Promise.all(weatherPromises);
+          const weatherMap = new Map<string, TonightForecast>();
+          weatherResults.forEach(({ key, weather }) => {
+            if (weather) weatherMap.set(key, weather);
+          });
+          setSpotWeather(weatherMap);
         }
       }
     } catch (err) {
@@ -170,6 +207,21 @@ export default function Home() {
     setTimeout(() => setAnimatePin(false), 4000);
   };
 
+  const handlePlanTrip = (spot: ScoredSpot) => {
+    const key = `${spot.lat}_${spot.lng}`;
+    setTripModal({
+      isOpen: true,
+      destination: {
+        lat: spot.lat,
+        lng: spot.lng,
+        name: `${spot.radius}km - ${spot.label} Sky`,
+        bortle: spot.bortle,
+        label: spot.label,
+      },
+      tonight: spotWeather.get(key) || null,
+    });
+  };
+
   return (
     <main className="h-screen w-screen relative overflow-hidden">
       {/* User Sidebar */}
@@ -187,7 +239,7 @@ export default function Home() {
       </Link>
 
       {/* Fullscreen Map */}
-      <Map
+      <MapComponent
         center={mapCenter}
         zoom={mapZoom}
         className="h-full w-full"
@@ -232,31 +284,41 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="divide-y divide-card-border">
-                  {spots.map((spot) => (
-                    <button
-                      key={spot.radius}
-                      onClick={() => handleSpotClick(spot)}
-                      className="w-full px-4 py-3 text-left hover:bg-foreground/5 transition-colors"
-                    >
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-medium">Within {spot.radius}km</span>
-                        <span className={`text-xs px-2 py-0.5 rounded-full ${
-                          spot.accessibilityScore >= 4 ? 'bg-success/20 text-success' :
-                          spot.accessibilityScore >= 2 ? 'bg-warning/20 text-warning' :
-                          'bg-foreground/10 text-foreground/60'
-                        }`}>
-                          {spot.accessibilityScore >= 4 ? 'Easy access' :
-                           spot.accessibilityScore >= 2 ? 'Some access' : 'Limited access'}
-                        </span>
-                      </div>
-                      {spot.accessibilityFeatures && spot.accessibilityFeatures.length > 0 && (
-                        <div className="text-xs text-foreground/60">
-                          {spot.accessibilityFeatures[0].name ||
-                           `Near ${spot.accessibilityFeatures[0].type}`}
+                  {spots.map((spot) => {
+                    const weatherKey = `${spot.lat}_${spot.lng}`;
+                    const weather = spotWeather.get(weatherKey);
+
+                    return (
+                      <button
+                        key={spot.radius}
+                        onClick={() => handleSpotClick(spot)}
+                        className="w-full px-4 py-3 text-left hover:bg-foreground/5 transition-colors"
+                      >
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-sm font-medium">Within {spot.radius}km</span>
+                          <SpotWeatherBadge
+                            score={weather?.overallScore ?? 0}
+                            loading={!weather && isLoadingSpots}
+                            compact
+                          />
                         </div>
-                      )}
-                    </button>
-                  ))}
+                        <div className="flex items-center justify-between">
+                          <div className="text-xs text-foreground/60">
+                            {spot.accessibilityFeatures?.[0]?.name || `Bortle ${spot.bortle}`}
+                          </div>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePlanTrip(spot);
+                            }}
+                            className="text-xs text-accent hover:underline"
+                          >
+                            Plan trip
+                          </button>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -387,6 +449,17 @@ export default function Home() {
             window.location.href = `/plan?${params.toString()}`;
           }}
           onDismiss={() => setSaveToast(null)}
+        />
+      )}
+
+      {/* Trip Plan Modal */}
+      {tripModal.isOpen && tripModal.destination && (
+        <TripPlanModal
+          isOpen={tripModal.isOpen}
+          onClose={() => setTripModal({ isOpen: false, destination: null, tonight: null })}
+          destination={tripModal.destination}
+          startingLocation={searchLocation ? { ...searchLocation, name: locationName || undefined } : undefined}
+          tonight={tripModal.tonight}
         />
       )}
     </main>
