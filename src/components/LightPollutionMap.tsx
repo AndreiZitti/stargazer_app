@@ -3,12 +3,19 @@
 import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl } from "react-leaflet";
 import { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { ScoredSpot, Coordinates, AccessibilityFeature } from "@/lib/types";
+import { useEffect, useState, useCallback } from "react";
+import { ScoredSpot, Coordinates, AccessibilityFeature, TonightForecast, WeatherForecast } from "@/lib/types";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
 import MapContextMenu from "./MapContextMenu";
+
+// Weather cache to avoid re-fetching
+interface SpotWeatherData {
+  tonight: TonightForecast | null;
+  bestDay: { date: string; score: number; dayName: string } | null;
+  loading: boolean;
+  error: boolean;
+}
 
 interface ContextMenuSpot {
   lat: number;
@@ -200,16 +207,70 @@ export default function LightPollutionMap({
     y: number;
     coords: Coordinates;
   } | null>(null);
-  const router = useRouter();
+  const [spotWeather, setSpotWeather] = useState<Record<string, SpotWeatherData>>({});
   const { addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
 
   const baseConfig = BASE_LAYERS[baseLayer];
 
-  const handlePlanTrip = (lat: number, lng: number, name?: string) => {
-    const params = new URLSearchParams({ lat: lat.toString(), lng: lng.toString() });
-    if (name) params.set("name", name);
-    router.push(`/plan?${params.toString()}`);
-  };
+  // Generate cache key for spot weather
+  const getWeatherKey = (lat: number, lng: number) => `${lat.toFixed(4)},${lng.toFixed(4)}`;
+
+  // Fetch weather for a spot
+  const fetchSpotWeather = useCallback(async (lat: number, lng: number) => {
+    const key = getWeatherKey(lat, lng);
+
+    // Skip if already loaded or loading
+    if (spotWeather[key] && (spotWeather[key].tonight || spotWeather[key].loading)) {
+      return;
+    }
+
+    setSpotWeather(prev => ({
+      ...prev,
+      [key]: { tonight: null, bestDay: null, loading: true, error: false }
+    }));
+
+    try {
+      // Fetch tonight's forecast and 7-day forecast in parallel
+      const [tonightRes, weekRes] = await Promise.all([
+        fetch(`/api/weather/tonight?lat=${lat}&lng=${lng}`),
+        fetch(`/api/weather?lat=${lat}&lng=${lng}`)
+      ]);
+
+      const tonightData = await tonightRes.json();
+      const weekData = await weekRes.json();
+
+      // Find best day in the next 7 days
+      let bestDay: { date: string; score: number; dayName: string } | null = null;
+      if (weekData.forecasts && weekData.forecasts.length > 0) {
+        const forecasts: WeatherForecast[] = weekData.forecasts.slice(0, 7);
+        const best = forecasts.reduce((best, day) =>
+          day.stargazingScore > best.stargazingScore ? day : best
+        );
+        const date = new Date(best.date);
+        const isToday = date.toDateString() === new Date().toDateString();
+        bestDay = {
+          date: best.date,
+          score: best.stargazingScore,
+          dayName: isToday ? 'Tonight' : date.toLocaleDateString('en', { weekday: 'long' })
+        };
+      }
+
+      setSpotWeather(prev => ({
+        ...prev,
+        [key]: {
+          tonight: tonightData.tonight || null,
+          bestDay,
+          loading: false,
+          error: false
+        }
+      }));
+    } catch {
+      setSpotWeather(prev => ({
+        ...prev,
+        [key]: { tonight: null, bestDay: null, loading: false, error: true }
+      }));
+    }
+  }, [spotWeather]);
 
   const handleToggleSave = (lat: number, lng: number, name: string, bortle?: number, label?: string) => {
     if (isPlaceSaved(lat, lng)) {
@@ -326,197 +387,372 @@ export default function LightPollutionMap({
       )}
 
       {/* Context menu spot marker (from right-click) */}
-      {contextSpot && (
-        <Marker
-          position={[contextSpot.lat, contextSpot.lng]}
-          icon={contextSpotIcon}
-          eventHandlers={{
-            popupclose: () => setContextSpot(null),
-          }}
-        >
-          <Popup>
-            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
-              {contextSpot.loading ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)' }}>
-                  <svg style={{ width: '16px', height: '16px' }} className="animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Loading spot info...
-                </div>
-              ) : (
-                <>
-                  <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-                    {contextSpot.label ? `${contextSpot.label} Sky` : 'Spot Info'}
-                    {contextSpot.bortle && (
-                      <span style={{ fontWeight: 'normal', color: 'rgba(229,229,229,0.6)', marginLeft: '4px' }}>
-                        (Bortle {contextSpot.bortle})
-                      </span>
-                    )}
+      {contextSpot && (() => {
+        const weatherKey = getWeatherKey(contextSpot.lat, contextSpot.lng);
+        const weather = spotWeather[weatherKey];
+
+        return (
+          <Marker
+            position={[contextSpot.lat, contextSpot.lng]}
+            icon={contextSpotIcon}
+            eventHandlers={{
+              popupclose: () => setContextSpot(null),
+              popupopen: () => fetchSpotWeather(contextSpot.lat, contextSpot.lng),
+            }}
+          >
+            <Popup>
+              <div style={{ fontSize: '14px', minWidth: '240px', color: '#e5e5e5' }}>
+                {contextSpot.loading ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)' }}>
+                    <svg style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
+                      <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Loading spot info...
                   </div>
-
-                  {contextSpot.accessibilityScore !== undefined && (
-                    <div style={{ marginBottom: '8px' }}>
-                      <span style={{
-                        fontSize: '12px',
-                        padding: '2px 8px',
-                        borderRadius: '9999px',
-                        background: contextSpot.accessibilityScore >= 4 ? 'rgba(34,197,94,0.2)' :
-                                   contextSpot.accessibilityScore >= 2 ? 'rgba(234,179,8,0.2)' : 'rgba(229,229,229,0.1)',
-                        color: contextSpot.accessibilityScore >= 4 ? '#22c55e' :
-                               contextSpot.accessibilityScore >= 2 ? '#eab308' : 'rgba(229,229,229,0.6)'
-                      }}>
-                        {contextSpot.accessibilityScore >= 4 ? 'Easy access' :
-                         contextSpot.accessibilityScore >= 2 ? 'Some access' : 'Limited access'}
-                      </span>
+                ) : (
+                  <>
+                    {/* Header */}
+                    <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                      {contextSpot.label ? `${contextSpot.label} Sky` : 'Spot Info'}
                     </div>
-                  )}
+                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
+                      {contextSpot.bortle && `Bortle ${contextSpot.bortle} • `}
+                      {contextSpot.lat.toFixed(4)}°, {contextSpot.lng.toFixed(4)}°
+                    </div>
 
-                  {contextSpot.accessibilityFeatures && contextSpot.accessibilityFeatures.length > 0 && (
-                    <div style={{ marginBottom: '8px' }}>
-                      <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
-                      <ul style={{ fontSize: '12px', margin: 0, padding: 0, listStyle: 'none' }}>
-                        {contextSpot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
-                          <li key={idx} style={{ marginBottom: '4px' }}>
-                            {feature.type === 'parking' && '🅿️ '}
-                            {feature.type === 'park' && '🌲 '}
-                            {feature.type === 'viewpoint' && '👁️ '}
-                            {feature.name || feature.type}
-                            <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
-                              ({formatDistance(feature.distance)})
+                    {/* Weather Section */}
+                    <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                      {weather?.loading ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)', fontSize: '12px' }}>
+                          <svg style={{ width: '14px', height: '14px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
+                            <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                            <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                          </svg>
+                          Loading weather...
+                        </div>
+                      ) : weather?.error ? (
+                        <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>Weather unavailable</div>
+                      ) : weather?.tonight ? (
+                        <>
+                          {/* Tonight's conditions */}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                            <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>🌙 Tonight</span>
+                            <span style={{
+                              fontSize: '12px',
+                              fontWeight: 600,
+                              color: weather.tonight.overallScore >= 70 ? '#22c55e' :
+                                     weather.tonight.overallScore >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
+                            }}>
+                              {weather.tonight.overallScore}% clear
                             </span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
+                          </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a', marginTop: '8px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <a
-                        href={`https://www.google.com/maps/dir/?api=1&destination=${contextSpot.lat},${contextSpot.lng}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none' }}
-                      >
-                        Directions
-                      </a>
+                          {/* Hourly forecast strip */}
+                          <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
+                            {weather.tonight.hours.map((hour) => {
+                              const score = 100 - hour.cloudCover;
+                              return (
+                                <div key={hour.hour} style={{
+                                  flex: 1,
+                                  textAlign: 'center',
+                                  padding: '4px 2px',
+                                  background: 'rgba(255,255,255,0.05)',
+                                  borderRadius: '4px',
+                                  fontSize: '10px'
+                                }}>
+                                  <div style={{ color: 'rgba(229,229,229,0.5)' }}>
+                                    {hour.hour === 0 ? '12a' : hour.hour === 12 ? '12p' : hour.hour < 12 ? `${hour.hour}a` : `${hour.hour - 12}p`}
+                                  </div>
+                                  <div style={{ margin: '2px 0' }}>
+                                    {hour.icon === 'clear' ? '☀️' : hour.icon === 'partly' ? '⛅' : hour.icon === 'cloudy' ? '☁️' : '🌧️'}
+                                  </div>
+                                  <div style={{
+                                    color: score >= 70 ? '#22c55e' : score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)',
+                                    fontWeight: 500
+                                  }}>
+                                    {score}%
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                          {/* Best day this week */}
+                          {weather.bestDay && (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                              <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>📅 Best night</span>
+                              <span style={{
+                                fontSize: '12px',
+                                color: weather.bestDay.score >= 70 ? '#22c55e' :
+                                       weather.bestDay.score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
+                              }}>
+                                {weather.bestDay.dayName} ({weather.bestDay.score}%)
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>
+                          Loading weather...
+                        </div>
+                      )}
+                    </div>
+
+                    {contextSpot.accessibilityScore !== undefined && (
+                      <div style={{ marginBottom: '8px' }}>
+                        <span style={{
+                          fontSize: '12px',
+                          padding: '2px 8px',
+                          borderRadius: '9999px',
+                          background: contextSpot.accessibilityScore >= 4 ? 'rgba(34,197,94,0.2)' :
+                                     contextSpot.accessibilityScore >= 2 ? 'rgba(234,179,8,0.2)' : 'rgba(229,229,229,0.1)',
+                          color: contextSpot.accessibilityScore >= 4 ? '#22c55e' :
+                                 contextSpot.accessibilityScore >= 2 ? '#eab308' : 'rgba(229,229,229,0.6)'
+                        }}>
+                          {contextSpot.accessibilityScore >= 4 ? 'Easy access' :
+                           contextSpot.accessibilityScore >= 2 ? 'Some access' : 'Limited access'}
+                        </span>
+                      </div>
+                    )}
+
+                    {contextSpot.accessibilityFeatures && contextSpot.accessibilityFeatures.length > 0 && (
+                      <div style={{ marginBottom: '12px' }}>
+                        <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
+                        <ul style={{ fontSize: '12px', margin: 0, padding: 0, listStyle: 'none' }}>
+                          {contextSpot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
+                            <li key={idx} style={{ marginBottom: '4px' }}>
+                              {feature.type === 'parking' && '🅿️ '}
+                              {feature.type === 'park' && '🌲 '}
+                              {feature.type === 'viewpoint' && '👁️ '}
+                              {feature.name || feature.type}
+                              <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
+                                ({formatDistance(feature.distance)})
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Action buttons */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${contextSpot.lat},${contextSpot.lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        >
+                          🧭 Directions
+                        </a>
+                        <a
+                          href="/december"
+                          style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        >
+                          🔭 Sky Guide
+                        </a>
+                      </div>
                       <button
-                        onClick={() => handlePlanTrip(contextSpot.lat, contextSpot.lng)}
-                        style={{ color: '#6366f1', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                        onClick={() => handleToggleSave(
+                          contextSpot.lat,
+                          contextSpot.lng,
+                          contextSpot.label ? `${contextSpot.label} Sky Spot` : "Saved Spot",
+                          contextSpot.bortle,
+                          contextSpot.label
+                        )}
+                        style={{
+                          padding: '4px',
+                          borderRadius: '4px',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          color: isPlaceSaved(contextSpot.lat, contextSpot.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
+                        }}
+                        title={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "Remove from saved" : "Save place"}
                       >
-                        Plan trip
+                        <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                        </svg>
                       </button>
                     </div>
-                    <button
-                      onClick={() => handleToggleSave(
-                        contextSpot.lat,
-                        contextSpot.lng,
-                        contextSpot.label ? `${contextSpot.label} Sky Spot` : "Saved Spot",
-                        contextSpot.bortle,
-                        contextSpot.label
-                      )}
-                      style={{
-                        padding: '4px',
-                        borderRadius: '4px',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        color: isPlaceSaved(contextSpot.lat, contextSpot.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
-                      }}
-                      title={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "Remove from saved" : "Save place"}
-                    >
-                      <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                      </svg>
-                    </button>
-                  </div>
-                </>
-              )}
-            </div>
-          </Popup>
-        </Marker>
-      )}
+                  </>
+                )}
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })()}
 
       {/* Spot markers */}
-      {spots.map((spot) => (
-        <Marker
-          key={spot.radius}
-          position={[spot.lat, spot.lng]}
-          icon={getSpotIcon(spot.radius)}
-          eventHandlers={{
-            click: () => onSpotClick?.(spot),
-          }}
-        >
-          <Popup>
-            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
-              <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
-                {spot.radius}km - {spot.label} Sky
-              </div>
+      {spots.map((spot) => {
+        const weatherKey = getWeatherKey(spot.lat, spot.lng);
+        const weather = spotWeather[weatherKey];
 
-              {spot.accessibilityFeatures && spot.accessibilityFeatures.length > 0 && (
-                <div style={{ marginBottom: '8px' }}>
-                  <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
-                  <ul style={{ fontSize: '12px', margin: 0, padding: 0, listStyle: 'none' }}>
-                    {spot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
-                      <li key={idx} style={{ marginBottom: '4px' }}>
-                        {feature.type === 'parking' && '🅿️ '}
-                        {feature.type === 'park' && '🌲 '}
-                        {feature.type === 'viewpoint' && '👁️ '}
-                        {feature.name || feature.type}
-                        <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
-                          ({formatDistance(feature.distance)})
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
+        return (
+          <Marker
+            key={spot.radius}
+            position={[spot.lat, spot.lng]}
+            icon={getSpotIcon(spot.radius)}
+            eventHandlers={{
+              click: () => onSpotClick?.(spot),
+              popupopen: () => fetchSpotWeather(spot.lat, spot.lng),
+            }}
+          >
+            <Popup>
+              <div style={{ fontSize: '14px', minWidth: '240px', color: '#e5e5e5' }}>
+                {/* Header */}
+                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                  {spot.radius}km - {spot.label} Sky
                 </div>
-              )}
+                <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
+                  Bortle {spot.bortle} • {spot.lat.toFixed(4)}°, {spot.lng.toFixed(4)}°
+                </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a', marginTop: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <a
-                    href={`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none' }}
-                  >
-                    Directions
-                  </a>
+                {/* Weather Section */}
+                <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                  {weather?.loading ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)', fontSize: '12px' }}>
+                      <svg style={{ width: '14px', height: '14px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
+                        <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                        <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Loading weather...
+                    </div>
+                  ) : weather?.error ? (
+                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>Weather unavailable</div>
+                  ) : weather?.tonight ? (
+                    <>
+                      {/* Tonight's conditions */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                        <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>🌙 Tonight</span>
+                        <span style={{
+                          fontSize: '12px',
+                          fontWeight: 600,
+                          color: weather.tonight.overallScore >= 70 ? '#22c55e' :
+                                 weather.tonight.overallScore >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
+                        }}>
+                          {weather.tonight.overallScore}% clear
+                        </span>
+                      </div>
+
+                      {/* Hourly forecast strip */}
+                      <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
+                        {weather.tonight.hours.map((hour) => {
+                          const score = 100 - hour.cloudCover;
+                          return (
+                            <div key={hour.hour} style={{
+                              flex: 1,
+                              textAlign: 'center',
+                              padding: '4px 2px',
+                              background: 'rgba(255,255,255,0.05)',
+                              borderRadius: '4px',
+                              fontSize: '10px'
+                            }}>
+                              <div style={{ color: 'rgba(229,229,229,0.5)' }}>
+                                {hour.hour === 0 ? '12a' : hour.hour === 12 ? '12p' : hour.hour < 12 ? `${hour.hour}a` : `${hour.hour - 12}p`}
+                              </div>
+                              <div style={{ margin: '2px 0' }}>
+                                {hour.icon === 'clear' ? '☀️' : hour.icon === 'partly' ? '⛅' : hour.icon === 'cloudy' ? '☁️' : '🌧️'}
+                              </div>
+                              <div style={{
+                                color: score >= 70 ? '#22c55e' : score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)',
+                                fontWeight: 500
+                              }}>
+                                {score}%
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Best day this week */}
+                      {weather.bestDay && (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                          <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>📅 Best night</span>
+                          <span style={{
+                            fontSize: '12px',
+                            color: weather.bestDay.score >= 70 ? '#22c55e' :
+                                   weather.bestDay.score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
+                          }}>
+                            {weather.bestDay.dayName} ({weather.bestDay.score}%)
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>
+                      Open popup to load weather
+                    </div>
+                  )}
+                </div>
+
+                {/* Nearby amenities */}
+                {spot.accessibilityFeatures && spot.accessibilityFeatures.length > 0 && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
+                    <ul style={{ fontSize: '12px', margin: 0, padding: 0, listStyle: 'none' }}>
+                      {spot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
+                        <li key={idx} style={{ marginBottom: '4px' }}>
+                          {feature.type === 'parking' && '🅿️ '}
+                          {feature.type === 'park' && '🌲 '}
+                          {feature.type === 'viewpoint' && '👁️ '}
+                          {feature.name || feature.type}
+                          <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
+                            ({formatDistance(feature.distance)})
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Action buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      🧭 Directions
+                    </a>
+                    <a
+                      href="/december"
+                      style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                    >
+                      🔭 Sky Guide
+                    </a>
+                  </div>
                   <button
-                    onClick={() => handlePlanTrip(spot.lat, spot.lng, `${spot.radius}km - ${spot.label} Sky`)}
-                    style={{ color: '#6366f1', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
+                    onClick={() => handleToggleSave(
+                      spot.lat,
+                      spot.lng,
+                      `${spot.radius}km - ${spot.label} Sky`,
+                      spot.bortle,
+                      spot.label
+                    )}
+                    style={{
+                      padding: '4px',
+                      borderRadius: '4px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      color: isPlaceSaved(spot.lat, spot.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
+                    }}
+                    title={isPlaceSaved(spot.lat, spot.lng) ? "Remove from saved" : "Save place"}
                   >
-                    Plan trip
+                    <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(spot.lat, spot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
                   </button>
                 </div>
-                <button
-                  onClick={() => handleToggleSave(
-                    spot.lat,
-                    spot.lng,
-                    `${spot.radius}km - ${spot.label} Sky`,
-                    spot.bortle,
-                    spot.label
-                  )}
-                  style={{
-                    padding: '4px',
-                    borderRadius: '4px',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: isPlaceSaved(spot.lat, spot.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
-                  }}
-                  title={isPlaceSaved(spot.lat, spot.lng) ? "Remove from saved" : "Save place"}
-                >
-                  <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(spot.lat, spot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                </button>
               </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+            </Popup>
+          </Marker>
+        );
+      })}
     </MapContainer>
 
     {/* Context Menu */}

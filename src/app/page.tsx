@@ -8,7 +8,6 @@ import UserSidebar from "@/components/UserSidebar";
 import OnboardingModal from "@/components/OnboardingModal";
 import SaveToast from "@/components/SaveToast";
 import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace, TonightForecast } from "@/lib/types";
-import TripPlanModal from "@/components/TripPlanModal";
 import SpotWeatherBadge from "@/components/SpotWeatherBadge";
 
 interface ContextMenuSpot {
@@ -63,23 +62,6 @@ export default function Home() {
 
   // Weather state for spots
   const [spotWeather, setSpotWeather] = useState<Map<string, TonightForecast>>(new Map());
-
-  // Trip modal state
-  const [tripModal, setTripModal] = useState<{
-    isOpen: boolean;
-    destination: {
-      lat: number;
-      lng: number;
-      name?: string;
-      bortle?: number;
-      label?: string;
-    } | null;
-    tonight: TonightForecast | null;
-  }>({
-    isOpen: false,
-    destination: null,
-    tonight: null,
-  });
 
   // Check if user has completed onboarding
   useEffect(() => {
@@ -172,33 +154,10 @@ export default function Home() {
     }
   };
 
-  const handleSavedPlaceClick = async (place: SavedPlace) => {
-    // Center map on the saved place
+  const handleSavedPlaceClick = (place: SavedPlace) => {
+    // Center map on the saved place - popup will show weather when opened
     setMapCenter([place.lat, place.lng]);
     setMapZoom(12);
-
-    // Fetch tonight's weather for this place
-    let tonight: TonightForecast | null = null;
-    try {
-      const res = await fetch(`/api/weather/tonight?lat=${place.lat}&lng=${place.lng}`);
-      const data = await res.json();
-      tonight = data.tonight;
-    } catch {
-      // Weather fetch failed, continue without it
-    }
-
-    // Open trip modal with saved place as destination
-    setTripModal({
-      isOpen: true,
-      destination: {
-        lat: place.lat,
-        lng: place.lng,
-        name: place.name,
-        bortle: place.bortle,
-        label: place.label,
-      },
-      tonight,
-    });
   };
 
   const handleOnboardingComplete = (lat: number, lng: number, name?: string) => {
@@ -226,36 +185,34 @@ export default function Home() {
     setTimeout(() => setAnimatePin(false), 4000);
   };
 
-  const handlePlanTrip = (spot: ScoredSpot) => {
-    const key = `${spot.lat}_${spot.lng}`;
-    setTripModal({
-      isOpen: true,
-      destination: {
-        lat: spot.lat,
-        lng: spot.lng,
-        name: `${spot.radius}km - ${spot.label} Sky`,
-        bortle: spot.bortle,
-        label: spot.label,
-      },
-      tonight: spotWeather.get(key) || null,
-    });
-  };
-
   return (
     <main className="h-screen w-screen relative overflow-hidden">
       {/* User Sidebar */}
       <UserSidebar onPlaceClick={handleSavedPlaceClick} />
 
-      {/* Monthly Program Link - Top Right */}
-      <Link
-        href="/december"
-        className="fixed top-4 right-4 z-[1001] bg-card/95 backdrop-blur-sm border border-card-border rounded-lg px-3 py-2.5 shadow-lg hover:bg-foreground/5 transition-colors flex items-center gap-2 group"
-      >
-        <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-        </svg>
-        <span className="text-sm font-medium">December Guide</span>
-      </Link>
+      {/* Top Right Links */}
+      <div className="fixed top-4 right-4 z-[1001] flex gap-2">
+        <Link
+          href="/stellarium"
+          className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg px-3 py-2.5 shadow-lg hover:bg-foreground/5 transition-colors flex items-center gap-2"
+        >
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+            <path strokeLinecap="round" strokeWidth={1.5} d="M2 12h20" />
+          </svg>
+          <span className="text-sm font-medium">Sky Viewer</span>
+        </Link>
+        <Link
+          href="/december"
+          className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg px-3 py-2.5 shadow-lg hover:bg-foreground/5 transition-colors flex items-center gap-2"
+        >
+          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+          </svg>
+          <span className="text-sm font-medium">December Guide</span>
+        </Link>
+      </div>
 
       {/* Fullscreen Map */}
       <MapComponent
@@ -325,15 +282,15 @@ export default function Home() {
                           <div className="text-xs text-foreground/60">
                             {spot.accessibilityFeatures?.[0]?.name || `Bortle ${spot.bortle}`}
                           </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handlePlanTrip(spot);
-                            }}
+                          <a
+                            href={`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
                             className="text-xs text-accent hover:underline"
                           >
-                            Plan trip
-                          </button>
+                            Directions
+                          </a>
                         </div>
                       </div>
                     );
@@ -460,25 +417,9 @@ export default function Home() {
           lat={saveToast.lat}
           lng={saveToast.lng}
           onPlanTrip={() => {
-            const params = new URLSearchParams({
-              lat: saveToast.lat.toString(),
-              lng: saveToast.lng.toString(),
-              name: saveToast.name,
-            });
-            window.location.href = `/plan?${params.toString()}`;
+            window.open(`https://www.google.com/maps/dir/?api=1&destination=${saveToast.lat},${saveToast.lng}`, '_blank');
           }}
           onDismiss={() => setSaveToast(null)}
-        />
-      )}
-
-      {/* Trip Plan Modal */}
-      {tripModal.isOpen && tripModal.destination && (
-        <TripPlanModal
-          isOpen={tripModal.isOpen}
-          onClose={() => setTripModal({ isOpen: false, destination: null, tonight: null })}
-          destination={tripModal.destination}
-          startingLocation={searchLocation ? { ...searchLocation, name: locationName || undefined } : undefined}
-          tonight={tripModal.tonight}
         />
       )}
     </main>

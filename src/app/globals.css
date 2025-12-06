@@ -116,3 +116,13 @@ body {
 .leaflet-container a:hover {
   color: #818cf8 !important;
 }
+
+/* Spin animation for loading spinners */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
