@@ -276,13 +276,28 @@ export default function LightPollutionMap({
           icon={createLocationPinIcon({ animate: animatePin })}
         >
           <Popup>
-            <div className="text-sm min-w-[180px] text-foreground">
-              <div className="font-bold mb-2">Your location</div>
+            <div style={{ fontSize: '14px', minWidth: '180px', color: '#e5e5e5' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Your location</div>
               {onFindSpots && (
                 <button
                   onClick={onFindSpots}
                   disabled={isLoadingSpots}
-                  className="w-full bg-accent hover:bg-accent-hover disabled:bg-accent/50 text-white text-xs font-medium py-2 px-3 rounded transition-colors flex items-center justify-center gap-2 mb-2"
+                  style={{
+                    width: '100%',
+                    background: '#6366f1',
+                    color: 'white',
+                    fontSize: '12px',
+                    fontWeight: 500,
+                    padding: '8px 12px',
+                    borderRadius: '4px',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    marginBottom: '8px',
+                  }}
                 >
                   {isLoadingSpots ? (
                     <>
@@ -294,7 +309,7 @@ export default function LightPollutionMap({
                     </>
                   ) : (
                     <>
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
+                      <svg style={{ width: '12px', height: '12px' }} fill="currentColor" viewBox="0 0 24 24">
                         <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                       </svg>
                       Find Dark Skies
@@ -302,7 +317,7 @@ export default function LightPollutionMap({
                   )}
                 </button>
               )}
-              <div className="text-xs text-foreground/50 text-center">
+              <div style={{ fontSize: '12px', color: 'rgba(229, 229, 229, 0.5)', textAlign: 'center' }}>
                 Right-click map for more options
               </div>
             </div>
@@ -320,33 +335,37 @@ export default function LightPollutionMap({
           }}
         >
           <Popup>
-            <div className="text-sm min-w-[200px] text-foreground">
+            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
               {contextSpot.loading ? (
-                <div className="flex items-center gap-2 text-foreground/60">
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)' }}>
+                  <svg style={{ width: '16px', height: '16px' }} className="animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
                   Loading spot info...
                 </div>
               ) : (
                 <>
-                  <div className="font-bold mb-2">
+                  <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
                     {contextSpot.label ? `${contextSpot.label} Sky` : 'Spot Info'}
                     {contextSpot.bortle && (
-                      <span className="font-normal text-foreground/60 ml-1">
+                      <span style={{ fontWeight: 'normal', color: 'rgba(229,229,229,0.6)', marginLeft: '4px' }}>
                         (Bortle {contextSpot.bortle})
                       </span>
                     )}
                   </div>
 
                   {contextSpot.accessibilityScore !== undefined && (
-                    <div className="mb-2">
-                      <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        contextSpot.accessibilityScore >= 4 ? 'bg-success/20 text-success' :
-                        contextSpot.accessibilityScore >= 2 ? 'bg-warning/20 text-warning' :
-                        'bg-foreground/10 text-foreground/60'
-                      }`}>
+                    <div style={{ marginBottom: '8px' }}>
+                      <span style={{
+                        fontSize: '12px',
+                        padding: '2px 8px',
+                        borderRadius: '9999px',
+                        background: contextSpot.accessibilityScore >= 4 ? 'rgba(34,197,94,0.2)' :
+                                   contextSpot.accessibilityScore >= 2 ? 'rgba(234,179,8,0.2)' : 'rgba(229,229,229,0.1)',
+                        color: contextSpot.accessibilityScore >= 4 ? '#22c55e' :
+                               contextSpot.accessibilityScore >= 2 ? '#eab308' : 'rgba(229,229,229,0.6)'
+                      }}>
                         {contextSpot.accessibilityScore >= 4 ? 'Easy access' :
                          contextSpot.accessibilityScore >= 2 ? 'Some access' : 'Limited access'}
                       </span>
@@ -354,16 +373,16 @@ export default function LightPollutionMap({
                   )}
 
                   {contextSpot.accessibilityFeatures && contextSpot.accessibilityFeatures.length > 0 && (
-                    <div className="mb-2">
-                      <div className="text-xs text-foreground/50 mb-1">Nearby:</div>
-                      <ul className="text-xs space-y-1">
+                    <div style={{ marginBottom: '8px' }}>
+                      <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
+                      <ul style={{ fontSize: '12px', margin: 0, padding: 0, listStyle: 'none' }}>
                         {contextSpot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
-                          <li key={idx}>
+                          <li key={idx} style={{ marginBottom: '4px' }}>
                             {feature.type === 'parking' && '🅿️ '}
                             {feature.type === 'park' && '🌲 '}
                             {feature.type === 'viewpoint' && '👁️ '}
                             {feature.name || feature.type}
-                            <span className="text-foreground/40 ml-1">
+                            <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
                               ({formatDistance(feature.distance)})
                             </span>
                           </li>
@@ -372,19 +391,19 @@ export default function LightPollutionMap({
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-2 border-t border-card-border mt-2">
-                    <div className="flex items-center gap-3">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a', marginTop: '8px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <a
                         href={`https://www.google.com/maps/dir/?api=1&destination=${contextSpot.lat},${contextSpot.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-accent hover:underline text-xs"
+                        style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none' }}
                       >
                         Directions
                       </a>
                       <button
                         onClick={() => handlePlanTrip(contextSpot.lat, contextSpot.lng)}
-                        className="text-accent hover:underline text-xs"
+                        style={{ color: '#6366f1', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                       >
                         Plan trip
                       </button>
@@ -397,14 +416,17 @@ export default function LightPollutionMap({
                         contextSpot.bortle,
                         contextSpot.label
                       )}
-                      className={`p-1 rounded transition-colors ${
-                        isPlaceSaved(contextSpot.lat, contextSpot.lng)
-                          ? "text-warning"
-                          : "text-foreground/40 hover:text-warning"
-                      }`}
+                      style={{
+                        padding: '4px',
+                        borderRadius: '4px',
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: isPlaceSaved(contextSpot.lat, contextSpot.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
+                      }}
                       title={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "Remove from saved" : "Save place"}
                     >
-                      <svg className="w-5 h-5" fill={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                      <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                       </svg>
                     </button>
@@ -427,22 +449,22 @@ export default function LightPollutionMap({
           }}
         >
           <Popup>
-            <div className="text-sm min-w-[200px] text-foreground">
-              <div className="font-bold mb-2">
+            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
+              <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>
                 {spot.radius}km - {spot.label} Sky
               </div>
 
               {spot.accessibilityFeatures && spot.accessibilityFeatures.length > 0 && (
-                <div className="mb-2">
-                  <div className="text-xs text-foreground/50 mb-1">Nearby:</div>
-                  <ul className="text-xs space-y-1">
+                <div style={{ marginBottom: '8px' }}>
+                  <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
+                  <ul style={{ fontSize: '12px', margin: 0, padding: 0, listStyle: 'none' }}>
                     {spot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
-                      <li key={idx}>
+                      <li key={idx} style={{ marginBottom: '4px' }}>
                         {feature.type === 'parking' && '🅿️ '}
                         {feature.type === 'park' && '🌲 '}
                         {feature.type === 'viewpoint' && '👁️ '}
                         {feature.name || feature.type}
-                        <span className="text-foreground/40 ml-1">
+                        <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
                           ({formatDistance(feature.distance)})
                         </span>
                       </li>
@@ -451,19 +473,19 @@ export default function LightPollutionMap({
                 </div>
               )}
 
-              <div className="flex items-center justify-between pt-2 border-t border-card-border mt-2">
-                <div className="flex items-center gap-3">
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a', marginTop: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-accent hover:underline text-xs"
+                    style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none' }}
                   >
                     Directions
                   </a>
                   <button
                     onClick={() => handlePlanTrip(spot.lat, spot.lng, `${spot.radius}km - ${spot.label} Sky`)}
-                    className="text-accent hover:underline text-xs"
+                    style={{ color: '#6366f1', fontSize: '12px', background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
                   >
                     Plan trip
                   </button>
@@ -476,14 +498,17 @@ export default function LightPollutionMap({
                     spot.bortle,
                     spot.label
                   )}
-                  className={`p-1 rounded transition-colors ${
-                    isPlaceSaved(spot.lat, spot.lng)
-                      ? "text-warning"
-                      : "text-foreground/40 hover:text-warning"
-                  }`}
+                  style={{
+                    padding: '4px',
+                    borderRadius: '4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: isPlaceSaved(spot.lat, spot.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
+                  }}
                   title={isPlaceSaved(spot.lat, spot.lng) ? "Remove from saved" : "Save place"}
                 >
-                  <svg className="w-5 h-5" fill={isPlaceSaved(spot.lat, spot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                  <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(spot.lat, spot.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                   </svg>
                 </button>

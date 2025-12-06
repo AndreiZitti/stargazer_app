@@ -289,10 +289,10 @@ export default function Home() {
                     const weather = spotWeather.get(weatherKey);
 
                     return (
-                      <button
+                      <div
                         key={spot.radius}
                         onClick={() => handleSpotClick(spot)}
-                        className="w-full px-4 py-3 text-left hover:bg-foreground/5 transition-colors"
+                        className="w-full px-4 py-3 text-left hover:bg-foreground/5 transition-colors cursor-pointer"
                       >
                         <div className="flex items-center justify-between mb-1">
                           <span className="text-sm font-medium">Within {spot.radius}km</span>
@@ -316,7 +316,7 @@ export default function Home() {
                             Plan trip
                           </button>
                         </div>
-                      </button>
+                      </div>
                     );
                   })}
                 </div>
