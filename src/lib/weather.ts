@@ -1,4 +1,4 @@
-import { WeatherForecast } from "./types";
+import { WeatherForecast, HourlyCondition, TonightForecast } from "./types";
 
 const OPEN_METEO_BASE_URL = "https://api.open-meteo.com/v1/forecast";
 
@@ -104,5 +104,79 @@ export async function getWeatherForecast(
   } catch (error) {
     console.error("Weather API error:", error);
     return [];
+  }
+}
+
+function getWeatherIcon(cloudCover: number, precipitation: number): "clear" | "partly" | "cloudy" | "rainy" {
+  if (precipitation > 0.5) return "rainy";
+  if (cloudCover <= 30) return "clear";
+  if (cloudCover <= 60) return "partly";
+  return "cloudy";
+}
+
+export async function getTonightForecast(
+  lat: number,
+  lng: number
+): Promise<TonightForecast | null> {
+  try {
+    const params = new URLSearchParams({
+      latitude: lat.toString(),
+      longitude: lng.toString(),
+      hourly: "cloud_cover,precipitation",
+      timezone: "auto",
+      forecast_days: "2",
+    });
+
+    const response = await fetch(`${OPEN_METEO_BASE_URL}?${params}`);
+    if (!response.ok) return null;
+
+    const data = await response.json();
+    if (!data.hourly?.time) return null;
+
+    // Get hours from 20:00 (8pm) to 02:00 (2am next day)
+    const hours: HourlyCondition[] = [];
+    const targetHours = [20, 21, 22, 23, 0, 1, 2];
+
+    for (const targetHour of targetHours) {
+      // Find index in hourly data
+      const dayOffset = targetHour < 12 ? 1 : 0; // 0-2am is next day
+      const hourIndex = dayOffset * 24 + targetHour;
+
+      if (hourIndex < data.hourly.cloud_cover.length) {
+        const cloudCover = data.hourly.cloud_cover[hourIndex] ?? 50;
+        const precip = data.hourly.precipitation?.[hourIndex] ?? 0;
+
+        hours.push({
+          hour: targetHour,
+          cloudCover: Math.round(cloudCover),
+          icon: getWeatherIcon(cloudCover, precip),
+        });
+      }
+    }
+
+    const avgCloud = hours.reduce((sum, h) => sum + h.cloudCover, 0) / hours.length;
+    const overallScore = Math.round(100 - avgCloud);
+    const bestHourData = hours.reduce((best, h) => h.cloudCover < best.cloudCover ? h : best, hours[0]);
+
+    // Generate summary
+    let summary = "Clear skies tonight";
+    if (avgCloud > 70) summary = "Mostly cloudy tonight";
+    else if (avgCloud > 40) summary = "Partly cloudy tonight";
+    else if (bestHourData.hour !== hours[0].hour) {
+      const hourStr = bestHourData.hour === 0 ? "midnight" :
+                      bestHourData.hour < 12 ? `${bestHourData.hour}am` :
+                      bestHourData.hour === 12 ? "noon" : `${bestHourData.hour - 12}pm`;
+      summary = `Clearest around ${hourStr}`;
+    }
+
+    return {
+      hours,
+      overallScore,
+      bestHour: bestHourData.hour,
+      summary,
+    };
+  } catch (error) {
+    console.error("Tonight forecast error:", error);
+    return null;
   }
 }

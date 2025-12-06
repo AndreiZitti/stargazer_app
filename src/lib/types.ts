@@ -3,6 +3,19 @@ export interface Coordinates {
   lng: number;
 }
 
+export interface HourlyCondition {
+  hour: number; // 0-23
+  cloudCover: number;
+  icon: "clear" | "partly" | "cloudy" | "rainy";
+}
+
+export interface TonightForecast {
+  hours: HourlyCondition[];
+  overallScore: number;
+  bestHour: number;
+  summary: string; // e.g., "Mostly clear after 10pm"
+}
+
 export interface GeocodedLocation extends Coordinates {
   displayName: string;
 }
