@@ -5,8 +5,10 @@ import { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace } from "@/lib/types";
+import { ScoredSpot, Coordinates, AccessibilityFeature } from "@/lib/types";
 import { useUser } from "@/contexts/UserContext";
+import { createLocationPinIcon } from "./LocationPin";
+import MapContextMenu from "./MapContextMenu";
 
 interface ContextMenuSpot {
   lat: number;
@@ -34,6 +36,8 @@ interface LightPollutionMapProps {
   onFindSpots?: () => void;
   isLoadingSpots?: boolean;
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
+  onSearchFromHere?: (coords: Coordinates) => void;
+  animatePin?: boolean;
 }
 
 // Base layer URLs
@@ -84,32 +88,17 @@ function MapUpdater({ center, zoom }: { center: LatLngExpression; zoom: number }
   return null;
 }
 
-// Component to handle right-click events
+// Component to handle right-click events - returns screen coordinates for context menu
 function RightClickHandler({
   onRightClick,
-  setContextSpot
 }: {
-  onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
-  setContextSpot: (spot: ContextMenuSpot | null) => void;
+  onRightClick: (coords: Coordinates, screenX: number, screenY: number) => void;
 }) {
   useMapEvents({
-    contextmenu: async (e) => {
+    contextmenu: (e) => {
       e.originalEvent.preventDefault();
-
-      if (!onRightClick) return;
-
       const coords = { lat: e.latlng.lat, lng: e.latlng.lng };
-
-      // Show loading state immediately
-      setContextSpot({ ...coords, loading: true });
-
-      // Fetch spot info
-      const result = await onRightClick(coords);
-      if (result) {
-        setContextSpot(result);
-      } else {
-        setContextSpot({ ...coords, loading: false });
-      }
+      onRightClick(coords, e.originalEvent.clientX, e.originalEvent.clientY);
     },
   });
 
@@ -202,8 +191,15 @@ export default function LightPollutionMap({
   onFindSpots,
   isLoadingSpots = false,
   onRightClick,
+  onSearchFromHere,
+  animatePin = false,
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    coords: Coordinates;
+  } | null>(null);
   const router = useRouter();
   const { addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
 
@@ -227,6 +223,7 @@ export default function LightPollutionMap({
   };
 
   return (
+    <>
     <MapContainer
       center={center}
       zoom={zoom}
@@ -238,8 +235,10 @@ export default function LightPollutionMap({
       <ZoomControl position="bottomright" />
       <MapUpdater center={center} zoom={zoom} />
       <RightClickHandler
-        onRightClick={onRightClick}
-        setContextSpot={setContextSpot}
+        onRightClick={(coords, screenX, screenY) => {
+          setContextMenu({ x: screenX, y: screenY, coords });
+          setContextSpot(null);
+        }}
       />
 
       {/* Base layer */}
@@ -274,7 +273,7 @@ export default function LightPollutionMap({
       {searchLocation && (
         <Marker
           position={[searchLocation.lat, searchLocation.lng]}
-          icon={searchLocationIcon}
+          icon={createLocationPinIcon({ animate: animatePin })}
         >
           <Popup>
             <div className="text-sm min-w-[180px]">
@@ -283,7 +282,7 @@ export default function LightPollutionMap({
                 <button
                   onClick={onFindSpots}
                   disabled={isLoadingSpots}
-                  className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white text-xs font-medium py-2 px-3 rounded transition-colors flex items-center justify-center gap-2 mb-2"
+                  className="w-full bg-accent hover:bg-accent-hover disabled:bg-accent/50 text-white text-xs font-medium py-2 px-3 rounded transition-colors flex items-center justify-center gap-2 mb-2"
                 >
                   {isLoadingSpots ? (
                     <>
@@ -304,7 +303,7 @@ export default function LightPollutionMap({
                 </button>
               )}
               <div className="text-xs text-gray-500 text-center">
-                Right-click map to check any spot
+                Right-click map for more options
               </div>
             </div>
           </Popup>
@@ -494,5 +493,31 @@ export default function LightPollutionMap({
         </Marker>
       ))}
     </MapContainer>
+
+    {/* Context Menu */}
+    {contextMenu && (
+      <MapContextMenu
+        x={contextMenu.x}
+        y={contextMenu.y}
+        onCheckSpot={async () => {
+          if (onRightClick) {
+            setContextSpot({ ...contextMenu.coords, loading: true });
+            const result = await onRightClick(contextMenu.coords);
+            if (result) {
+              setContextSpot(result);
+            } else {
+              setContextSpot({ ...contextMenu.coords, loading: false });
+            }
+          }
+          setContextMenu(null);
+        }}
+        onSearchFromHere={() => {
+          onSearchFromHere?.(contextMenu.coords);
+          setContextMenu(null);
+        }}
+        onClose={() => setContextMenu(null)}
+      />
+    )}
+    </>
   );
 }
