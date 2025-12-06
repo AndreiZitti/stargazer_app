@@ -276,7 +276,7 @@ export default function LightPollutionMap({
           icon={createLocationPinIcon({ animate: animatePin })}
         >
           <Popup>
-            <div className="text-sm min-w-[180px]">
+            <div className="text-sm min-w-[180px] text-foreground">
               <div className="font-bold mb-2">Your location</div>
               {onFindSpots && (
                 <button
@@ -302,7 +302,7 @@ export default function LightPollutionMap({
                   )}
                 </button>
               )}
-              <div className="text-xs text-gray-500 text-center">
+              <div className="text-xs text-foreground/50 text-center">
                 Right-click map for more options
               </div>
             </div>
@@ -320,9 +320,9 @@ export default function LightPollutionMap({
           }}
         >
           <Popup>
-            <div className="text-sm min-w-[200px]">
+            <div className="text-sm min-w-[200px] text-foreground">
               {contextSpot.loading ? (
-                <div className="flex items-center gap-2 text-gray-500">
+                <div className="flex items-center gap-2 text-foreground/60">
                   <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
@@ -334,7 +334,7 @@ export default function LightPollutionMap({
                   <div className="font-bold mb-2">
                     {contextSpot.label ? `${contextSpot.label} Sky` : 'Spot Info'}
                     {contextSpot.bortle && (
-                      <span className="font-normal text-gray-500 ml-1">
+                      <span className="font-normal text-foreground/60 ml-1">
                         (Bortle {contextSpot.bortle})
                       </span>
                     )}
@@ -343,9 +343,9 @@ export default function LightPollutionMap({
                   {contextSpot.accessibilityScore !== undefined && (
                     <div className="mb-2">
                       <span className={`text-xs px-2 py-0.5 rounded-full ${
-                        contextSpot.accessibilityScore >= 4 ? 'bg-green-100 text-green-700' :
-                        contextSpot.accessibilityScore >= 2 ? 'bg-yellow-100 text-yellow-700' :
-                        'bg-gray-100 text-gray-600'
+                        contextSpot.accessibilityScore >= 4 ? 'bg-success/20 text-success' :
+                        contextSpot.accessibilityScore >= 2 ? 'bg-warning/20 text-warning' :
+                        'bg-foreground/10 text-foreground/60'
                       }`}>
                         {contextSpot.accessibilityScore >= 4 ? 'Easy access' :
                          contextSpot.accessibilityScore >= 2 ? 'Some access' : 'Limited access'}
@@ -355,7 +355,7 @@ export default function LightPollutionMap({
 
                   {contextSpot.accessibilityFeatures && contextSpot.accessibilityFeatures.length > 0 && (
                     <div className="mb-2">
-                      <div className="text-xs text-gray-500 mb-1">Nearby:</div>
+                      <div className="text-xs text-foreground/50 mb-1">Nearby:</div>
                       <ul className="text-xs space-y-1">
                         {contextSpot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
                           <li key={idx}>
@@ -363,7 +363,7 @@ export default function LightPollutionMap({
                             {feature.type === 'park' && '🌲 '}
                             {feature.type === 'viewpoint' && '👁️ '}
                             {feature.name || feature.type}
-                            <span className="text-gray-400 ml-1">
+                            <span className="text-foreground/40 ml-1">
                               ({formatDistance(feature.distance)})
                             </span>
                           </li>
@@ -372,19 +372,19 @@ export default function LightPollutionMap({
                     </div>
                   )}
 
-                  <div className="flex items-center justify-between pt-2 border-t border-gray-200 mt-2">
+                  <div className="flex items-center justify-between pt-2 border-t border-card-border mt-2">
                     <div className="flex items-center gap-3">
                       <a
                         href={`https://www.google.com/maps/dir/?api=1&destination=${contextSpot.lat},${contextSpot.lng}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-blue-500 hover:underline text-xs"
+                        className="text-accent hover:underline text-xs"
                       >
                         Directions
                       </a>
                       <button
                         onClick={() => handlePlanTrip(contextSpot.lat, contextSpot.lng)}
-                        className="text-purple-500 hover:underline text-xs"
+                        className="text-accent hover:underline text-xs"
                       >
                         Plan trip
                       </button>
@@ -399,8 +399,8 @@ export default function LightPollutionMap({
                       )}
                       className={`p-1 rounded transition-colors ${
                         isPlaceSaved(contextSpot.lat, contextSpot.lng)
-                          ? "text-yellow-500"
-                          : "text-gray-400 hover:text-yellow-500"
+                          ? "text-warning"
+                          : "text-foreground/40 hover:text-warning"
                       }`}
                       title={isPlaceSaved(contextSpot.lat, contextSpot.lng) ? "Remove from saved" : "Save place"}
                     >
@@ -427,14 +427,14 @@ export default function LightPollutionMap({
           }}
         >
           <Popup>
-            <div className="text-sm min-w-[200px]">
+            <div className="text-sm min-w-[200px] text-foreground">
               <div className="font-bold mb-2">
                 {spot.radius}km - {spot.label} Sky
               </div>
 
               {spot.accessibilityFeatures && spot.accessibilityFeatures.length > 0 && (
                 <div className="mb-2">
-                  <div className="text-xs text-gray-500 mb-1">Nearby:</div>
+                  <div className="text-xs text-foreground/50 mb-1">Nearby:</div>
                   <ul className="text-xs space-y-1">
                     {spot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
                       <li key={idx}>
@@ -442,7 +442,7 @@ export default function LightPollutionMap({
                         {feature.type === 'park' && '🌲 '}
                         {feature.type === 'viewpoint' && '👁️ '}
                         {feature.name || feature.type}
-                        <span className="text-gray-400 ml-1">
+                        <span className="text-foreground/40 ml-1">
                           ({formatDistance(feature.distance)})
                         </span>
                       </li>
@@ -451,19 +451,19 @@ export default function LightPollutionMap({
                 </div>
               )}
 
-              <div className="flex items-center justify-between pt-2 border-t border-gray-200 mt-2">
+              <div className="flex items-center justify-between pt-2 border-t border-card-border mt-2">
                 <div className="flex items-center gap-3">
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${spot.lat},${spot.lng}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline text-xs"
+                    className="text-accent hover:underline text-xs"
                   >
                     Directions
                   </a>
                   <button
                     onClick={() => handlePlanTrip(spot.lat, spot.lng, `${spot.radius}km - ${spot.label} Sky`)}
-                    className="text-purple-500 hover:underline text-xs"
+                    className="text-accent hover:underline text-xs"
                   >
                     Plan trip
                   </button>
@@ -478,8 +478,8 @@ export default function LightPollutionMap({
                   )}
                   className={`p-1 rounded transition-colors ${
                     isPlaceSaved(spot.lat, spot.lng)
-                      ? "text-yellow-500"
-                      : "text-gray-400 hover:text-yellow-500"
+                      ? "text-warning"
+                      : "text-foreground/40 hover:text-warning"
                   }`}
                   title={isPlaceSaved(spot.lat, spot.lng) ? "Remove from saved" : "Save place"}
                 >
