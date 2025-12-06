@@ -31,6 +31,8 @@ interface MapProps {
   onFindSpots?: () => void;
   isLoadingSpots?: boolean;
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
+  onSearchFromHere?: (coords: Coordinates) => void;
+  animatePin?: boolean;
 }
 
 export default function Map({
@@ -46,6 +48,8 @@ export default function Map({
   onFindSpots,
   isLoadingSpots,
   onRightClick,
+  onSearchFromHere,
+  animatePin,
 }: MapProps) {
   const LightPollutionMap = useMemo(
     () =>
@@ -76,6 +80,8 @@ export default function Map({
       onFindSpots={onFindSpots}
       isLoadingSpots={isLoadingSpots}
       onRightClick={onRightClick}
+      onSearchFromHere={onSearchFromHere}
+      animatePin={animatePin}
     />
   );
 }

@@ -1,10 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Map from "@/components/Map";
 import MapSearchBar from "@/components/MapSearchBar";
 import UserSidebar from "@/components/UserSidebar";
+import OnboardingModal from "@/components/OnboardingModal";
+import SaveToast from "@/components/SaveToast";
 import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace } from "@/lib/types";
 
 interface ContextMenuSpot {
@@ -45,6 +47,25 @@ export default function Home() {
   const [spots, setSpots] = useState<ScoredSpot[]>([]);
   const [isLoadingSpots, setIsLoadingSpots] = useState(false);
   const [showSpots, setShowSpots] = useState(false);
+
+  // Onboarding state
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [animatePin, setAnimatePin] = useState(false);
+
+  // Save toast state
+  const [saveToast, setSaveToast] = useState<{
+    name: string;
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  // Check if user has completed onboarding
+  useEffect(() => {
+    const hasOnboarded = localStorage.getItem("stargazer_onboarded");
+    if (!hasOnboarded) {
+      setShowOnboarding(true);
+    }
+  }, []);
 
   const handleSearch = (lat: number, lng: number, name?: string) => {
     setMapCenter([lat, lng]);
@@ -124,6 +145,31 @@ export default function Home() {
     setShowSpots(false);
   };
 
+  const handleOnboardingComplete = (lat: number, lng: number, name?: string) => {
+    localStorage.setItem("stargazer_onboarded", "true");
+    setShowOnboarding(false);
+    setMapCenter([lat, lng]);
+    setMapZoom(10);
+    setLocationName(name || null);
+    setSearchLocation({ lat, lng });
+    setAnimatePin(true);
+
+    // Reset animation flag after animation completes
+    setTimeout(() => setAnimatePin(false), 4000);
+  };
+
+  const handleSearchFromHere = (coords: Coordinates) => {
+    setSearchLocation(coords);
+    setMapCenter([coords.lat, coords.lng]);
+    setMapZoom(10);
+    setLocationName(null);
+    setAnimatePin(true);
+    setSpots([]);
+    setShowSpots(false);
+
+    setTimeout(() => setAnimatePin(false), 4000);
+  };
+
   return (
     <main className="h-screen w-screen relative overflow-hidden">
       {/* User Sidebar */}
@@ -154,6 +200,8 @@ export default function Home() {
         onFindSpots={handleFindSpots}
         isLoadingSpots={isLoadingSpots}
         onRightClick={handleRightClick}
+        onSearchFromHere={handleSearchFromHere}
+        animatePin={animatePin}
       />
 
 
@@ -312,6 +360,35 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <OnboardingModal
+          onLocationSelect={handleOnboardingComplete}
+          onClose={() => {
+            localStorage.setItem("stargazer_onboarded", "true");
+            setShowOnboarding(false);
+          }}
+        />
+      )}
+
+      {/* Save Toast */}
+      {saveToast && (
+        <SaveToast
+          placeName={saveToast.name}
+          lat={saveToast.lat}
+          lng={saveToast.lng}
+          onPlanTrip={() => {
+            const params = new URLSearchParams({
+              lat: saveToast.lat.toString(),
+              lng: saveToast.lng.toString(),
+              name: saveToast.name,
+            });
+            window.location.href = `/plan?${params.toString()}`;
+          }}
+          onDismiss={() => setSaveToast(null)}
+        />
+      )}
     </main>
   );
 }
