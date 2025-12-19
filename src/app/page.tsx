@@ -7,8 +7,40 @@ import MapSearchBar from "@/components/MapSearchBar";
 import UserSidebar from "@/components/UserSidebar";
 import OnboardingModal from "@/components/OnboardingModal";
 import SaveToast from "@/components/SaveToast";
+import TutorialOverlay, { TutorialStep } from "@/components/TutorialOverlay";
+import TutorialPrompt from "@/components/TutorialPrompt";
+import HelpButton from "@/components/HelpButton";
 import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace, TonightForecast } from "@/lib/types";
 import SpotWeatherBadge from "@/components/SpotWeatherBadge";
+
+// Tutorial steps configuration
+const TUTORIAL_STEPS: TutorialStep[] = [
+  {
+    target: "search",
+    title: "Search for a location",
+    description: "Type a city or place name to find it on the map. We'll show suggestions as you type.",
+  },
+  {
+    target: "find-spots",
+    title: "Find Dark Skies",
+    description: "Click 'Find Dark Skies' to discover stargazing spots at 10km, 50km, and 150km from your location.",
+  },
+  {
+    target: "sidebar",
+    title: "Your Saved Places",
+    description: "Open the sidebar to see your saved spots. Click the star on any location to save it.",
+  },
+  {
+    target: "sky-viewer",
+    title: "Sky Viewer",
+    description: "See what's visible in the night sky right now with an interactive star map.",
+  },
+  {
+    target: "sky-guide",
+    title: "Monthly Sky Guide",
+    description: "Check out celestial events and what to observe this month.",
+  },
+];
 
 interface ContextMenuSpot {
   lat: number;
@@ -53,6 +85,10 @@ export default function Home() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [animatePin, setAnimatePin] = useState(false);
 
+  // Tutorial state
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [showTutorialPrompt, setShowTutorialPrompt] = useState(false);
+
   // Save toast state
   const [saveToast, setSaveToast] = useState<{
     name: string;
@@ -70,6 +106,39 @@ export default function Home() {
       setShowOnboarding(true);
     }
   }, []);
+
+  // Show tutorial prompt after onboarding closes (if not already prompted)
+  useEffect(() => {
+    if (!showOnboarding) {
+      const hasBeenPrompted = localStorage.getItem("stargazer_tutorial_prompted");
+      if (!hasBeenPrompted) {
+        // Show prompt after a short delay
+        const timer = setTimeout(() => {
+          setShowTutorialPrompt(true);
+        }, 1000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [showOnboarding]);
+
+  const handleStartTutorial = () => {
+    setShowTutorialPrompt(false);
+    setShowTutorial(true);
+    localStorage.setItem("stargazer_tutorial_prompted", "true");
+  };
+
+  const handleDismissTutorialPrompt = () => {
+    setShowTutorialPrompt(false);
+    localStorage.setItem("stargazer_tutorial_prompted", "true");
+  };
+
+  const handleTutorialComplete = () => {
+    setShowTutorial(false);
+  };
+
+  const handleTutorialSkip = () => {
+    setShowTutorial(false);
+  };
 
   const handleSearch = (lat: number, lng: number, name?: string) => {
     setMapCenter([lat, lng]);
@@ -188,12 +257,16 @@ export default function Home() {
   return (
     <main className="h-screen w-screen relative overflow-hidden">
       {/* User Sidebar */}
-      <UserSidebar onPlaceClick={handleSavedPlaceClick} />
+      <div data-tutorial="sidebar">
+        <UserSidebar onPlaceClick={handleSavedPlaceClick} />
+      </div>
 
       {/* Top Right Links */}
       <div className="fixed top-4 right-4 z-[1001] flex gap-2">
+        <HelpButton onClick={handleStartTutorial} />
         <Link
           href="/stellarium"
+          data-tutorial="sky-viewer"
           className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg px-3 py-2.5 shadow-lg hover:bg-foreground/5 transition-colors flex items-center gap-2"
         >
           <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -205,6 +278,7 @@ export default function Home() {
         </Link>
         <Link
           href="/december"
+          data-tutorial="sky-guide"
           className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg px-3 py-2.5 shadow-lg hover:bg-foreground/5 transition-colors flex items-center gap-2"
         >
           <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,7 +387,34 @@ export default function Home() {
 
       {/* Floating Search Bar - Bottom Center */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[1000] flex flex-col items-center gap-2">
-        <MapSearchBar onSearch={handleSearch} isLoading={false} />
+        <div className="flex items-center gap-2">
+          <MapSearchBar onSearch={handleSearch} isLoading={false} />
+          {searchLocation && !showSpots && (
+            <button
+              data-tutorial="find-spots"
+              onClick={handleFindSpots}
+              disabled={isLoadingSpots}
+              className="bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-medium rounded-full px-4 py-3 shadow-lg transition-colors flex items-center gap-2"
+            >
+              {isLoadingSpots ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  <span className="text-sm">Searching...</span>
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                  <span className="text-sm">Find Dark Skies</span>
+                </>
+              )}
+            </button>
+          )}
+        </div>
 
         {/* Layer Controls - hover to reveal */}
         <div className="group relative">
@@ -422,6 +523,22 @@ export default function Home() {
           onDismiss={() => setSaveToast(null)}
         />
       )}
+
+      {/* Tutorial Prompt */}
+      {showTutorialPrompt && (
+        <TutorialPrompt
+          onStartTour={handleStartTutorial}
+          onDismiss={handleDismissTutorialPrompt}
+        />
+      )}
+
+      {/* Tutorial Overlay */}
+      <TutorialOverlay
+        steps={TUTORIAL_STEPS}
+        isActive={showTutorial}
+        onComplete={handleTutorialComplete}
+        onSkip={handleTutorialSkip}
+      />
     </main>
   );
 }
