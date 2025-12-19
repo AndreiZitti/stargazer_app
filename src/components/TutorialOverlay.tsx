@@ -59,38 +59,45 @@ export default function TutorialOverlay({
       height: rect.height + padding * 2,
     });
 
-    // Calculate tooltip position
-    const tooltipWidth = 320;
-    const tooltipHeight = 150;
+    // Calculate tooltip position - prefer placing to the side to avoid covering element
+    const tooltipWidth = 280;
+    const tooltipHeight = 120;
     const margin = 16;
 
-    let placement: "top" | "bottom" | "left" | "right" = "bottom";
-    let top = rect.bottom + margin;
-    let left = rect.left + rect.width / 2 - tooltipWidth / 2;
+    let placement: "top" | "bottom" | "left" | "right" = "right";
+    let top = rect.top + rect.height / 2 - tooltipHeight / 2;
+    let left = rect.right + margin;
 
-    // Check if tooltip goes off screen and adjust
-    if (top + tooltipHeight > window.innerHeight - margin) {
-      // Place above
-      placement = "top";
-      top = rect.top - tooltipHeight - margin;
+    // Try right first
+    if (left + tooltipWidth > window.innerWidth - margin) {
+      // Try left
+      placement = "left";
+      left = rect.left - tooltipWidth - margin;
     }
 
+    // If left doesn't work either, try bottom
     if (left < margin) {
-      left = margin;
-    } else if (left + tooltipWidth > window.innerWidth - margin) {
-      left = window.innerWidth - tooltipWidth - margin;
+      placement = "bottom";
+      top = rect.bottom + margin;
+      left = rect.left + rect.width / 2 - tooltipWidth / 2;
+
+      // Clamp horizontal position
+      if (left < margin) left = margin;
+      if (left + tooltipWidth > window.innerWidth - margin) {
+        left = window.innerWidth - tooltipWidth - margin;
+      }
+
+      // If bottom doesn't work, try top
+      if (top + tooltipHeight > window.innerHeight - margin) {
+        placement = "top";
+        top = rect.top - tooltipHeight - margin;
+      }
     }
 
-    // If still off screen vertically, place to the side
-    if (top < margin) {
-      placement = "right";
-      top = rect.top + rect.height / 2 - tooltipHeight / 2;
-      left = rect.right + margin;
-
-      if (left + tooltipWidth > window.innerWidth - margin) {
-        placement = "left";
-        left = rect.left - tooltipWidth - margin;
-      }
+    // Clamp vertical position
+    if (top < margin) top = margin;
+    if (top + tooltipHeight > window.innerHeight - margin) {
+      top = window.innerHeight - tooltipHeight - margin;
     }
 
     setTooltipPosition({ top, left, placement });
@@ -175,19 +182,20 @@ export default function TutorialOverlay({
 
       {/* Tooltip */}
       <div
-        className="absolute bg-card border border-card-border rounded-xl shadow-2xl p-5 w-80 transition-all duration-300"
+        className="absolute bg-card border border-card-border rounded-lg shadow-2xl p-4 transition-all duration-300"
         style={{
           top: tooltipPosition.top,
           left: tooltipPosition.left,
+          width: 280,
         }}
       >
         {/* Step indicator */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex gap-1.5">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex gap-1">
             {steps.map((_, index) => (
               <div
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
+                className={`w-1.5 h-1.5 rounded-full transition-colors ${
                   index === currentStep
                     ? "bg-accent"
                     : index < currentStep
@@ -198,37 +206,37 @@ export default function TutorialOverlay({
             ))}
           </div>
           <span className="text-xs text-foreground/50">
-            {currentStep + 1} of {steps.length}
+            {currentStep + 1}/{steps.length}
           </span>
         </div>
 
         {/* Content */}
-        <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
-        <p className="text-sm text-foreground/70 mb-4">{step.description}</p>
+        <h3 className="text-sm font-semibold mb-1">{step.title}</h3>
+        <p className="text-xs text-foreground/70 mb-3">{step.description}</p>
 
         {/* Navigation */}
         <div className="flex items-center justify-between">
           <button
             onClick={onSkip}
-            className="text-sm text-foreground/50 hover:text-foreground/70 transition-colors"
+            className="text-xs text-foreground/50 hover:text-foreground/70 transition-colors"
           >
-            Skip tour
+            Skip
           </button>
 
           <div className="flex gap-2">
             {currentStep > 0 && (
               <button
                 onClick={handleBack}
-                className="px-3 py-1.5 text-sm rounded-lg border border-card-border hover:bg-foreground/5 transition-colors"
+                className="px-2.5 py-1 text-xs rounded border border-card-border hover:bg-foreground/5 transition-colors"
               >
                 Back
               </button>
             )}
             <button
               onClick={handleNext}
-              className="px-4 py-1.5 text-sm font-medium rounded-lg bg-accent hover:bg-accent-hover text-white transition-colors"
+              className="px-3 py-1 text-xs font-medium rounded bg-accent hover:bg-accent-hover text-white transition-colors"
             >
-              {currentStep < steps.length - 1 ? "Next" : "Got it!"}
+              {currentStep < steps.length - 1 ? "Next" : "Done"}
             </button>
           </div>
         </div>

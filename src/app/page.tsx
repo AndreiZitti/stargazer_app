@@ -17,28 +17,28 @@ import SpotWeatherBadge from "@/components/SpotWeatherBadge";
 const TUTORIAL_STEPS: TutorialStep[] = [
   {
     target: "search",
-    title: "Search for a location",
-    description: "Type a city or place name to find it on the map. We'll show suggestions as you type.",
+    title: "Search",
+    description: "Find any location on the map.",
   },
   {
     target: "find-spots",
     title: "Find Dark Skies",
-    description: "Click 'Find Dark Skies' to discover stargazing spots at 10km, 50km, and 150km from your location.",
+    description: "Discover stargazing spots nearby.",
   },
   {
-    target: "sidebar",
-    title: "Your Saved Places",
-    description: "Open the sidebar to see your saved spots. Click the star on any location to save it.",
+    target: "sidebar-toggle",
+    title: "Saved Places",
+    description: "View and manage your saved spots.",
   },
   {
     target: "sky-viewer",
     title: "Sky Viewer",
-    description: "See what's visible in the night sky right now with an interactive star map.",
+    description: "Interactive star map for tonight.",
   },
   {
     target: "sky-guide",
-    title: "Monthly Sky Guide",
-    description: "Check out celestial events and what to observe this month.",
+    title: "Sky Guide",
+    description: "Monthly celestial events.",
   },
 ];
 
@@ -257,9 +257,7 @@ export default function Home() {
   return (
     <main className="h-screen w-screen relative overflow-hidden">
       {/* User Sidebar */}
-      <div data-tutorial="sidebar">
-        <UserSidebar onPlaceClick={handleSavedPlaceClick} />
-      </div>
+      <UserSidebar onPlaceClick={handleSavedPlaceClick} />
 
       {/* Top Right Links */}
       <div className="fixed top-4 right-4 z-[1001] flex gap-2">

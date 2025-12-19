@@ -44,6 +44,7 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
       {/* Toggle button - fixed position */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        data-tutorial="sidebar-toggle"
         className="fixed top-4 left-4 z-[1001] bg-card/95 backdrop-blur-sm border border-card-border rounded-lg p-2.5 shadow-lg hover:bg-foreground/5 transition-colors"
         title={isOpen ? "Close menu" : "Open menu"}
       >
