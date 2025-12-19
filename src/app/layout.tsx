@@ -3,9 +3,13 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "Stargazer - Find Dark Sky Spots",
+  title: "Stargazer",
   description:
     "Find the best stargazing spots near you based on light pollution data and weather forecasts.",
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
 };
 
 export default function RootLayout({
