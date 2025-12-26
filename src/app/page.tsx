@@ -47,8 +47,13 @@ interface ContextMenuSpot {
   loading: boolean;
   bortle?: number;
   label?: string;
-  accessibilityScore?: number;
-  accessibilityFeatures?: AccessibilityFeature[];
+  score?: number;
+  hasRoadAccess?: boolean;
+  nearestFeature?: {
+    type: string;
+    name: string;
+    distance: number;
+  };
 }
 
 type BaseLayer = 'dark' | 'stadia' | 'satellite' | 'osm';
@@ -191,8 +196,9 @@ export default function Home() {
         loading: false,
         bortle: data.bortle,
         label: data.label,
-        accessibilityScore: data.accessibilityScore,
-        accessibilityFeatures: data.accessibilityFeatures,
+        score: data.score,
+        hasRoadAccess: data.hasRoadAccess,
+        nearestFeature: data.nearestFeature,
       };
     } catch (err) {
       console.error("Failed to fetch spot info:", err);
