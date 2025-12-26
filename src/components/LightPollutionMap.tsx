@@ -1,9 +1,9 @@
 "use client";
 
 import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl } from "react-leaflet";
-import { LatLngExpression, DivIcon } from "leaflet";
+import L, { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType, SpotSearchResult } from "@/lib/types";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
@@ -268,7 +268,15 @@ export default function LightPollutionMap({
     y: number;
     coords: Coordinates;
   } | null>(null);
+  const contextSpotMarkerRef = useRef<L.Marker | null>(null);
   const { addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
+
+  // Auto-open popup when context spot is set
+  useEffect(() => {
+    if (contextSpot && contextSpotMarkerRef.current) {
+      contextSpotMarkerRef.current.openPopup();
+    }
+  }, [contextSpot]);
 
   const baseConfig = BASE_LAYERS[baseLayer];
 
@@ -389,6 +397,7 @@ export default function LightPollutionMap({
       {/* Context menu spot marker (from right-click) */}
       {contextSpot && (
         <Marker
+          ref={contextSpotMarkerRef}
           position={[contextSpot.lat, contextSpot.lng]}
           icon={contextSpotIcon}
           eventHandlers={{
