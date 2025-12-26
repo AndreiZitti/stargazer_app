@@ -33,10 +33,9 @@ interface LightPollutionMapProps {
   searchLocation?: Coordinates | null;
   spots?: ScoredSpot[];
   onSpotClick?: (spot: ScoredSpot) => void;
-  onFindSpots?: () => void;
   isLoadingSpots?: boolean;
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
-  onSearchFromHere?: (coords: Coordinates) => void;
+  onFindSpots?: (coords: Coordinates) => void;
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
 }
@@ -223,10 +222,9 @@ export default function LightPollutionMap({
   searchLocation,
   spots = [],
   onSpotClick,
-  onFindSpots,
   isLoadingSpots = false,
   onRightClick,
-  onSearchFromHere,
+  onFindSpots,
   animatePin = false,
   showDarkSkyPlaces = true,
 }: LightPollutionMapProps) {
@@ -309,7 +307,7 @@ export default function LightPollutionMap({
               <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Your location</div>
               {onFindSpots && (
                 <button
-                  onClick={onFindSpots}
+                  onClick={() => onFindSpots(searchLocation)}
                   disabled={isLoadingSpots}
                   style={{
                     width: '100%',
@@ -647,8 +645,8 @@ export default function LightPollutionMap({
           }
           setContextMenu(null);
         }}
-        onSearchFromHere={() => {
-          onSearchFromHere?.(contextMenu.coords);
+        onFindSpots={() => {
+          onFindSpots?.(contextMenu.coords);
           setContextMenu(null);
         }}
         onClose={() => setContextMenu(null)}

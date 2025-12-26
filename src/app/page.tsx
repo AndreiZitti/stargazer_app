@@ -284,10 +284,9 @@ export default function Home() {
         searchLocation={searchLocation}
         spots={spots}
         onSpotClick={handleSpotClick}
-        onFindSpots={handleFindSpots}
         isLoadingSpots={isLoadingSpots}
         onRightClick={handleRightClick}
-        onSearchFromHere={handleSearchFromHere}
+        onFindSpots={handleSearchFromHere}
         animatePin={animatePin}
       />
 

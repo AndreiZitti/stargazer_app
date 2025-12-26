@@ -28,10 +28,9 @@ interface MapProps {
   searchLocation?: Coordinates | null;
   spots?: ScoredSpot[];
   onSpotClick?: (spot: ScoredSpot) => void;
-  onFindSpots?: () => void;
   isLoadingSpots?: boolean;
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
-  onSearchFromHere?: (coords: Coordinates) => void;
+  onFindSpots?: (coords: Coordinates) => void;
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
 }
@@ -46,10 +45,9 @@ export default function Map({
   searchLocation,
   spots,
   onSpotClick,
-  onFindSpots,
   isLoadingSpots,
   onRightClick,
-  onSearchFromHere,
+  onFindSpots,
   animatePin,
   showDarkSkyPlaces = true,
 }: MapProps) {
@@ -79,10 +77,9 @@ export default function Map({
       searchLocation={searchLocation}
       spots={spots}
       onSpotClick={onSpotClick}
-      onFindSpots={onFindSpots}
       isLoadingSpots={isLoadingSpots}
       onRightClick={onRightClick}
-      onSearchFromHere={onSearchFromHere}
+      onFindSpots={onFindSpots}
       animatePin={animatePin}
       showDarkSkyPlaces={showDarkSkyPlaces}
     />
