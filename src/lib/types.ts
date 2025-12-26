@@ -271,3 +271,34 @@ export interface DarkSkyPlacesData {
   lastUpdated: string;
   places: DarkSkyPlace[];
 }
+
+// Spot rating types
+export interface SpotRating {
+  lat: number;
+  lng: number;
+  score: number; // 1-10
+  label: string;
+  bortle: number;
+  hasRoadAccess: boolean;
+  nearestFeature?: {
+    type: "parking" | "road" | "park";
+    name?: string;
+    distance: number;
+  };
+}
+
+export interface SpotSearchParams {
+  lat: number;
+  lng: number;
+  maxDistanceKm: number;
+  hasCar: boolean;
+}
+
+export interface SpotSearchResult {
+  lat: number;
+  lng: number;
+  score: number;
+  label: string;
+  distanceKm: number;
+  hasRoadAccess: boolean;
+}
