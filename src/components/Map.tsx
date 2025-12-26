@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { LatLngExpression } from "leaflet";
-import { ScoredSpot, Coordinates, AccessibilityFeature } from "@/lib/types";
+import { ScoredSpot, Coordinates, AccessibilityFeature, SpotSearchResult } from "@/lib/types";
 
 interface ContextMenuSpot {
   lat: number;
@@ -33,6 +33,7 @@ interface MapProps {
   onFindSpots?: (coords: Coordinates) => void;
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
+  searchResults?: SpotSearchResult[];
 }
 
 export default function Map({
@@ -50,6 +51,7 @@ export default function Map({
   onFindSpots,
   animatePin,
   showDarkSkyPlaces = true,
+  searchResults,
 }: MapProps) {
   const LightPollutionMap = useMemo(
     () =>
@@ -82,6 +84,7 @@ export default function Map({
       onFindSpots={onFindSpots}
       animatePin={animatePin}
       showDarkSkyPlaces={showDarkSkyPlaces}
+      searchResults={searchResults}
     />
   );
 }

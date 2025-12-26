@@ -279,6 +279,7 @@ export default function Home() {
         onRightClick={handleRightClick}
         onFindSpots={handleFindSpots}
         animatePin={animatePin}
+        searchResults={searchResults}
       />
 
 

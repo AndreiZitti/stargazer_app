@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomContr
 import { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType } from "@/lib/types";
+import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType, SpotSearchResult } from "@/lib/types";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
 import MapContextMenu from "./MapContextMenu";
@@ -16,6 +16,13 @@ interface ContextMenuSpot {
   loading: boolean;
   bortle?: number;
   label?: string;
+  score?: number;
+  hasRoadAccess?: boolean;
+  nearestFeature?: {
+    type: string;
+    name?: string;
+    distance: number;
+  };
   accessibilityScore?: number;
   accessibilityFeatures?: AccessibilityFeature[];
 }
@@ -38,6 +45,7 @@ interface LightPollutionMapProps {
   onFindSpots?: (coords: Coordinates) => void;
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
+  searchResults?: SpotSearchResult[];
 }
 
 // Dark Sky Places icons by type
@@ -205,6 +213,31 @@ function getSpotIcon(radius: number): DivIcon {
   });
 }
 
+// Custom icons for search result markers (numbered)
+function getSearchResultIcon(number: number): DivIcon {
+  return new DivIcon({
+    className: 'search-result-marker',
+    html: `
+      <div style="
+        width: 36px;
+        height: 36px;
+        background: #6366f1;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+      ">${number}</div>
+    `,
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+  });
+}
+
 function formatDistance(meters: number): string {
   if (meters < 1000) {
     return `${meters}m`;
@@ -227,6 +260,7 @@ export default function LightPollutionMap({
   onFindSpots,
   animatePin = false,
   showDarkSkyPlaces = true,
+  searchResults = [],
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
   const [contextMenu, setContextMenu] = useState<{
@@ -373,50 +407,59 @@ export default function LightPollutionMap({
                 </div>
               ) : (
                 <>
-                  {/* Header */}
-                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                    {contextSpot.label ? `${contextSpot.label} Sky` : 'Spot Info'}
-                  </div>
-                  <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
-                    {contextSpot.bortle && `Bortle ${contextSpot.bortle} • `}
+                  {/* Score display */}
+                  {contextSpot.score !== undefined && (
+                    <div style={{ marginBottom: '8px', textAlign: 'center' }}>
+                      <div style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: '1', marginBottom: '4px' }}>
+                        {contextSpot.score.toFixed(1)}<span style={{ fontSize: '16px', color: 'rgba(229,229,229,0.5)' }}> / 10</span>
+                      </div>
+                      <div style={{ fontSize: '13px', color: 'rgba(229,229,229,0.7)' }}>
+                        {contextSpot.label}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Coordinates */}
+                  <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px', textAlign: 'center' }}>
                     {contextSpot.lat.toFixed(4)}°, {contextSpot.lng.toFixed(4)}°
                   </div>
 
-                  {contextSpot.accessibilityScore !== undefined && (
-                      <div style={{ marginBottom: '8px' }}>
-                        <span style={{
-                          fontSize: '12px',
-                          padding: '2px 8px',
-                          borderRadius: '9999px',
-                          background: contextSpot.accessibilityScore >= 4 ? 'rgba(34,197,94,0.2)' :
-                                     contextSpot.accessibilityScore >= 2 ? 'rgba(234,179,8,0.2)' : 'rgba(229,229,229,0.1)',
-                          color: contextSpot.accessibilityScore >= 4 ? '#22c55e' :
-                                 contextSpot.accessibilityScore >= 2 ? '#eab308' : 'rgba(229,229,229,0.6)'
-                        }}>
-                          {contextSpot.accessibilityScore >= 4 ? 'Easy access' :
-                           contextSpot.accessibilityScore >= 2 ? 'Some access' : 'Limited access'}
+                  {/* Road access indicator */}
+                  {contextSpot.hasRoadAccess !== undefined && (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{
+                        fontSize: '12px',
+                        padding: '6px 10px',
+                        borderRadius: '6px',
+                        background: contextSpot.hasRoadAccess ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
+                        color: contextSpot.hasRoadAccess ? '#22c55e' : '#eab308',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}>
+                        <span>{contextSpot.hasRoadAccess ? '✓' : '⚠️'}</span>
+                        <span>
+                          {contextSpot.hasRoadAccess ? 'Road access nearby' : 'Remote - no road access'}
                         </span>
                       </div>
-                    )}
+                    </div>
+                  )}
 
-                    {contextSpot.accessibilityFeatures && contextSpot.accessibilityFeatures.length > 0 && (
-                      <div style={{ marginBottom: '12px' }}>
-                        <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
-                        <ul style={{ fontSize: '12px', margin: 0, padding: 0, listStyle: 'none' }}>
-                          {contextSpot.accessibilityFeatures.slice(0, 3).map((feature, idx) => (
-                            <li key={idx} style={{ marginBottom: '4px' }}>
-                              {feature.type === 'parking' && '🅿️ '}
-                              {feature.type === 'park' && '🌲 '}
-                              {feature.type === 'viewpoint' && '👁️ '}
-                              {feature.name || feature.type}
-                              <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
-                                ({formatDistance(feature.distance)})
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
+                  {/* Nearest feature info */}
+                  {contextSpot.nearestFeature && (
+                    <div style={{ marginBottom: '12px' }}>
+                      <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearest:</div>
+                      <div style={{ fontSize: '12px' }}>
+                        {contextSpot.nearestFeature.type === 'parking' && '🅿️ '}
+                        {contextSpot.nearestFeature.type === 'road' && '🛣️ '}
+                        {contextSpot.nearestFeature.type === 'park' && '🌲 '}
+                        {contextSpot.nearestFeature.name || contextSpot.nearestFeature.type}
+                        <span style={{ color: 'rgba(229,229,229,0.4)', marginLeft: '4px' }}>
+                          ({formatDistance(contextSpot.nearestFeature.distance)})
+                        </span>
                       </div>
-                    )}
+                    </div>
+                  )}
 
                     {/* Action buttons */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a' }}>
@@ -437,13 +480,18 @@ export default function LightPollutionMap({
                         </a>
                       </div>
                       <button
-                        onClick={() => handleToggleSave(
-                          contextSpot.lat,
-                          contextSpot.lng,
-                          contextSpot.label ? `${contextSpot.label} Sky Spot` : "Saved Spot",
-                          contextSpot.bortle,
-                          contextSpot.label
-                        )}
+                        onClick={() => {
+                          const spotName = contextSpot.score
+                            ? `${contextSpot.label} (${contextSpot.score.toFixed(1)}/10)`
+                            : (contextSpot.label ? `${contextSpot.label} Sky Spot` : "Saved Spot");
+                          handleToggleSave(
+                            contextSpot.lat,
+                            contextSpot.lng,
+                            spotName,
+                            contextSpot.bortle,
+                            contextSpot.label
+                          );
+                        }}
                         style={{
                           padding: '4px',
                           borderRadius: '4px',
@@ -626,6 +674,111 @@ export default function LightPollutionMap({
           </Marker>
         );
       })}
+
+      {/* Search Result markers (numbered pins) */}
+      {searchResults.map((result, index) => (
+        <Marker
+          key={`search-result-${index}-${result.lat}-${result.lng}`}
+          position={[result.lat, result.lng]}
+          icon={getSearchResultIcon(index + 1)}
+        >
+          <Popup>
+            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
+              {/* Ranking */}
+              <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '8px', textAlign: 'center' }}>
+                Result #{index + 1}
+              </div>
+
+              {/* Score display */}
+              <div style={{ marginBottom: '8px', textAlign: 'center' }}>
+                <div style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: '1', marginBottom: '4px' }}>
+                  {result.score.toFixed(1)}<span style={{ fontSize: '16px', color: 'rgba(229,229,229,0.5)' }}> / 10</span>
+                </div>
+                <div style={{ fontSize: '13px', color: 'rgba(229,229,229,0.7)' }}>
+                  {result.label}
+                </div>
+              </div>
+
+              {/* Distance */}
+              <div style={{ marginBottom: '12px', textAlign: 'center' }}>
+                <span style={{
+                  fontSize: '12px',
+                  padding: '4px 10px',
+                  borderRadius: '9999px',
+                  background: 'rgba(99,102,241,0.2)',
+                  color: '#6366f1'
+                }}>
+                  {result.distanceKm}km away
+                </span>
+              </div>
+
+              {/* Road access */}
+              <div style={{ marginBottom: '12px' }}>
+                <div style={{
+                  fontSize: '12px',
+                  padding: '6px 10px',
+                  borderRadius: '6px',
+                  background: result.hasRoadAccess ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
+                  color: result.hasRoadAccess ? '#22c55e' : '#eab308',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px'
+                }}>
+                  <span>{result.hasRoadAccess ? '✓' : '⚠️'}</span>
+                  <span>
+                    {result.hasRoadAccess ? 'Road access nearby' : 'Remote - no road access'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Coordinates */}
+              <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px', textAlign: 'center' }}>
+                {result.lat.toFixed(4)}°, {result.lng.toFixed(4)}°
+              </div>
+
+              {/* Action buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a' }}>
+                <a
+                  href={`https://www.google.com/maps/dir/?api=1&destination=${result.lat},${result.lng}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  🧭 Directions
+                </a>
+                <a
+                  href="/december"
+                  style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                >
+                  🔭 Sky Guide
+                </a>
+                <button
+                  onClick={() => handleToggleSave(
+                    result.lat,
+                    result.lng,
+                    `${result.label} (${result.score.toFixed(1)}/10)`,
+                    undefined,
+                    result.label
+                  )}
+                  style={{
+                    padding: '4px',
+                    borderRadius: '4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: isPlaceSaved(result.lat, result.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
+                  }}
+                  title={isPlaceSaved(result.lat, result.lng) ? "Remove from saved" : "Save place"}
+                >
+                  <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(result.lat, result.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
     </MapContainer>
 
     {/* Context Menu */}
