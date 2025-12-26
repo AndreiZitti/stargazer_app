@@ -33,6 +33,7 @@ interface MapProps {
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
   onSearchFromHere?: (coords: Coordinates) => void;
   animatePin?: boolean;
+  showDarkSkyPlaces?: boolean;
 }
 
 export default function Map({
@@ -50,6 +51,7 @@ export default function Map({
   onRightClick,
   onSearchFromHere,
   animatePin,
+  showDarkSkyPlaces = true,
 }: MapProps) {
   const LightPollutionMap = useMemo(
     () =>
@@ -82,6 +84,7 @@ export default function Map({
       onRightClick={onRightClick}
       onSearchFromHere={onSearchFromHere}
       animatePin={animatePin}
+      showDarkSkyPlaces={showDarkSkyPlaces}
     />
   );
 }

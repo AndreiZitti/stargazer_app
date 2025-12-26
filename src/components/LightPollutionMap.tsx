@@ -4,10 +4,11 @@ import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomContr
 import { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import { ScoredSpot, Coordinates, AccessibilityFeature } from "@/lib/types";
+import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType } from "@/lib/types";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
 import MapContextMenu from "./MapContextMenu";
+import darkSkyPlacesData from "@/data/dark-sky-places.json";
 
 interface ContextMenuSpot {
   lat: number;
@@ -37,6 +38,41 @@ interface LightPollutionMapProps {
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
   onSearchFromHere?: (coords: Coordinates) => void;
   animatePin?: boolean;
+  showDarkSkyPlaces?: boolean;
+}
+
+// Dark Sky Places icons by type
+const DARK_SKY_PLACE_STYLES: Record<DarkSkyPlaceType, { color: string; icon: string; label: string }> = {
+  park: { color: '#22c55e', icon: '🌲', label: 'Dark Sky Park' },
+  reserve: { color: '#3b82f6', icon: '🏔️', label: 'Dark Sky Reserve' },
+  community: { color: '#a855f7', icon: '🏘️', label: 'Dark Sky Community' },
+  tourism: { color: '#f59e0b', icon: '🔭', label: 'Starlight Destination' },
+  stellar_park: { color: '#ec4899', icon: '⭐', label: 'Stellar Park' },
+  urban: { color: '#6b7280', icon: '🌃', label: 'Urban Night Sky' },
+};
+
+function getDarkSkyPlaceIcon(type: DarkSkyPlaceType): DivIcon {
+  const style = DARK_SKY_PLACE_STYLES[type] || DARK_SKY_PLACE_STYLES.park;
+
+  return new DivIcon({
+    className: 'dark-sky-place-marker',
+    html: `
+      <div style="
+        width: 28px;
+        height: 28px;
+        background: ${style.color};
+        border: 2px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+      ">${style.icon}</div>
+    `,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
 }
 
 // Base layer URLs
@@ -192,6 +228,7 @@ export default function LightPollutionMap({
   onRightClick,
   onSearchFromHere,
   animatePin = false,
+  showDarkSkyPlaces = true,
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
   const [contextMenu, setContextMenu] = useState<{
@@ -517,6 +554,80 @@ export default function LightPollutionMap({
           </Marker>
         ))}
 
+      {/* Dark Sky Places markers */}
+      {showDarkSkyPlaces && darkSkyPlacesData.places.map((place) => {
+        const placeType = place.type as DarkSkyPlaceType;
+        const style = DARK_SKY_PLACE_STYLES[placeType] || DARK_SKY_PLACE_STYLES.park;
+
+        return (
+          <Marker
+            key={`${place.name}-${place.lat}-${place.lng}`}
+            position={[place.lat, place.lng]}
+            icon={getDarkSkyPlaceIcon(placeType)}
+          >
+            <Popup>
+              <div style={{ fontSize: '14px', minWidth: '220px', color: '#e5e5e5' }}>
+                {/* Header with icon */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <span style={{
+                    width: '24px',
+                    height: '24px',
+                    background: style.color,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                  }}>{style.icon}</span>
+                  <div>
+                    <div style={{ fontWeight: 'bold' }}>{place.name}</div>
+                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.6)' }}>{place.country}</div>
+                  </div>
+                </div>
+
+                {/* Certification badge */}
+                <div style={{ marginBottom: '12px' }}>
+                  <span style={{
+                    fontSize: '11px',
+                    padding: '3px 8px',
+                    borderRadius: '9999px',
+                    background: `${style.color}33`,
+                    color: style.color,
+                    fontWeight: 500,
+                  }}>
+                    {place.certification}
+                  </span>
+                </div>
+
+                {/* Coordinates */}
+                <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
+                  {place.lat.toFixed(4)}°, {place.lng.toFixed(4)}°
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', paddingTop: '8px', borderTop: '1px solid #2a2a3a' }}>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    Get directions
+                  </a>
+                  <a
+                    href={`https://www.google.com/search?q=${encodeURIComponent(place.name + ' ' + place.certification)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                  >
+                    Learn more
+                  </a>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
     </MapContainer>
 
     {/* Context Menu */}

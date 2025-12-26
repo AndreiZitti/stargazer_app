@@ -246,3 +246,28 @@ export interface MonthPhases {
   dark_sky_windows: DarkSkyWindow[];
   special_events?: SpecialEvent[];
 }
+
+// Dark Sky Places types
+export type DarkSkyPlaceType =
+  | 'park'
+  | 'reserve'
+  | 'community'
+  | 'tourism'
+  | 'stellar_park'
+  | 'urban';
+
+export interface DarkSkyPlace {
+  name: string;
+  country: string;
+  lat: number;
+  lng: number;
+  type: DarkSkyPlaceType;
+  certification: string;
+}
+
+export interface DarkSkyPlacesData {
+  description: string;
+  source: string;
+  lastUpdated: string;
+  places: DarkSkyPlace[];
+}
