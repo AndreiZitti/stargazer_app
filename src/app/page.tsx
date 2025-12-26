@@ -10,7 +10,8 @@ import SaveToast from "@/components/SaveToast";
 import TutorialOverlay, { TutorialStep } from "@/components/TutorialOverlay";
 import TutorialPrompt from "@/components/TutorialPrompt";
 import HelpButton from "@/components/HelpButton";
-import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace } from "@/lib/types";
+import SpotSearchModal from "@/components/SpotSearchModal";
+import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace, SpotSearchResult } from "@/lib/types";
 
 // Tutorial steps configuration
 const TUTORIAL_STEPS: TutorialStep[] = [
@@ -100,6 +101,12 @@ export default function Home() {
     lng: number;
   } | null>(null);
 
+  // Spot search modal state
+  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [searchOrigin, setSearchOrigin] = useState<Coordinates | null>(null);
+  const [searchResults, setSearchResults] = useState<SpotSearchResult[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
+
   // Check if user has completed onboarding
   useEffect(() => {
     const hasOnboarded = localStorage.getItem("stargazer_onboarded");
@@ -150,34 +157,9 @@ export default function Home() {
     setSpots([]);
   };
 
-  const handleFindSpots = async () => {
-    // Use current map center if no search location
-    const location = searchLocation || { lat: mapCenter[0], lng: mapCenter[1] };
-
-    if (!searchLocation) {
-      setSearchLocation(location);
-    }
-
-    setIsLoadingSpots(true);
-    setShowSpots(true);
-
-    try {
-      const response = await fetch(`/api/spots?lat=${location.lat}&lng=${location.lng}`);
-      const data = await response.json();
-
-      if (data.spots) {
-        setSpots(data.spots);
-
-        // Zoom out to show all spots if we have results
-        if (data.spots.length > 0) {
-          setMapZoom(7);
-        }
-      }
-    } catch (err) {
-      console.error("Failed to find spots:", err);
-    } finally {
-      setIsLoadingSpots(false);
-    }
+  const handleFindSpots = (coords: Coordinates) => {
+    setSearchOrigin(coords);
+    setShowSearchModal(true);
   };
 
   const handleSpotClick = (spot: ScoredSpot) => {
@@ -229,16 +211,25 @@ export default function Home() {
     setTimeout(() => setAnimatePin(false), 4000);
   };
 
-  const handleSearchFromHere = (coords: Coordinates) => {
-    setSearchLocation(coords);
-    setMapCenter([coords.lat, coords.lng]);
-    setMapZoom(10);
-    setLocationName(null);
-    setAnimatePin(true);
-    setSpots([]);
-    setShowSpots(false);
+  const handleSpotSearch = async (maxDistanceKm: number, hasCar: boolean) => {
+    if (!searchOrigin) return;
 
-    setTimeout(() => setAnimatePin(false), 4000);
+    setIsSearching(true);
+    try {
+      const response = await fetch(
+        `/api/find-spots?lat=${searchOrigin.lat}&lng=${searchOrigin.lng}&maxDistance=${maxDistanceKm}&hasCar=${hasCar}`
+      );
+      const data = await response.json();
+      setSearchResults(data.spots || []);
+
+      // Center map on search origin
+      setMapCenter([searchOrigin.lat, searchOrigin.lng]);
+      setMapZoom(9);
+    } catch (err) {
+      console.error("Failed to search for spots:", err);
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
@@ -286,7 +277,7 @@ export default function Home() {
         onSpotClick={handleSpotClick}
         isLoadingSpots={isLoadingSpots}
         onRightClick={handleRightClick}
-        onFindSpots={handleSearchFromHere}
+        onFindSpots={handleFindSpots}
         animatePin={animatePin}
       />
 
@@ -367,7 +358,7 @@ export default function Home() {
           {searchLocation && !showSpots && (
             <button
               data-tutorial="find-spots"
-              onClick={handleFindSpots}
+              onClick={() => handleFindSpots(searchLocation)}
               disabled={isLoadingSpots}
               className="bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-medium rounded-full px-4 py-3 shadow-lg transition-colors flex items-center gap-2"
             >
@@ -513,6 +504,13 @@ export default function Home() {
         isActive={showTutorial}
         onComplete={handleTutorialComplete}
         onSkip={handleTutorialSkip}
+      />
+
+      {/* Spot Search Modal */}
+      <SpotSearchModal
+        isOpen={showSearchModal}
+        onClose={() => setShowSearchModal(false)}
+        onSearch={handleSpotSearch}
       />
     </main>
   );
