@@ -3,19 +3,6 @@ export interface Coordinates {
   lng: number;
 }
 
-export interface HourlyCondition {
-  hour: number; // 0-23
-  cloudCover: number;
-  icon: "clear" | "partly" | "cloudy" | "rainy";
-}
-
-export interface TonightForecast {
-  hours: HourlyCondition[];
-  overallScore: number;
-  bestHour: number;
-  summary: string; // e.g., "Mostly clear after 10pm"
-}
-
 export interface GeocodedLocation extends Coordinates {
   displayName: string;
 }
@@ -42,19 +29,6 @@ export interface SpotResult {
 export interface SpotsResponse {
   origin: GeocodedLocation;
   spots: SpotResult[];
-}
-
-export interface WeatherForecast {
-  date: string;
-  cloudCover: number;
-  cloudCoverLow: number;
-  cloudCoverMid: number;
-  cloudCoverHigh: number;
-  precipitation: number;
-  visibility: "Excellent" | "Good" | "Fair" | "Poor";
-  stargazingScore: number; // 0-100
-  sunrise: string;
-  sunset: string;
 }
 
 export interface SkyEvent {

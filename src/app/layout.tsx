@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "Stargazer",
   description:
-    "Find the best stargazing spots near you based on light pollution data and weather forecasts.",
+    "Find the best stargazing spots near you based on light pollution data.",
   icons: {
     icon: "/icon.svg",
     apple: "/icon.svg",

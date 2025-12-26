@@ -3,19 +3,11 @@
 import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl } from "react-leaflet";
 import { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState, useCallback } from "react";
-import { ScoredSpot, Coordinates, AccessibilityFeature, TonightForecast, WeatherForecast } from "@/lib/types";
+import { useEffect, useState } from "react";
+import { ScoredSpot, Coordinates, AccessibilityFeature } from "@/lib/types";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
 import MapContextMenu from "./MapContextMenu";
-
-// Weather cache to avoid re-fetching
-interface SpotWeatherData {
-  tonight: TonightForecast | null;
-  bestDay: { date: string; score: number; dayName: string } | null;
-  loading: boolean;
-  error: boolean;
-}
 
 interface ContextMenuSpot {
   lat: number;
@@ -207,70 +199,9 @@ export default function LightPollutionMap({
     y: number;
     coords: Coordinates;
   } | null>(null);
-  const [spotWeather, setSpotWeather] = useState<Record<string, SpotWeatherData>>({});
   const { addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
 
   const baseConfig = BASE_LAYERS[baseLayer];
-
-  // Generate cache key for spot weather
-  const getWeatherKey = (lat: number, lng: number) => `${lat.toFixed(4)},${lng.toFixed(4)}`;
-
-  // Fetch weather for a spot
-  const fetchSpotWeather = useCallback(async (lat: number, lng: number) => {
-    const key = getWeatherKey(lat, lng);
-
-    // Skip if already loaded or loading
-    if (spotWeather[key] && (spotWeather[key].tonight || spotWeather[key].loading)) {
-      return;
-    }
-
-    setSpotWeather(prev => ({
-      ...prev,
-      [key]: { tonight: null, bestDay: null, loading: true, error: false }
-    }));
-
-    try {
-      // Fetch tonight's forecast and 7-day forecast in parallel
-      const [tonightRes, weekRes] = await Promise.all([
-        fetch(`/api/weather/tonight?lat=${lat}&lng=${lng}`),
-        fetch(`/api/weather?lat=${lat}&lng=${lng}`)
-      ]);
-
-      const tonightData = await tonightRes.json();
-      const weekData = await weekRes.json();
-
-      // Find best day in the next 7 days
-      let bestDay: { date: string; score: number; dayName: string } | null = null;
-      if (weekData.forecasts && weekData.forecasts.length > 0) {
-        const forecasts: WeatherForecast[] = weekData.forecasts.slice(0, 7);
-        const best = forecasts.reduce((best, day) =>
-          day.stargazingScore > best.stargazingScore ? day : best
-        );
-        const date = new Date(best.date);
-        const isToday = date.toDateString() === new Date().toDateString();
-        bestDay = {
-          date: best.date,
-          score: best.stargazingScore,
-          dayName: isToday ? 'Tonight' : date.toLocaleDateString('en', { weekday: 'long' })
-        };
-      }
-
-      setSpotWeather(prev => ({
-        ...prev,
-        [key]: {
-          tonight: tonightData.tonight || null,
-          bestDay,
-          loading: false,
-          error: false
-        }
-      }));
-    } catch {
-      setSpotWeather(prev => ({
-        ...prev,
-        [key]: { tonight: null, bestDay: null, loading: false, error: true }
-      }));
-    }
-  }, [spotWeather]);
 
   const handleToggleSave = (lat: number, lng: number, name: string, bortle?: number, label?: string) => {
     if (isPlaceSaved(lat, lng)) {
@@ -387,119 +318,36 @@ export default function LightPollutionMap({
       )}
 
       {/* Context menu spot marker (from right-click) */}
-      {contextSpot && (() => {
-        const weatherKey = getWeatherKey(contextSpot.lat, contextSpot.lng);
-        const weather = spotWeather[weatherKey];
-
-        return (
-          <Marker
-            position={[contextSpot.lat, contextSpot.lng]}
-            icon={contextSpotIcon}
-            eventHandlers={{
-              popupclose: () => setContextSpot(null),
-              popupopen: () => fetchSpotWeather(contextSpot.lat, contextSpot.lng),
-            }}
-          >
-            <Popup>
-              <div style={{ fontSize: '14px', minWidth: '240px', color: '#e5e5e5' }}>
-                {contextSpot.loading ? (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)' }}>
-                    <svg style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
-                      <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Loading spot info...
+      {contextSpot && (
+        <Marker
+          position={[contextSpot.lat, contextSpot.lng]}
+          icon={contextSpotIcon}
+          eventHandlers={{
+            popupclose: () => setContextSpot(null),
+          }}
+        >
+          <Popup>
+            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
+              {contextSpot.loading ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)' }}>
+                  <svg style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
+                    <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Loading spot info...
+                </div>
+              ) : (
+                <>
+                  {/* Header */}
+                  <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                    {contextSpot.label ? `${contextSpot.label} Sky` : 'Spot Info'}
                   </div>
-                ) : (
-                  <>
-                    {/* Header */}
-                    <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                      {contextSpot.label ? `${contextSpot.label} Sky` : 'Spot Info'}
-                    </div>
-                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
-                      {contextSpot.bortle && `Bortle ${contextSpot.bortle} • `}
-                      {contextSpot.lat.toFixed(4)}°, {contextSpot.lng.toFixed(4)}°
-                    </div>
+                  <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
+                    {contextSpot.bortle && `Bortle ${contextSpot.bortle} • `}
+                    {contextSpot.lat.toFixed(4)}°, {contextSpot.lng.toFixed(4)}°
+                  </div>
 
-                    {/* Weather Section */}
-                    <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                      {weather?.loading ? (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)', fontSize: '12px' }}>
-                          <svg style={{ width: '14px', height: '14px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
-                            <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                          </svg>
-                          Loading weather...
-                        </div>
-                      ) : weather?.error ? (
-                        <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>Weather unavailable</div>
-                      ) : weather?.tonight ? (
-                        <>
-                          {/* Tonight's conditions */}
-                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                            <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>🌙 Tonight</span>
-                            <span style={{
-                              fontSize: '12px',
-                              fontWeight: 600,
-                              color: weather.tonight.overallScore >= 70 ? '#22c55e' :
-                                     weather.tonight.overallScore >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
-                            }}>
-                              {weather.tonight.overallScore}% clear
-                            </span>
-                          </div>
-
-                          {/* Hourly forecast strip */}
-                          <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
-                            {weather.tonight.hours.map((hour) => {
-                              const score = 100 - hour.cloudCover;
-                              return (
-                                <div key={hour.hour} style={{
-                                  flex: 1,
-                                  textAlign: 'center',
-                                  padding: '4px 2px',
-                                  background: 'rgba(255,255,255,0.05)',
-                                  borderRadius: '4px',
-                                  fontSize: '10px'
-                                }}>
-                                  <div style={{ color: 'rgba(229,229,229,0.5)' }}>
-                                    {hour.hour === 0 ? '12a' : hour.hour === 12 ? '12p' : hour.hour < 12 ? `${hour.hour}a` : `${hour.hour - 12}p`}
-                                  </div>
-                                  <div style={{ margin: '2px 0' }}>
-                                    {hour.icon === 'clear' ? '☀️' : hour.icon === 'partly' ? '⛅' : hour.icon === 'cloudy' ? '☁️' : '🌧️'}
-                                  </div>
-                                  <div style={{
-                                    color: score >= 70 ? '#22c55e' : score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)',
-                                    fontWeight: 500
-                                  }}>
-                                    {score}%
-                                  </div>
-                                </div>
-                              );
-                            })}
-                          </div>
-
-                          {/* Best day this week */}
-                          {weather.bestDay && (
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                              <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>📅 Best night</span>
-                              <span style={{
-                                fontSize: '12px',
-                                color: weather.bestDay.score >= 70 ? '#22c55e' :
-                                       weather.bestDay.score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
-                              }}>
-                                {weather.bestDay.dayName} ({weather.bestDay.score}%)
-                              </span>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>
-                          Loading weather...
-                        </div>
-                      )}
-                    </div>
-
-                    {contextSpot.accessibilityScore !== undefined && (
+                  {contextSpot.accessibilityScore !== undefined && (
                       <div style={{ marginBottom: '8px' }}>
                         <span style={{
                           fontSize: '12px',
@@ -581,113 +429,29 @@ export default function LightPollutionMap({
               </div>
             </Popup>
           </Marker>
-        );
-      })()}
+        )}
 
       {/* Spot markers */}
-      {spots.map((spot) => {
-        const weatherKey = getWeatherKey(spot.lat, spot.lng);
-        const weather = spotWeather[weatherKey];
+      {spots.map((spot) => (
+        <Marker
+          key={spot.radius}
+          position={[spot.lat, spot.lng]}
+          icon={getSpotIcon(spot.radius)}
+          eventHandlers={{
+            click: () => onSpotClick?.(spot),
+          }}
+        >
+          <Popup>
+            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
+              {/* Header */}
+              <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
+                {spot.radius}km - {spot.label} Sky
+              </div>
+              <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
+                Bortle {spot.bortle} • {spot.lat.toFixed(4)}°, {spot.lng.toFixed(4)}°
+              </div>
 
-        return (
-          <Marker
-            key={spot.radius}
-            position={[spot.lat, spot.lng]}
-            icon={getSpotIcon(spot.radius)}
-            eventHandlers={{
-              click: () => onSpotClick?.(spot),
-              popupopen: () => fetchSpotWeather(spot.lat, spot.lng),
-            }}
-          >
-            <Popup>
-              <div style={{ fontSize: '14px', minWidth: '240px', color: '#e5e5e5' }}>
-                {/* Header */}
-                <div style={{ fontWeight: 'bold', marginBottom: '4px' }}>
-                  {spot.radius}km - {spot.label} Sky
-                </div>
-                <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
-                  Bortle {spot.bortle} • {spot.lat.toFixed(4)}°, {spot.lng.toFixed(4)}°
-                </div>
-
-                {/* Weather Section */}
-                <div style={{ marginBottom: '12px', padding: '10px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                  {weather?.loading ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)', fontSize: '12px' }}>
-                      <svg style={{ width: '14px', height: '14px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
-                        <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Loading weather...
-                    </div>
-                  ) : weather?.error ? (
-                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>Weather unavailable</div>
-                  ) : weather?.tonight ? (
-                    <>
-                      {/* Tonight's conditions */}
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>🌙 Tonight</span>
-                        <span style={{
-                          fontSize: '12px',
-                          fontWeight: 600,
-                          color: weather.tonight.overallScore >= 70 ? '#22c55e' :
-                                 weather.tonight.overallScore >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
-                        }}>
-                          {weather.tonight.overallScore}% clear
-                        </span>
-                      </div>
-
-                      {/* Hourly forecast strip */}
-                      <div style={{ display: 'flex', gap: '4px', marginBottom: '8px' }}>
-                        {weather.tonight.hours.map((hour) => {
-                          const score = 100 - hour.cloudCover;
-                          return (
-                            <div key={hour.hour} style={{
-                              flex: 1,
-                              textAlign: 'center',
-                              padding: '4px 2px',
-                              background: 'rgba(255,255,255,0.05)',
-                              borderRadius: '4px',
-                              fontSize: '10px'
-                            }}>
-                              <div style={{ color: 'rgba(229,229,229,0.5)' }}>
-                                {hour.hour === 0 ? '12a' : hour.hour === 12 ? '12p' : hour.hour < 12 ? `${hour.hour}a` : `${hour.hour - 12}p`}
-                              </div>
-                              <div style={{ margin: '2px 0' }}>
-                                {hour.icon === 'clear' ? '☀️' : hour.icon === 'partly' ? '⛅' : hour.icon === 'cloudy' ? '☁️' : '🌧️'}
-                              </div>
-                              <div style={{
-                                color: score >= 70 ? '#22c55e' : score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)',
-                                fontWeight: 500
-                              }}>
-                                {score}%
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* Best day this week */}
-                      {weather.bestDay && (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                          <span style={{ fontSize: '12px', color: 'rgba(229,229,229,0.7)' }}>📅 Best night</span>
-                          <span style={{
-                            fontSize: '12px',
-                            color: weather.bestDay.score >= 70 ? '#22c55e' :
-                                   weather.bestDay.score >= 40 ? '#eab308' : 'rgba(229,229,229,0.5)'
-                          }}>
-                            {weather.bestDay.dayName} ({weather.bestDay.score}%)
-                          </span>
-                        </div>
-                      )}
-                    </>
-                  ) : (
-                    <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)' }}>
-                      Open popup to load weather
-                    </div>
-                  )}
-                </div>
-
-                {/* Nearby amenities */}
+              {/* Nearby amenities */}
                 {spot.accessibilityFeatures && spot.accessibilityFeatures.length > 0 && (
                   <div style={{ marginBottom: '12px' }}>
                     <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '4px' }}>Nearby:</div>
@@ -751,8 +515,8 @@ export default function LightPollutionMap({
               </div>
             </Popup>
           </Marker>
-        );
-      })}
+        ))}
+
     </MapContainer>
 
     {/* Context Menu */}

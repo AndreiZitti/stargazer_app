@@ -377,24 +377,11 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
     })
     .filter((s): s is NonNullable<typeof s> => s !== null);
 
-  const calendarDarkSkyWindows = moonData.darkSkyWindows
-    .map((window) => {
-      const startDate = new Date(window.start);
-      const endDate = new Date(window.end);
-
-      // Check if window overlaps with this month
-      const monthIdx = month === "December" ? 11 : 0;
-      const windowStartMonth = startDate.getMonth();
-      const windowEndMonth = endDate.getMonth();
-
-      if (monthIdx < windowStartMonth && monthIdx > windowEndMonth) return null;
-
-      return {
-        start: windowStartMonth === monthIdx ? startDate.getDate() : 1,
-        end: windowEndMonth === monthIdx ? endDate.getDate() : daysInMonth,
-      };
-    })
-    .filter((w): w is NonNullable<typeof w> => w !== null);
+  // Calculate current day if viewing current month
+  const today = new Date();
+  const currentMonthIdx = month === "December" ? 11 : 0;
+  const isCurrentMonth = today.getMonth() === currentMonthIdx && today.getFullYear() === year;
+  const currentDay = isCurrentMonth ? today.getDate() : undefined;
 
   return (
     <main className="min-h-screen bg-background">
@@ -435,7 +422,7 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
             daysInMonth={daysInMonth}
             moonPhases={calendarMoonPhases}
             meteorShowers={calendarShowers}
-            darkSkyWindows={calendarDarkSkyWindows}
+            currentDay={currentDay}
           />
         </section>
 

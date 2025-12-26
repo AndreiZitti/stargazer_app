@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 
 interface MeteorShowerEvent {
   id: string;
@@ -18,19 +18,16 @@ interface MoonPhaseData {
   fullMoonName: string;
 }
 
-interface DarkSkyWindow {
-  start: number;
-  end: number;
-}
-
 interface CelestialCalendarProps {
   month: string;
   year: number;
   daysInMonth: number;
   moonPhases: MoonPhaseData;
   meteorShowers: MeteorShowerEvent[];
-  darkSkyWindows: DarkSkyWindow[];
+  currentDay?: number;
 }
+
+const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function getMoonPhase(day: number, newMoonDay: number, daysInMonth: number): number {
   const lunarCycle = 29.53;
@@ -38,7 +35,17 @@ function getMoonPhase(day: number, newMoonDay: number, daysInMonth: number): num
   return (daysSinceNew / lunarCycle) % 1;
 }
 
-function MoonIcon({ phase, size = 24 }: { phase: number; size?: number }) {
+function getFirstDayOfMonth(month: string, year: number): number {
+  const monthIndex = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ].indexOf(month);
+  const date = new Date(year, monthIndex, 1);
+  // Convert Sunday=0 to Monday=0 format
+  return (date.getDay() + 6) % 7;
+}
+
+function MoonIcon({ phase, size = 24, isCurrentDay = false }: { phase: number; size?: number; isCurrentDay?: boolean }) {
   const illumination = Math.abs(Math.cos(phase * 2 * Math.PI));
   const isWaxing = phase < 0.5;
   const radius = size / 2 - 1;
@@ -47,8 +54,36 @@ function MoonIcon({ phase, size = 24 }: { phase: number; size?: number }) {
   const terminatorX = radius * Math.cos(phase * 2 * Math.PI);
 
   return (
-    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="relative">
+      {/* Glow effect for current day */}
+      {isCurrentDay && (
+        <>
+          <defs>
+            <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <circle
+            cx={centerX}
+            cy={centerY}
+            r={radius + 3}
+            fill="none"
+            stroke="#60a5fa"
+            strokeWidth="2"
+            opacity="0.6"
+            filter="url(#glow)"
+          />
+        </>
+      )}
+
+      {/* Moon base */}
       <circle cx={centerX} cy={centerY} r={radius} fill="#1a1a2e" stroke="#2a2a4a" strokeWidth="0.5" />
+
+      {/* Illuminated portion */}
       {phase > 0.01 && phase < 0.99 && (
         <path
           d={
@@ -59,12 +94,18 @@ function MoonIcon({ phase, size = 24 }: { phase: number; size?: number }) {
           fill="#e8e4d9"
         />
       )}
+
+      {/* Full moon */}
       {phase >= 0.45 && phase <= 0.55 && (
         <circle cx={centerX} cy={centerY} r={radius - 0.5} fill="#e8e4d9" />
       )}
+
+      {/* New moon outline */}
       {(phase < 0.03 || phase > 0.97) && (
         <circle cx={centerX} cy={centerY} r={radius} fill="none" stroke="#3a3a5a" strokeWidth="1" strokeDasharray="2 2" />
       )}
+
+      {/* Moon surface details */}
       {illumination > 0.3 && (
         <>
           <circle cx={centerX - 2} cy={centerY - 1} r="1.5" fill="#d4d0c5" opacity="0.3" />
@@ -76,99 +117,13 @@ function MoonIcon({ phase, size = 24 }: { phase: number; size?: number }) {
   );
 }
 
-// Meteor shower track with activity bar and shimmer
-function MeteorShowerTrack({
-  shower,
-  daysInMonth,
-  isHighlighted,
-}: {
-  shower: MeteorShowerEvent;
-  daysInMonth: number;
-  isHighlighted: boolean;
-}) {
-  // Calculate positions as percentages of calendar width
-  // Each day occupies (100 / daysInMonth)% of width
-  // Day N is centered at ((N - 0.5) / daysInMonth * 100)%
-  const dayWidth = 100 / daysInMonth;
-  const startPercent = (shower.activeStart - 1) * dayWidth;
-  const endPercent = shower.activeEnd * dayWidth;
-  const width = endPercent - startPercent;
+function formatDateRange(start: number, end: number, month: string): string {
+  return `${month.slice(0, 3)} ${start}-${end}`;
+}
 
-  // Find peak day for gradient
-  const peakMatch = shower.peakDate.match(/(\d+)/);
-  const peakDay = peakMatch ? parseInt(peakMatch[1]) : null;
-
-  // Peak position relative to bar (for gradient intensity)
-  const peakRelativePercent = peakDay && width > 0
-    ? ((peakDay - shower.activeStart) / (shower.activeEnd - shower.activeStart)) * 100
-    : 50;
-
-  return (
-    <div
-      className={`relative h-12 flex items-center transition-opacity duration-300 ${
-        isHighlighted ? "opacity-100" : "opacity-25"
-      }`}
-    >
-      {/* Shower label - positioned at start */}
-      <div
-        className="absolute text-[11px] font-medium tracking-wide z-10 flex items-center gap-2 whitespace-nowrap"
-        style={{
-          left: `${startPercent}%`,
-          top: '2px',
-          color: shower.color,
-        }}
-      >
-        <span>{shower.name}</span>
-        <span className="opacity-50 text-[9px]">~{shower.zhr}/hr</span>
-      </div>
-
-      {/* Activity bar container */}
-      <div
-        className="absolute h-6 top-1/2 -translate-y-1/2 overflow-hidden rounded-full"
-        style={{
-          left: `${startPercent}%`,
-          width: `${width}%`,
-        }}
-      >
-        {/* Base bar with gradient - peaks at the peak location */}
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: `linear-gradient(90deg,
-              ${shower.color}20 0%,
-              ${shower.color}50 ${Math.max(0, peakRelativePercent - 15)}%,
-              ${shower.color} ${peakRelativePercent}%,
-              ${shower.color}50 ${Math.min(100, peakRelativePercent + 15)}%,
-              ${shower.color}20 100%)`,
-          }}
-        />
-
-        {/* Shimmer effect - moving highlight */}
-        <div
-          className="absolute inset-0 rounded-full overflow-hidden"
-          style={{
-            background: `linear-gradient(90deg,
-              transparent 0%,
-              transparent 35%,
-              rgba(255,255,255,0.2) 50%,
-              transparent 65%,
-              transparent 100%)`,
-            backgroundSize: '200% 100%',
-            animation: 'shimmer 3s ease-in-out infinite',
-          }}
-        />
-
-        {/* Top highlight edge */}
-        <div
-          className="absolute top-0 left-0 right-0 h-[1px] rounded-full opacity-40"
-          style={{
-            background: `linear-gradient(90deg, transparent, ${shower.color}, transparent)`,
-          }}
-        />
-      </div>
-
-    </div>
-  );
+function extractPeakDay(peakDate: string): number | null {
+  const match = peakDate.match(/(\d+)/);
+  return match ? parseInt(match[1]) : null;
 }
 
 export default function CelestialCalendar({
@@ -177,240 +132,152 @@ export default function CelestialCalendar({
   daysInMonth,
   moonPhases,
   meteorShowers,
-  darkSkyWindows,
+  currentDay,
 }: CelestialCalendarProps) {
-  const [hoveredDay, setHoveredDay] = useState<number | null>(null);
-  const [selectedShower, setSelectedShower] = useState<string | null>(null);
+  const firstDayOffset = useMemo(() => getFirstDayOfMonth(month, year), [month, year]);
 
-  const days = useMemo(() => Array.from({ length: daysInMonth }, (_, i) => i + 1), [daysInMonth]);
+  const calendarWeeks = useMemo(() => {
+    const weeks: (number | null)[][] = [];
+    let currentWeek: (number | null)[] = [];
 
-  const hoveredDayInfo = useMemo(() => {
-    if (!hoveredDay) return null;
+    // Add empty cells for days before the 1st
+    for (let i = 0; i < firstDayOffset; i++) {
+      currentWeek.push(null);
+    }
 
-    const phase = getMoonPhase(hoveredDay, moonPhases.newMoon, daysInMonth);
-    const isNewMoon = hoveredDay === moonPhases.newMoon;
-    const isFullMoon = hoveredDay === moonPhases.fullMoon;
+    // Add all days of the month
+    for (let day = 1; day <= daysInMonth; day++) {
+      currentWeek.push(day);
+      if (currentWeek.length === 7) {
+        weeks.push(currentWeek);
+        currentWeek = [];
+      }
+    }
 
-    const activeShowers = meteorShowers.filter(
-      (s) => hoveredDay >= s.activeStart && hoveredDay <= s.activeEnd
-    );
+    // Fill remaining cells in last week
+    if (currentWeek.length > 0) {
+      while (currentWeek.length < 7) {
+        currentWeek.push(null);
+      }
+      weeks.push(currentWeek);
+    }
 
-    const inDarkWindow = darkSkyWindows.some(
-      (w) => hoveredDay >= w.start && hoveredDay <= w.end
-    );
+    return weeks;
+  }, [daysInMonth, firstDayOffset]);
 
-    let phaseName = "";
-    if (isNewMoon) phaseName = "New Moon";
-    else if (isFullMoon) phaseName = `Full Moon (${moonPhases.fullMoonName})`;
-    else if (phase < 0.25) phaseName = "Waxing Crescent";
-    else if (phase < 0.3) phaseName = "First Quarter";
-    else if (phase < 0.45) phaseName = "Waxing Gibbous";
-    else if (phase < 0.55) phaseName = "Full";
-    else if (phase < 0.7) phaseName = "Waning Gibbous";
-    else if (phase < 0.8) phaseName = "Last Quarter";
-    else phaseName = "Waning Crescent";
-
-    return {
-      day: hoveredDay,
-      phase,
-      phaseName,
-      isNewMoon,
-      isFullMoon,
-      activeShowers,
-      inDarkWindow,
-    };
-  }, [hoveredDay, moonPhases, meteorShowers, darkSkyWindows, daysInMonth]);
+  const getActiveShowersForDay = (day: number): MeteorShowerEvent[] => {
+    return meteorShowers.filter(s => day >= s.activeStart && day <= s.activeEnd);
+  };
 
   return (
-    <div className="relative">
-      <style jsx>{`
-        @keyframes shimmer {
-          0% {
-            background-position: 200% 0;
-          }
-          100% {
-            background-position: -200% 0;
-          }
-        }
-      `}</style>
+    <div className="bg-[#0a0a12] border border-[#1a1a2e] rounded-2xl overflow-hidden">
+      {/* Header */}
+      <div className="px-6 py-4 border-b border-[#1a1a2e] bg-gradient-to-r from-[#0d0d18] to-[#0a0a12]">
+        <h3 className="text-lg font-light tracking-widest text-[#8888aa] uppercase">
+          {month} {year}
+        </h3>
+      </div>
 
-      <div className="bg-[#0a0a12] border border-[#1a1a2e] rounded-2xl overflow-hidden">
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-[#1a1a2e] bg-gradient-to-r from-[#0d0d18] to-[#0a0a12]">
-          <h3 className="text-lg font-light tracking-widest text-[#8888aa] uppercase">
-            {month} {year} &mdash; Celestial Calendar
-          </h3>
-        </div>
-
-        {/* Legend */}
-        <div className="px-6 py-3 border-b border-[#1a1a2e]/50 flex flex-wrap gap-4 text-xs">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-[#1a3a2a] border border-[#2a5a3a]" />
-            <span className="text-[#6a8a7a]">Dark Sky Window</span>
-          </div>
-          {meteorShowers.map((shower) => (
-            <button
-              key={shower.id}
-              onClick={() => setSelectedShower(selectedShower === shower.id ? null : shower.id)}
-              className={`flex items-center gap-2 transition-opacity ${
-                selectedShower && selectedShower !== shower.id ? "opacity-40" : ""
-              }`}
-            >
-              <div
-                className="w-1.5 h-1.5 rounded-full"
-                style={{
-                  backgroundColor: shower.color,
-                  boxShadow: `0 0 4px ${shower.color}`
-                }}
-              />
-              <span style={{ color: shower.color }}>{shower.name}</span>
-            </button>
-          ))}
-        </div>
-
-        {/* Calendar grid */}
-        <div className="p-6">
-          {/* Meteor shower tracks */}
-          <div className="relative mb-4 space-y-1">
-            {meteorShowers.map((shower) => (
-              <MeteorShowerTrack
-                key={shower.id}
-                shower={shower}
-                daysInMonth={daysInMonth}
-                isHighlighted={!selectedShower || selectedShower === shower.id}
-              />
+      <div className="flex">
+        {/* Calendar Grid */}
+        <div className="flex-1 p-4">
+          {/* Weekday headers */}
+          <div className="grid grid-cols-7 mb-2">
+            {WEEKDAYS.map((day) => (
+              <div key={day} className="text-center text-xs text-[#6a6a8a] font-medium py-2">
+                {day}
+              </div>
             ))}
           </div>
 
-          {/* Days row with moon phases */}
-          <div className="relative">
-            {/* Dark sky window backgrounds */}
-            {darkSkyWindows.map((window, idx) => {
-              const startPercent = ((window.start - 1) / daysInMonth) * 100;
-              const endPercent = (window.end / daysInMonth) * 100;
+          {/* Calendar weeks */}
+          <div className="space-y-1">
+            {calendarWeeks.map((week, weekIdx) => (
+              <div key={weekIdx} className="grid grid-cols-7 gap-1">
+                {week.map((day, dayIdx) => {
+                  if (day === null) {
+                    return <div key={dayIdx} className="aspect-square" />;
+                  }
 
-              return (
-                <div
-                  key={idx}
-                  className="absolute top-0 bottom-0 rounded-lg"
-                  style={{
-                    left: `${startPercent}%`,
-                    width: `${endPercent - startPercent}%`,
-                    background: "linear-gradient(180deg, #0a1a10 0%, #0a1a1088 100%)",
-                    border: "1px solid #1a3a2a",
-                  }}
-                />
-              );
-            })}
+                  const phase = getMoonPhase(day, moonPhases.newMoon, daysInMonth);
+                  const isToday = day === currentDay;
+                  const activeShowers = getActiveShowersForDay(day);
 
-            {/* Days */}
-            <div className="relative flex">
-              {days.map((day) => {
-                const phase = getMoonPhase(day, moonPhases.newMoon, daysInMonth);
-                const isNewMoon = day === moonPhases.newMoon;
-                const isFullMoon = day === moonPhases.fullMoon;
-                const isSpecial = isNewMoon || isFullMoon;
-
-                const hasShowerPeak = meteorShowers.some((s) => {
-                  const match = s.peakDate.match(/(\d+)/);
-                  return match && parseInt(match[1]) === day;
-                });
-
-                return (
-                  <div
-                    key={day}
-                    className={`flex-1 flex flex-col items-center py-3 cursor-pointer transition-all duration-200 ${
-                      hoveredDay === day ? "bg-white/5" : ""
-                    }`}
-                    onMouseEnter={() => setHoveredDay(day)}
-                    onMouseLeave={() => setHoveredDay(null)}
-                  >
-                    {isSpecial && (
-                      <div
-                        className="absolute inset-0 rounded-lg opacity-30 pointer-events-none"
-                        style={{
-                          background: isFullMoon
-                            ? "radial-gradient(circle at center, #e8e4d9 0%, transparent 70%)"
-                            : "radial-gradient(circle at center, #3a3a6a 0%, transparent 70%)",
-                        }}
-                      />
-                    )}
-
-                    <div className={`relative ${isSpecial ? "scale-125" : ""}`}>
-                      <MoonIcon phase={phase} size={isSpecial ? 28 : 20} />
-                      {isFullMoon && (
-                        <div
-                          className="absolute inset-0 rounded-full animate-pulse pointer-events-none"
-                          style={{ boxShadow: "0 0 12px #e8e4d9, 0 0 24px #e8e4d966" }}
-                        />
-                      )}
-                    </div>
-
-                    <span
-                      className={`mt-1 text-xs tabular-nums ${
-                        isSpecial ? "text-white font-medium" : "text-[#6a6a8a]"
+                  return (
+                    <div
+                      key={dayIdx}
+                      className={`aspect-square flex flex-col items-center justify-center p-1 rounded-lg transition-colors ${
+                        isToday ? "bg-blue-500/10" : "hover:bg-white/5"
                       }`}
                     >
-                      {day}
-                    </span>
+                      {/* Day number */}
+                      <span className={`text-xs tabular-nums mb-1 ${
+                        isToday ? "text-blue-400 font-medium" : "text-[#6a6a8a]"
+                      }`}>
+                        {day}
+                      </span>
 
-                    {hasShowerPeak && (
-                      <div className="mt-1 w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse" />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                      {/* Moon icon */}
+                      <MoonIcon phase={phase} size={24} isCurrentDay={isToday} />
+
+                      {/* Meteor shower dots */}
+                      {activeShowers.length > 0 && (
+                        <div className="flex gap-0.5 mt-1">
+                          {activeShowers.map((shower) => (
+                            <div
+                              key={shower.id}
+                              className="w-1.5 h-1.5 rounded-full"
+                              style={{ backgroundColor: shower.color }}
+                              title={shower.name}
+                            />
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Hover info panel */}
-        {hoveredDayInfo && (
-          <div className="px-6 py-4 border-t border-[#1a1a2e] bg-gradient-to-r from-[#0d0d18] to-[#0a0a12]">
-            <div className="flex items-start gap-6">
-              <div className="flex items-center gap-3">
-                <MoonIcon phase={hoveredDayInfo.phase} size={40} />
-                <div>
-                  <p className="text-white font-medium">
-                    {month} {hoveredDayInfo.day}
-                  </p>
-                  <p className="text-[#8888aa] text-sm">{hoveredDayInfo.phaseName}</p>
-                </div>
-              </div>
-
-              {hoveredDayInfo.inDarkWindow && (
-                <div className="flex items-center gap-2 px-3 py-1.5 bg-[#1a3a2a]/50 border border-[#2a5a3a] rounded-lg">
-                  <div className="w-2 h-2 rounded-full bg-[#4a8a5a] animate-pulse" />
-                  <span className="text-[#6a9a7a] text-sm">Dark Sky Window</span>
-                </div>
-              )}
-
-              {hoveredDayInfo.activeShowers.length > 0 && (
-                <div className="flex-1">
-                  <p className="text-[#6a6a8a] text-xs uppercase tracking-wider mb-1">
-                    Active Showers
-                  </p>
-                  <div className="flex gap-3">
-                    {hoveredDayInfo.activeShowers.map((shower) => {
-                      const peakMatch = shower.peakDate.match(/(\d+)/);
-                      const peakDay = peakMatch ? parseInt(peakMatch[1]) : null;
-                      const isPeak = peakDay === hoveredDayInfo.day;
-
-                      return (
-                        <div key={shower.id} className="flex items-center gap-2" style={{ color: shower.color }}>
-                          <span className="font-medium">{shower.name}</span>
-                          {isPeak && (
-                            <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${shower.color}33` }}>
-                              PEAK
-                            </span>
-                          )}
-                          <span className="text-xs opacity-70">{shower.zhr}/hr</span>
-                        </div>
-                      );
-                    })}
+        {/* Meteor Shower Legend Sidebar */}
+        {meteorShowers.length > 0 && (
+          <div className="w-48 border-l border-[#1a1a2e] p-4 bg-[#0d0d18]/50">
+            <h4 className="text-xs font-medium text-[#6a6a8a] uppercase tracking-wider mb-4">
+              Meteor Showers
+            </h4>
+            <div className="space-y-4">
+              {meteorShowers.map((shower) => {
+                const peakDay = extractPeakDay(shower.peakDate);
+                return (
+                  <div key={shower.id} className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-2 h-2 rounded-full"
+                        style={{
+                          backgroundColor: shower.color,
+                          boxShadow: `0 0 4px ${shower.color}`
+                        }}
+                      />
+                      <span className="text-sm font-medium" style={{ color: shower.color }}>
+                        {shower.name}
+                      </span>
+                    </div>
+                    <div className="text-xs text-[#6a6a8a] pl-4">
+                      {formatDateRange(shower.activeStart, shower.activeEnd, month)}
+                    </div>
+                    {peakDay && (
+                      <div className="text-xs text-[#8888aa] pl-4">
+                        Peak: {month.slice(0, 3)} {peakDay}
+                      </div>
+                    )}
+                    <div className="text-xs text-[#6a6a8a] pl-4">
+                      ~{shower.zhr}/hr
+                    </div>
                   </div>
-                </div>
-              )}
+                );
+              })}
             </div>
           </div>
         )}
