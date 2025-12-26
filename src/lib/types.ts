@@ -98,11 +98,6 @@ export interface UserProfile {
   lastVisit: string;
 }
 
-export interface UserData {
-  profile: UserProfile;
-  savedPlaces: SavedPlace[];
-}
-
 // Deep Sky Object types
 export interface DSONames {
   primary: string;
