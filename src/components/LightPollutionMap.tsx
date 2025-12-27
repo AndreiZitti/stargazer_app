@@ -685,8 +685,8 @@ export default function LightPollutionMap({
         );
       })}
 
-      {/* Search origin radar (shows during search until results arrive) */}
-      {searchOrigin && (isSearching || searchResults.length === 0) && (
+      {/* Search origin radar (shows only during active search) */}
+      {searchOrigin && isSearching && (
         <>
           {/* Animated pulse circles */}
           <Circle
