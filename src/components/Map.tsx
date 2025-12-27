@@ -34,6 +34,8 @@ interface MapProps {
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
   searchResults?: SpotSearchResult[];
+  searchOrigin?: Coordinates | null;
+  isSearching?: boolean;
 }
 
 export default function Map({
@@ -52,6 +54,8 @@ export default function Map({
   animatePin,
   showDarkSkyPlaces = true,
   searchResults,
+  searchOrigin,
+  isSearching,
 }: MapProps) {
   const LightPollutionMap = useMemo(
     () =>
@@ -85,6 +89,8 @@ export default function Map({
       animatePin={animatePin}
       showDarkSkyPlaces={showDarkSkyPlaces}
       searchResults={searchResults}
+      searchOrigin={searchOrigin}
+      isSearching={isSearching}
     />
   );
 }

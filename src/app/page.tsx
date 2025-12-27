@@ -280,6 +280,8 @@ export default function Home() {
         onFindSpots={handleFindSpots}
         animatePin={animatePin}
         searchResults={searchResults}
+        searchOrigin={searchOrigin}
+        isSearching={isSearching}
       />
 
 

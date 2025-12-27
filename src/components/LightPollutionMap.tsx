@@ -46,6 +46,8 @@ interface LightPollutionMapProps {
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
   searchResults?: SpotSearchResult[];
+  searchOrigin?: Coordinates | null;
+  isSearching?: boolean;
 }
 
 // Dark Sky Places icons by type
@@ -245,6 +247,76 @@ function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)}km`;
 }
 
+// Radar/pulse animation icon for search origin
+const radarIcon = new DivIcon({
+  className: 'radar-marker',
+  html: `
+    <div style="position: relative; width: 80px; height: 80px;">
+      <!-- Pulse rings -->
+      <div style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.3);
+        animation: radar-pulse 2s ease-out infinite;
+      "></div>
+      <div style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.3);
+        animation: radar-pulse 2s ease-out infinite 0.5s;
+      "></div>
+      <div style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: rgba(99, 102, 241, 0.3);
+        animation: radar-pulse 2s ease-out infinite 1s;
+      "></div>
+      <!-- Center dot -->
+      <div style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+        height: 16px;
+        background: #6366f1;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      "></div>
+    </div>
+    <style>
+      @keyframes radar-pulse {
+        0% {
+          transform: translate(-50%, -50%) scale(0.2);
+          opacity: 1;
+        }
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+          opacity: 0;
+        }
+      }
+    </style>
+  `,
+  iconSize: [80, 80],
+  iconAnchor: [40, 40],
+});
+
 export default function LightPollutionMap({
   center = [48.1351, 11.582],
   zoom = 6,
@@ -261,6 +333,8 @@ export default function LightPollutionMap({
   animatePin = false,
   showDarkSkyPlaces = true,
   searchResults = [],
+  searchOrigin,
+  isSearching = false,
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
   const [contextMenu, setContextMenu] = useState<{
@@ -678,6 +752,14 @@ export default function LightPollutionMap({
           </Marker>
         );
       })}
+
+      {/* Search origin radar marker (shows during search) */}
+      {isSearching && searchOrigin && (
+        <Marker
+          position={[searchOrigin.lat, searchOrigin.lng]}
+          icon={radarIcon}
+        />
+      )}
 
       {/* Search Result markers (numbered pins) */}
       {searchResults.map((result, index) => (
