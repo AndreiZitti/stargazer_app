@@ -36,6 +36,7 @@ interface MapProps {
   searchResults?: SpotSearchResult[];
   searchOrigin?: Coordinates | null;
   isSearching?: boolean;
+  searchRadius?: number;
 }
 
 export default function Map({
@@ -56,6 +57,7 @@ export default function Map({
   searchResults,
   searchOrigin,
   isSearching,
+  searchRadius,
 }: MapProps) {
   const LightPollutionMap = useMemo(
     () =>
@@ -91,6 +93,7 @@ export default function Map({
       searchResults={searchResults}
       searchOrigin={searchOrigin}
       isSearching={isSearching}
+      searchRadius={searchRadius}
     />
   );
 }

@@ -106,6 +106,7 @@ export default function Home() {
   const [searchOrigin, setSearchOrigin] = useState<Coordinates | null>(null);
   const [searchResults, setSearchResults] = useState<SpotSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchRadius, setSearchRadius] = useState<number>(40); // km
 
   // Check if user has completed onboarding
   useEffect(() => {
@@ -214,6 +215,7 @@ export default function Home() {
   const handleSpotSearch = async (maxDistanceKm: number, hasCar: boolean) => {
     if (!searchOrigin) return;
 
+    setSearchRadius(maxDistanceKm);
     setIsSearching(true);
     try {
       const response = await fetch(
@@ -282,6 +284,7 @@ export default function Home() {
         searchResults={searchResults}
         searchOrigin={searchOrigin}
         isSearching={isSearching}
+        searchRadius={searchRadius}
       />
 
 

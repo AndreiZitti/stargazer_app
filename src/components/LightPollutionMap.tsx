@@ -1,6 +1,6 @@
 "use client";
 
-import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl, Circle } from "react-leaflet";
 import L, { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
@@ -48,6 +48,7 @@ interface LightPollutionMapProps {
   searchResults?: SpotSearchResult[];
   searchOrigin?: Coordinates | null;
   isSearching?: boolean;
+  searchRadius?: number; // in km
 }
 
 // Dark Sky Places icons by type
@@ -247,76 +248,6 @@ function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)}km`;
 }
 
-// Radar/pulse animation icon for search origin
-const radarIcon = new DivIcon({
-  className: 'radar-marker',
-  html: `
-    <div style="position: relative; width: 80px; height: 80px;">
-      <!-- Pulse rings -->
-      <div style="
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: rgba(99, 102, 241, 0.3);
-        animation: radar-pulse 2s ease-out infinite;
-      "></div>
-      <div style="
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: rgba(99, 102, 241, 0.3);
-        animation: radar-pulse 2s ease-out infinite 0.5s;
-      "></div>
-      <div style="
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: rgba(99, 102, 241, 0.3);
-        animation: radar-pulse 2s ease-out infinite 1s;
-      "></div>
-      <!-- Center dot -->
-      <div style="
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 16px;
-        height: 16px;
-        background: #6366f1;
-        border: 3px solid white;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-      "></div>
-    </div>
-    <style>
-      @keyframes radar-pulse {
-        0% {
-          transform: translate(-50%, -50%) scale(0.2);
-          opacity: 1;
-        }
-        100% {
-          transform: translate(-50%, -50%) scale(1);
-          opacity: 0;
-        }
-      }
-    </style>
-  `,
-  iconSize: [80, 80],
-  iconAnchor: [40, 40],
-});
-
 export default function LightPollutionMap({
   center = [48.1351, 11.582],
   zoom = 6,
@@ -335,6 +266,7 @@ export default function LightPollutionMap({
   searchResults = [],
   searchOrigin,
   isSearching = false,
+  searchRadius = 40,
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
   const [contextMenu, setContextMenu] = useState<{
@@ -753,12 +685,73 @@ export default function LightPollutionMap({
         );
       })}
 
-      {/* Search origin radar marker (shows during search) */}
-      {isSearching && searchOrigin && (
-        <Marker
-          position={[searchOrigin.lat, searchOrigin.lng]}
-          icon={radarIcon}
-        />
+      {/* Search origin radar (shows during search until results arrive) */}
+      {searchOrigin && (isSearching || searchResults.length === 0) && (
+        <>
+          {/* Animated pulse circles */}
+          <Circle
+            center={[searchOrigin.lat, searchOrigin.lng]}
+            radius={searchRadius * 1000} // convert km to meters
+            pathOptions={{
+              color: '#6366f1',
+              fillColor: '#6366f1',
+              fillOpacity: 0.1,
+              weight: 2,
+              opacity: 0.6,
+            }}
+            className="radar-circle"
+          />
+          <Circle
+            center={[searchOrigin.lat, searchOrigin.lng]}
+            radius={searchRadius * 1000 * 0.66}
+            pathOptions={{
+              color: '#6366f1',
+              fillColor: '#6366f1',
+              fillOpacity: 0.15,
+              weight: 1,
+              opacity: 0.4,
+              dashArray: '5, 5',
+            }}
+          />
+          <Circle
+            center={[searchOrigin.lat, searchOrigin.lng]}
+            radius={searchRadius * 1000 * 0.33}
+            pathOptions={{
+              color: '#6366f1',
+              fillColor: '#6366f1',
+              fillOpacity: 0.2,
+              weight: 1,
+              opacity: 0.3,
+              dashArray: '3, 3',
+            }}
+          />
+          {/* Center marker */}
+          <Marker
+            position={[searchOrigin.lat, searchOrigin.lng]}
+            icon={new DivIcon({
+              className: 'search-origin-center',
+              html: `
+                <div style="
+                  width: 20px;
+                  height: 20px;
+                  background: #6366f1;
+                  border: 3px solid white;
+                  border-radius: 50%;
+                  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+                  animation: pulse-center 1.5s ease-in-out infinite;
+                "></div>
+                <style>
+                  @keyframes pulse-center {
+                    0%, 100% { transform: scale(1); }
+                    50% { transform: scale(1.2); }
+                  }
+                </style>
+              `,
+              iconSize: [20, 20],
+              iconAnchor: [10, 10],
+            })}
+          />
+        </>
       )}
 
       {/* Search Result markers (numbered pins) */}
