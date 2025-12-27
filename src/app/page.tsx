@@ -343,6 +343,63 @@ export default function Home() {
         </div>
       )}
 
+      {/* Search Results Panel */}
+      {searchResults.length > 0 && (
+        <div className="absolute top-16 right-4 z-[1000] w-80">
+          <div className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg shadow-lg overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-card-border">
+              <h3 className="font-medium text-sm">Best Stargazing Spots</h3>
+              <button
+                onClick={() => setSearchResults([])}
+                className="text-foreground/60 hover:text-foreground"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="divide-y divide-card-border">
+              {searchResults.map((result, index) => (
+                <div
+                  key={`${result.lat}-${result.lng}`}
+                  onClick={() => {
+                    setMapCenter([result.lat, result.lng]);
+                    setMapZoom(12);
+                  }}
+                  className="w-full px-4 py-3 text-left hover:bg-foreground/5 transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Rank badge */}
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-sm">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-lg font-bold">{result.score.toFixed(1)}<span className="text-xs text-foreground/50 font-normal"> / 10</span></span>
+                        <span className="text-xs text-foreground/60">{result.distanceKm} km away</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-foreground/60">{result.label}</span>
+                        <a
+                          href={`https://www.google.com/maps/dir/?api=1&destination=${result.lat},${result.lng}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={(e) => e.stopPropagation()}
+                          className="text-xs text-accent hover:underline"
+                        >
+                          Directions
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Location indicator - Top Center */}
       {locationName && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000]">
