@@ -128,6 +128,28 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, [supabase.auth]);
 
+  // Background fetch weather for auto-load places
+  useEffect(() => {
+    if (placesLoading || authLoading) return;
+
+    // Get places with autoLoadWeather enabled, sorted by most recent
+    const autoLoadPlaces = savedPlaces
+      .filter(p => p.autoLoadWeather)
+      .sort((a, b) => new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime())
+      .slice(0, 5);
+
+    if (autoLoadPlaces.length === 0) return;
+
+    // Defer to avoid blocking initial render
+    const timeoutId = setTimeout(() => {
+      Promise.all(
+        autoLoadPlaces.map(place => fetchWeather(place.lat, place.lng))
+      );
+    }, 100);
+
+    return () => clearTimeout(timeoutId);
+  }, [savedPlaces, placesLoading, authLoading, fetchWeather]);
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
