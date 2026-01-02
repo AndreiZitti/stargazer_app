@@ -90,6 +90,7 @@ export interface SavedPlace {
   label?: string;
   savedAt: string; // ISO date
   notes?: string;
+  autoLoadWeather?: boolean;
 }
 
 export interface UserProfile {
