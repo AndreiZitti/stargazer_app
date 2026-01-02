@@ -8,6 +8,7 @@ import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPla
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
 import MapContextMenu from "./MapContextMenu";
+import CloudForecastModal from "./CloudForecastModal";
 import darkSkyPlacesData from "@/data/dark-sky-places.json";
 
 interface ContextMenuSpot {
@@ -275,6 +276,11 @@ export default function LightPollutionMap({
     coords: Coordinates;
   } | null>(null);
   const { addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
+  const [cloudForecast, setCloudForecast] = useState<{
+    lat: number;
+    lng: number;
+    name?: string;
+  } | null>(null);
 
   const baseConfig = BASE_LAYERS[baseLayer];
 
@@ -482,12 +488,28 @@ export default function LightPollutionMap({
                         >
                           🧭 Directions
                         </a>
-                        <a
-                          href="/december"
-                          style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                        <button
+                          onClick={() => setCloudForecast({
+                            lat: contextSpot.lat,
+                            lng: contextSpot.lng,
+                            name: contextSpot.label ? `${contextSpot.label} Sky Spot` : undefined,
+                          })}
+                          style={{
+                            color: '#6366f1',
+                            fontSize: '12px',
+                            background: 'none',
+                            border: 'none',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
                         >
-                          🔭 Sky Guide
-                        </a>
+                          <svg style={{ width: '14px', height: '14px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                          </svg>
+                          Forecast
+                        </button>
                       </div>
                       <button
                         onClick={() => {
@@ -849,12 +871,28 @@ export default function LightPollutionMap({
                 >
                   🧭 Directions
                 </a>
-                <a
-                  href="/december"
-                  style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
+                <button
+                  onClick={() => setCloudForecast({
+                    lat: result.lat,
+                    lng: result.lng,
+                    name: `${result.label} (${result.score.toFixed(1)}/10)`,
+                  })}
+                  style={{
+                    color: '#6366f1',
+                    fontSize: '12px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px'
+                  }}
                 >
-                  🔭 Sky Guide
-                </a>
+                  <svg style={{ width: '14px', height: '14px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                  </svg>
+                  Forecast
+                </button>
                 <button
                   onClick={() => handleToggleSave(
                     result.lat,
@@ -906,6 +944,17 @@ export default function LightPollutionMap({
           setContextMenu(null);
         }}
         onClose={() => setContextMenu(null)}
+      />
+    )}
+
+    {/* Cloud Forecast Modal */}
+    {cloudForecast && (
+      <CloudForecastModal
+        isOpen={!!cloudForecast}
+        onClose={() => setCloudForecast(null)}
+        lat={cloudForecast.lat}
+        lng={cloudForecast.lng}
+        placeName={cloudForecast.name}
       />
     )}
     </>
