@@ -4,23 +4,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { SavedPlace } from "@/lib/types";
-import CloudForecastModal from "./CloudForecastModal";
+import NightHoursGrid from "./NightHoursGrid";
 
 interface UserSidebarProps {
   onPlaceClick?: (place: SavedPlace) => void;
 }
 
 export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
-  const { user, isAuthenticated, signOut, profile, savedPlaces, isLoading, updateProfile, removeSavedPlace } = useUser();
+  const { user, isAuthenticated, signOut, profile, savedPlaces, isLoading, updateProfile, removeSavedPlace, updateSavedPlace, getWeather, fetchWeather } = useUser();
   const [isOpen, setIsOpen] = useState(false);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editName, setEditName] = useState("");
   const [activeTab, setActiveTab] = useState<"places" | "profile">("places");
-  const [cloudForecast, setCloudForecast] = useState<{
-    lat: number;
-    lng: number;
-    name: string;
-  } | null>(null);
+  const [expandedPlaceId, setExpandedPlaceId] = useState<string | null>(null);
+  const [loadingWeather, setLoadingWeather] = useState<Set<string>>(new Set());
 
   if (isLoading) {
     return null;
@@ -42,6 +39,32 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
     e.stopPropagation();
     if (confirm("Remove this saved place?")) {
       removeSavedPlace(id);
+    }
+  };
+
+  const handleToggleAutoLoad = (e: React.MouseEvent, place: SavedPlace) => {
+    e.stopPropagation();
+    updateSavedPlace(place.id, { autoLoadWeather: !place.autoLoadWeather });
+  };
+
+  const handleExpandPlace = async (place: SavedPlace) => {
+    if (expandedPlaceId === place.id) {
+      setExpandedPlaceId(null);
+      return;
+    }
+
+    setExpandedPlaceId(place.id);
+
+    // Fetch weather if not cached
+    const cached = getWeather(place.lat, place.lng);
+    if (!cached) {
+      setLoadingWeather(prev => new Set(prev).add(place.id));
+      await fetchWeather(place.lat, place.lng);
+      setLoadingWeather(prev => {
+        const next = new Set(prev);
+        next.delete(place.id);
+        return next;
+      });
     }
   };
 
@@ -177,57 +200,104 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    {savedPlaces.map((place) => (
-                      <div
-                        key={place.id}
-                        className="w-full text-left p-3 rounded-lg border border-card-border hover:bg-foreground/5 transition-colors group"
-                      >
-                        <div className="flex items-start justify-between">
-                          <button
-                            onClick={() => onPlaceClick?.(place)}
-                            className="flex-1 min-w-0 text-left"
+                    {savedPlaces.map((place) => {
+                      const isExpanded = expandedPlaceId === place.id;
+                      const cached = getWeather(place.lat, place.lng);
+                      const isLoadingThis = loadingWeather.has(place.id);
+
+                      return (
+                        <div
+                          key={place.id}
+                          className="rounded-lg border border-card-border overflow-hidden"
+                        >
+                          {/* Card header - clickable to expand */}
+                          <div
+                            onClick={() => handleExpandPlace(place)}
+                            className="w-full text-left p-3 hover:bg-foreground/5 transition-colors group cursor-pointer"
                           >
-                            <div className="font-medium text-sm truncate">{place.name}</div>
-                            <div className="text-xs text-foreground/50 mt-0.5">
-                              {place.label && <span className="mr-2">{place.label} Sky</span>}
-                              {place.bortle && <span>Bortle {place.bortle}</span>}
+                            <div className="flex items-start justify-between">
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium text-sm truncate">{place.name}</div>
+                                <div className="text-xs text-foreground/50 mt-0.5">
+                                  {place.label && <span className="mr-2">{place.label} Sky</span>}
+                                  {place.bortle && <span>Bortle {place.bortle}</span>}
+                                </div>
+                                <div className="text-xs text-foreground/40 mt-1">
+                                  Saved {new Date(place.savedAt).toLocaleDateString()}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                {/* Auto-load toggle */}
+                                <button
+                                  onClick={(e) => handleToggleAutoLoad(e, place)}
+                                  className={`relative w-8 h-4 rounded-full transition-colors ${
+                                    place.autoLoadWeather ? "bg-accent" : "bg-foreground/20"
+                                  }`}
+                                  title={place.autoLoadWeather ? "Disable auto-load weather" : "Enable auto-load weather"}
+                                >
+                                  <div
+                                    className={`absolute top-0.5 w-3 h-3 rounded-full bg-white transition-transform ${
+                                      place.autoLoadWeather ? "translate-x-4" : "translate-x-0.5"
+                                    }`}
+                                  />
+                                </button>
+                                {/* Delete button */}
+                                <button
+                                  onClick={(e) => handleDeletePlace(e, place.id)}
+                                  className="p-1 text-foreground/30 hover:text-error opacity-0 group-hover:opacity-100 transition-opacity"
+                                  title="Remove"
+                                >
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                  </svg>
+                                </button>
+                                {/* Expand indicator */}
+                                <svg
+                                  className={`w-4 h-4 text-foreground/40 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </div>
                             </div>
-                            <div className="text-xs text-foreground/40 mt-1">
-                              Saved {new Date(place.savedAt).toLocaleDateString()}
-                            </div>
-                          </button>
-                          <div className="flex items-center gap-1">
-                            {/* Cloud forecast button */}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setCloudForecast({
-                                  lat: place.lat,
-                                  lng: place.lng,
-                                  name: place.name,
-                                });
-                              }}
-                              className="p-1.5 text-foreground/30 hover:text-accent opacity-0 group-hover:opacity-100 transition-opacity"
-                              title="Cloud forecast"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                              </svg>
-                            </button>
-                            {/* Delete button */}
-                            <button
-                              onClick={(e) => handleDeletePlace(e, place.id)}
-                              className="p-1 text-foreground/30 hover:text-error opacity-0 group-hover:opacity-100 transition-opacity"
-                              title="Remove"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                              </svg>
-                            </button>
                           </div>
+
+                          {/* Expanded weather section */}
+                          {isExpanded && (
+                            <div className="px-3 pb-3 border-t border-card-border bg-foreground/[0.02]">
+                              <div className="pt-3">
+                                {isLoadingThis ? (
+                                  <div className="flex items-center justify-center py-4">
+                                    <svg className="w-5 h-5 text-accent animate-spin" viewBox="0 0 24 24" fill="none">
+                                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                                    </svg>
+                                  </div>
+                                ) : cached ? (
+                                  <NightHoursGrid forecast={cached.forecast} />
+                                ) : (
+                                  <div className="text-xs text-foreground/50 text-center py-2">
+                                    {place.autoLoadWeather ? "Loading..." : "Enable auto-load or tap to fetch weather"}
+                                  </div>
+                                )}
+                                {/* Go to location button */}
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onPlaceClick?.(place);
+                                  }}
+                                  className="w-full mt-3 py-2 text-xs text-accent hover:bg-accent/10 rounded transition-colors"
+                                >
+                                  Go to location
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -325,17 +395,6 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
         <div
           className="fixed inset-0 bg-black/30 z-[999]"
           onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Cloud Forecast Modal */}
-      {cloudForecast && (
-        <CloudForecastModal
-          isOpen={!!cloudForecast}
-          onClose={() => setCloudForecast(null)}
-          lat={cloudForecast.lat}
-          lng={cloudForecast.lng}
-          placeName={cloudForecast.name}
         />
       )}
     </>
