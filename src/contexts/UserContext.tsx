@@ -1,12 +1,17 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, ReactNode } from "react";
 import { User } from "@supabase/supabase-js";
-import { UserProfile, SavedPlace } from "@/lib/types";
+import { UserProfile, SavedPlace, CloudForecast } from "@/lib/types";
 import { createClient } from "@/lib/supabase/client";
 import { useSavedPlaces } from "@/hooks/useSavedPlaces";
 
 const PROFILE_STORAGE_KEY = "stargazer_profile";
+
+interface WeatherCacheEntry {
+  forecast: CloudForecast;
+  fetchedAt: number;
+}
 
 interface UserContextType {
   // Auth
@@ -24,6 +29,9 @@ interface UserContextType {
   updateSavedPlace: (id: string, updates: Partial<SavedPlace>) => void;
   isPlaceSaved: (lat: number, lng: number) => boolean;
   findSavedPlace: (lat: number, lng: number) => SavedPlace | undefined;
+  // Weather cache (in-memory only)
+  getWeather: (lat: number, lng: number) => WeatherCacheEntry | undefined;
+  fetchWeather: (lat: number, lng: number) => Promise<CloudForecast | null>;
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -51,6 +59,39 @@ export function UserProvider({ children }: { children: ReactNode }) {
     isPlaceSaved,
     findPlace,
   } = useSavedPlaces(user);
+
+  // Weather cache (in-memory only, 30 min TTL)
+  const [weatherCache, setWeatherCache] = useState<Map<string, WeatherCacheEntry>>(new Map());
+  const WEATHER_CACHE_TTL = 30 * 60 * 1000; // 30 minutes
+
+  const getCacheKey = useCallback((lat: number, lng: number) =>
+    `${lat.toFixed(4)},${lng.toFixed(4)}`, []);
+
+  const getWeather = useCallback((lat: number, lng: number): WeatherCacheEntry | undefined => {
+    const key = getCacheKey(lat, lng);
+    const cached = weatherCache.get(key);
+    if (cached && Date.now() - cached.fetchedAt < WEATHER_CACHE_TTL) {
+      return cached;
+    }
+    return undefined;
+  }, [weatherCache, getCacheKey]);
+
+  const fetchWeather = useCallback(async (lat: number, lng: number): Promise<CloudForecast | null> => {
+    const key = getCacheKey(lat, lng);
+    try {
+      const res = await fetch(`/api/cloud-forecast?lat=${lat}&lng=${lng}`);
+      if (!res.ok) return null;
+      const forecast: CloudForecast = await res.json();
+      setWeatherCache(prev => {
+        const next = new Map(prev);
+        next.set(key, { forecast, fetchedAt: Date.now() });
+        return next;
+      });
+      return forecast;
+    } catch {
+      return null;
+    }
+  }, [getCacheKey]);
 
   // Load auth state and profile on mount
   useEffect(() => {
@@ -118,6 +159,9 @@ export function UserProvider({ children }: { children: ReactNode }) {
         updateSavedPlace: updatePlace,
         isPlaceSaved,
         findSavedPlace: findPlace,
+        // Weather cache
+        getWeather,
+        fetchWeather,
       }}
     >
       {children}
