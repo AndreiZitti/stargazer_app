@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { SavedPlace } from "@/lib/types";
+import CloudForecastModal from "./CloudForecastModal";
 
 interface UserSidebarProps {
   onPlaceClick?: (place: SavedPlace) => void;
@@ -15,6 +16,11 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
   const [isEditingName, setIsEditingName] = useState(false);
   const [editName, setEditName] = useState("");
   const [activeTab, setActiveTab] = useState<"places" | "profile">("places");
+  const [cloudForecast, setCloudForecast] = useState<{
+    lat: number;
+    lng: number;
+    name: string;
+  } | null>(null);
 
   if (isLoading) {
     return null;
@@ -172,13 +178,15 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
                 ) : (
                   <div className="space-y-2">
                     {savedPlaces.map((place) => (
-                      <button
+                      <div
                         key={place.id}
-                        onClick={() => onPlaceClick?.(place)}
                         className="w-full text-left p-3 rounded-lg border border-card-border hover:bg-foreground/5 transition-colors group"
                       >
                         <div className="flex items-start justify-between">
-                          <div className="flex-1 min-w-0">
+                          <button
+                            onClick={() => onPlaceClick?.(place)}
+                            className="flex-1 min-w-0 text-left"
+                          >
                             <div className="font-medium text-sm truncate">{place.name}</div>
                             <div className="text-xs text-foreground/50 mt-0.5">
                               {place.label && <span className="mr-2">{place.label} Sky</span>}
@@ -187,18 +195,38 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
                             <div className="text-xs text-foreground/40 mt-1">
                               Saved {new Date(place.savedAt).toLocaleDateString()}
                             </div>
-                          </div>
-                          <button
-                            onClick={(e) => handleDeletePlace(e, place.id)}
-                            className="p-1 text-foreground/30 hover:text-error opacity-0 group-hover:opacity-100 transition-opacity"
-                            title="Remove"
-                          >
-                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
                           </button>
+                          <div className="flex items-center gap-1">
+                            {/* Cloud forecast button */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setCloudForecast({
+                                  lat: place.lat,
+                                  lng: place.lng,
+                                  name: place.name,
+                                });
+                              }}
+                              className="p-1.5 text-foreground/30 hover:text-accent opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Cloud forecast"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                              </svg>
+                            </button>
+                            {/* Delete button */}
+                            <button
+                              onClick={(e) => handleDeletePlace(e, place.id)}
+                              className="p-1 text-foreground/30 hover:text-error opacity-0 group-hover:opacity-100 transition-opacity"
+                              title="Remove"
+                            >
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 )}
@@ -297,6 +325,17 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
         <div
           className="fixed inset-0 bg-black/30 z-[999]"
           onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Cloud Forecast Modal */}
+      {cloudForecast && (
+        <CloudForecastModal
+          isOpen={!!cloudForecast}
+          onClose={() => setCloudForecast(null)}
+          lat={cloudForecast.lat}
+          lng={cloudForecast.lng}
+          placeName={cloudForecast.name}
         />
       )}
     </>
