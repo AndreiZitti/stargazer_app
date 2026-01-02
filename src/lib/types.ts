@@ -302,3 +302,32 @@ export interface SpotSearchResult {
   distanceKm: number;
   hasRoadAccess: boolean;
 }
+
+// Cloud coverage forecast types
+export type CloudRating = "excellent" | "great" | "good" | "poor" | "bad";
+
+export interface CloudHour {
+  time: string;           // ISO timestamp
+  isNight: boolean;
+  cloudTotal: number;     // 0-100%
+  cloudLow: number;       // 0-100%
+  cloudMid: number;       // 0-100%
+  cloudHigh: number;      // 0-100%
+  precipitation: number;  // probability %
+  rating: CloudRating;
+}
+
+export interface CloudForecast {
+  location: {
+    lat: number;
+    lng: number;
+    timezone: string;
+  };
+  generatedAt: string;
+  hours: CloudHour[];
+  bestWindows: {
+    time: string;
+    cloudTotal: number;
+    rating: CloudRating;
+  }[];
+}
