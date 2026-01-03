@@ -360,6 +360,95 @@
 #compass-toast.visible {
   opacity: 1;
 }
+
+/* ========== DIRECTIONAL ARROW GUIDE ========== */
+#arrow-guide {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#arrow-guide.visible {
+  opacity: 1;
+}
+
+.arrow-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.arrow-pointer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+}
+
+.arrow-pointer svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.arrow-pointer path {
+  fill: rgba(100, 149, 237, 0.9);
+}
+
+.arrow-label {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,15,25,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.arrow-distance {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 2px;
+}
+
+/* Arrow edge indicators (when target is off-screen) */
+.edge-arrow {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 9996;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.edge-arrow.visible {
+  opacity: 1;
+}
+
+.edge-arrow svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+}
+
+.edge-arrow path {
+  fill: rgba(100, 149, 237, 0.85);
+}
 </style>
 </head><body><div id=app></div>
 
@@ -441,6 +530,21 @@
 
 <!-- Compass Toast -->
 <div id="compass-toast"></div>
+
+<!-- Arrow Guide for Object Navigation -->
+<div id="arrow-guide">
+  <div class="arrow-container">
+    <div class="arrow-pointer" id="arrow-pointer">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L4 14h5v8h6v-8h5L12 2z"/>
+      </svg>
+    </div>
+    <div class="arrow-label">
+      <div id="arrow-target-name">Target</div>
+      <div class="arrow-distance" id="arrow-distance">--</div>
+    </div>
+  </div>
+</div>
 <script>
 // Error handling to prevent flickering from ephemeris loading errors
 (function() {
@@ -801,41 +905,40 @@
             console.log('[Sky Lab] Created object:', obj);
             obj.update();
             window.skylabSelectionLayer.add(obj);
-            stel.core.selection = obj;
-            stel.core.lock = obj;
-            stel.core.lookat(obj.azalt, 1);
-          } else {
-            console.warn('[Sky Lab] createObj returned null, navigating to coordinates');
-            // Fallback: just navigate to coordinates
-            var ra = item.ra * Math.PI / 180;
-            var dec = item.dec * Math.PI / 180;
-            var x = Math.cos(dec) * Math.cos(ra);
-            var y = Math.cos(dec) * Math.sin(ra);
-            var z = Math.sin(dec);
-            stel.core.lookat([x, y, z], 1);
           }
         } catch (e) {
           console.warn('[Sky Lab] Could not create temp object:', e);
-          // Fallback: just navigate to coordinates
+        }
+      }
+
+      // Handle navigation based on compass mode
+      if (obj) {
+        stel.core.selection = obj;
+        obj.update();
+
+        if (compassActive) {
+          // In compass mode: DON'T navigate - show arrow guidance instead
+          setArrowTarget(obj, item.match);
+          showCompassToast('Follow the arrow to find ' + item.match, 3000);
+          console.log('[Sky Lab] Compass mode - arrow guidance enabled for:', item.match);
+        } else {
+          // Normal mode: navigate to object
+          stel.core.lock = obj;
+          stel.core.lookat(obj.azalt, 1);
+          console.log('[Sky Lab] Navigated to object');
+        }
+      } else if (item.ra && item.dec && item.ra !== 0) {
+        // Fallback: navigate to coordinates (only if not in compass mode)
+        if (!compassActive) {
           var ra = item.ra * Math.PI / 180;
           var dec = item.dec * Math.PI / 180;
           var x = Math.cos(dec) * Math.cos(ra);
           var y = Math.cos(dec) * Math.sin(ra);
           var z = Math.sin(dec);
           stel.core.lookat([x, y, z], 1);
+        } else {
+          showCompassToast('Point your phone to find ' + item.match, 3000);
         }
-        searchOverlay.classList.add('search-hidden');
-        searchInput.blur();
-        return;
-      }
-
-      if (obj) {
-        // Set selection and lock (from original app pattern)
-        stel.core.selection = obj;
-        stel.core.lock = obj;
-        obj.update();
-        stel.core.lookat(obj.azalt, 1);
-        console.log('[Sky Lab] Locked to object');
       } else {
         console.warn('[Sky Lab] Could not find object in Stellarium catalog');
       }
@@ -911,6 +1014,8 @@
   var compassActive = false;
   var compassPaused = false;
   var compassToastTimeout = null;
+  var currentViewAz = 0;  // Track current view azimuth (radians)
+  var currentViewAlt = 0; // Track current view altitude (radians)
 
   function showCompassToast(message, duration) {
     duration = duration || 3000;
@@ -951,17 +1056,30 @@
 
     if (alpha === null || beta === null) return;
 
+    // Convert device orientation to Stellarium view direction
+    // alpha: compass heading (0 = North, 90 = East, 180 = South, 270 = West)
+    // beta: front-to-back tilt (-180 to 180, 90 = phone vertical screen facing user)
+
+    // Azimuth: Device alpha goes clockwise (0→90→180→270 for N→E→S→W)
+    // Stellarium's lookat expects: x=sin(az), y=cos(az) where az=0 is North
+    // The device alpha needs to be inverted (360 - alpha) because device orientation
+    // increases clockwise but we need counter-clockwise for correct left/right mapping
     var azimuth = (360 - alpha) * (Math.PI / 180);
-    var altitude = (90 - Math.abs(beta)) * (Math.PI / 180);
-    if (beta < 0) altitude = -altitude;
+
+    // Altitude: when beta = 90, phone is vertical (horizon), when beta = 0, pointing at zenith
+    var altitude = (90 - beta) * (Math.PI / 180);
     altitude = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, altitude));
 
+    // Convert spherical to Cartesian (Stellarium coordinate system)
     var x = Math.cos(altitude) * Math.sin(azimuth);
     var y = Math.cos(altitude) * Math.cos(azimuth);
     var z = Math.sin(altitude);
 
     try {
-      stel.core.lookat([x, -y, z], 0);
+      stel.core.lookat([x, y, z], 0);
+
+      // Update arrow guidance if we have a selected object
+      updateArrowGuidance();
     } catch (e) {}
   }
 
@@ -1026,6 +1144,7 @@
     btnCompass.classList.remove('active');
     btnCompass.classList.remove('compass-paused');
     window.removeEventListener('deviceorientation', updateViewFromOrientation);
+    clearArrowTarget(); // Hide arrow guidance when compass stops
     showCompassToast('Compass mode off', 1500);
     console.log('[Sky Lab] Compass mode stopped');
   }
@@ -1043,6 +1162,126 @@
       btnCompass.classList.remove('compass-paused');
       showCompassToast('Compass resumed', 1500);
     }
+  }
+
+  // ========== ARROW GUIDANCE SYSTEM ==========
+  var arrowGuide = document.getElementById('arrow-guide');
+  var arrowPointer = document.getElementById('arrow-pointer');
+  var arrowTargetName = document.getElementById('arrow-target-name');
+  var arrowDistance = document.getElementById('arrow-distance');
+  var currentTargetObject = null;
+  var currentTargetAzAlt = null;
+
+  function setArrowTarget(obj, name) {
+    currentTargetObject = obj;
+    if (arrowTargetName && name) {
+      arrowTargetName.textContent = name;
+    }
+  }
+
+  function clearArrowTarget() {
+    currentTargetObject = null;
+    currentTargetAzAlt = null;
+    if (arrowGuide) {
+      arrowGuide.classList.remove('visible');
+    }
+  }
+
+  function updateArrowGuidance() {
+    if (!compassActive || !stel || !arrowGuide) return;
+
+    // Get the current selection as target
+    var target = currentTargetObject || (stel.core && stel.core.selection);
+    if (!target) {
+      arrowGuide.classList.remove('visible');
+      return;
+    }
+
+    try {
+      // Update target position
+      target.update();
+      var targetAzAlt = target.azalt;
+
+      if (!targetAzAlt || targetAzAlt.length < 2) {
+        arrowGuide.classList.remove('visible');
+        return;
+      }
+
+      // Get current view direction from Stellarium
+      var viewDir = stel.core.observer ? stel.core.observer.azalt : null;
+
+      // Calculate target azimuth and altitude
+      var targetAz = Math.atan2(targetAzAlt[0], targetAzAlt[1]);
+      var targetAlt = Math.asin(Math.max(-1, Math.min(1, targetAzAlt[2])));
+
+      // Get current view azimuth from lookat (approximate from observer state)
+      var currentAz = 0;
+      var currentAlt = 0;
+
+      if (stel.core.lookat_azalt) {
+        var lookAt = stel.core.lookat_azalt;
+        currentAz = Math.atan2(lookAt[0], lookAt[1]);
+        currentAlt = Math.asin(Math.max(-1, Math.min(1, lookAt[2])));
+      }
+
+      // Calculate angular difference
+      var deltaAz = targetAz - currentAz;
+      var deltaAlt = targetAlt - currentAlt;
+
+      // Normalize azimuth difference to -PI to PI
+      while (deltaAz > Math.PI) deltaAz -= 2 * Math.PI;
+      while (deltaAz < -Math.PI) deltaAz += 2 * Math.PI;
+
+      // Calculate total angular distance
+      var angularDistance = Math.sqrt(deltaAz * deltaAz + deltaAlt * deltaAlt);
+      var distanceDeg = angularDistance * 180 / Math.PI;
+
+      // If target is very close to center of view, hide arrow
+      if (distanceDeg < 15) {
+        arrowGuide.classList.remove('visible');
+        return;
+      }
+
+      // Calculate arrow direction (0 = up, increases clockwise)
+      // deltaAz > 0 means target is to the right
+      // deltaAlt > 0 means target is above
+      var arrowAngle = Math.atan2(deltaAz, deltaAlt);
+      var arrowAngleDeg = arrowAngle * 180 / Math.PI;
+
+      // Update arrow rotation (arrow SVG points up at 0 degrees)
+      if (arrowPointer) {
+        arrowPointer.style.transform = 'translate(-50%, -50%) rotate(' + arrowAngleDeg + 'deg)';
+      }
+
+      // Update distance display
+      if (arrowDistance) {
+        if (distanceDeg < 1) {
+          arrowDistance.textContent = 'Almost there!';
+        } else if (distanceDeg < 10) {
+          arrowDistance.textContent = Math.round(distanceDeg) + '° away';
+        } else {
+          arrowDistance.textContent = Math.round(distanceDeg) + '° away';
+        }
+      }
+
+      // Update target name
+      if (arrowTargetName && target.designations && target.designations.length > 0) {
+        arrowTargetName.textContent = target.designations[0];
+      } else if (arrowTargetName && target.names && target.names.length > 0) {
+        arrowTargetName.textContent = target.names[0];
+      }
+
+      arrowGuide.classList.add('visible');
+
+    } catch (e) {
+      console.warn('[Sky Lab] Arrow guidance error:', e);
+      arrowGuide.classList.remove('visible');
+    }
+  }
+
+  // Clear arrow when compass stops
+  function onCompassStop() {
+    clearArrowTarget();
   }
 
   btnCompass.addEventListener('click', function() {

@@ -126,29 +126,6 @@ export default function CloudForecastModal({
 
           {forecast && !isLoading && (
             <>
-              {/* Best Windows Summary */}
-              {forecast.bestWindows.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-medium text-foreground/70 mb-3">Best Stargazing Windows</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {forecast.bestWindows.map((window, i) => (
-                      <div
-                        key={i}
-                        className="px-3 py-2 rounded-lg border border-card-border"
-                        style={{ borderLeftColor: RATING_COLORS[window.rating], borderLeftWidth: 3 }}
-                      >
-                        <div className="text-sm font-medium">
-                          {formatDate(window.time)} {formatTime(window.time)}
-                        </div>
-                        <div className="text-xs text-foreground/60">
-                          {window.cloudTotal}% clouds - {RATING_LABELS[window.rating]}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {/* Hourly Forecast */}
               {Object.entries(hoursByDate).map(([date, hours]) => (
                 <div key={date} className="mb-6">
