@@ -10,7 +10,7 @@ import TutorialPrompt from "@/components/TutorialPrompt";
 import HelpButton from "@/components/HelpButton";
 import SpotSearchModal from "@/components/SpotSearchModal";
 import BottomTabBar from "@/components/BottomTabBar";
-import SavedPanel from "@/components/SavedPanel";
+import SavedPlacesWidget from "@/components/SavedPlacesWidget";
 import { ScoredSpot, Coordinates, SavedPlace, SpotSearchResult } from "@/lib/types";
 
 // Tutorial steps configuration
@@ -98,9 +98,7 @@ export default function Home() {
   const [isSearching, setIsSearching] = useState(false);
   const [searchRadius, setSearchRadius] = useState<number>(40); // km
 
-  // Saved panel state
-  const [showSavedPanel, setShowSavedPanel] = useState(false);
-
+  
   // Check if user has completed onboarding
   useEffect(() => {
     const hasOnboarded = localStorage.getItem("stargazer_onboarded");
@@ -229,11 +227,7 @@ export default function Home() {
 
   return (
     <main className="h-screen w-screen relative overflow-hidden pb-14">
-      {/* Help Button - Top Right */}
-      <div className="fixed top-4 right-4 z-[1001]">
-        <HelpButton onClick={handleStartTutorial} />
-      </div>
-
+      
       {/* Fullscreen Map */}
       <MapComponent
         center={mapCenter}
@@ -560,17 +554,16 @@ export default function Home() {
         onSearch={handleSpotSearch}
       />
 
+      {/* Saved Places Widget */}
+      <SavedPlacesWidget
+        onPlaceClick={handleSavedPlaceClick}
+        userLocation={searchLocation}
+      />
+
       {/* Bottom Tab Bar */}
       <div data-tutorial="bottom-tabs">
-        <BottomTabBar onSavedClick={() => setShowSavedPanel(true)} />
+        <BottomTabBar />
       </div>
-
-      {/* Saved Panel */}
-      <SavedPanel
-        isOpen={showSavedPanel}
-        onClose={() => setShowSavedPanel(false)}
-        onPlaceClick={handleSavedPlaceClick}
-      />
     </main>
   );
 }

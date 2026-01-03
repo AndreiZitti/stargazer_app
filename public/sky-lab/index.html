@@ -773,25 +773,39 @@
       if (!obj && item.ra && item.dec && item.ra !== 0) {
         console.log('[Sky Lab] Object not in catalog, creating temporary object at:', item.ra, item.dec);
         try {
-          // Create a temporary sky object for display
-          // The model format follows Stellarium's createObj API
+          // Create selection layer if not exists (like original app)
+          if (!window.skylabSelectionLayer) {
+            window.skylabSelectionLayer = stel.createLayer({id: 'skylab-selection', z: 50, visible: true});
+            console.log('[Sky Lab] Created selection layer');
+          }
+
+          // Format data like original app expects
           var tempData = {
+            model: 'dso',
+            id: 'skylab_' + Date.now(),
+            names: [item.match],
+            types: item.types || ['Neb'],
             model_data: {
               ra: item.ra,
               de: item.dec,
-              vmag: 5.0 // Default magnitude for visibility
-            },
-            names: [item.match],
-            types: item.types || ['DSO']
+              Vmag: 5.0,
+              dimx: 30, // Default size in arcmin
+              dimy: 30
+            }
           };
+
+          console.log('[Sky Lab] Creating object with data:', tempData);
           obj = stel.createObj('dso', tempData);
+
           if (obj) {
-            console.log('[Sky Lab] Created temporary object:', obj);
+            console.log('[Sky Lab] Created object:', obj);
             obj.update();
+            window.skylabSelectionLayer.add(obj);
             stel.core.selection = obj;
             stel.core.lock = obj;
             stel.core.lookat(obj.azalt, 1);
           } else {
+            console.warn('[Sky Lab] createObj returned null, navigating to coordinates');
             // Fallback: just navigate to coordinates
             var ra = item.ra * Math.PI / 180;
             var dec = item.dec * Math.PI / 180;

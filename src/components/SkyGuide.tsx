@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { DeepSkyObject, MeteorShower, SavedPlace } from "@/lib/types";
+import { DeepSkyObject, MeteorShower } from "@/lib/types";
 import CelestialCalendar from "./CelestialCalendar";
 import FeaturedDSOCard from "./FeaturedDSOCard";
 import BottomTabBar from "./BottomTabBar";
-import SavedPanel from "./SavedPanel";
 
 // Featured DSOs with local images
 const FEATURED_DSO_IMAGES: Record<string, string> = {
@@ -345,8 +344,6 @@ function getActivePeriodForMonth(
 }
 
 export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moonData }: SkyGuideProps) {
-  const [showSavedPanel, setShowSavedPanel] = useState(false);
-
   // Format data for CelestialCalendar
   const calendarMoonPhases = {
     newMoon: new Date(moonData.newMoon).getDate(),
@@ -454,13 +451,7 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
         </div>
 
       {/* Bottom Tab Bar */}
-      <BottomTabBar onSavedClick={() => setShowSavedPanel(true)} />
-
-      {/* Saved Panel */}
-      <SavedPanel
-        isOpen={showSavedPanel}
-        onClose={() => setShowSavedPanel(false)}
-      />
+      <BottomTabBar />
     </main>
   );
 }

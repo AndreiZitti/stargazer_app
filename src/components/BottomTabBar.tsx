@@ -3,10 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-interface BottomTabBarProps {
-  onSavedClick: () => void;
-}
-
 const tabs = [
   {
     id: "map",
@@ -22,7 +18,7 @@ const tabs = [
   {
     id: "sky",
     label: "Sky",
-    href: "/stellarium",
+    href: "/sky-lab",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
@@ -41,26 +37,16 @@ const tabs = [
       </svg>
     ),
   },
-  {
-    id: "saved",
-    label: "Saved",
-    href: null, // Opens panel instead of navigating
-    icon: (
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-      </svg>
-    ),
-  },
 ];
 
-export default function BottomTabBar({ onSavedClick }: BottomTabBarProps) {
+export default function BottomTabBar() {
   const pathname = usePathname();
 
   const isActive = (tab: typeof tabs[0]) => {
     if (tab.id === "map") return pathname === "/";
+    if (tab.id === "sky") return pathname.startsWith("/sky-lab");
     if (tab.id === "guide") return pathname.startsWith("/guide") || pathname === "/december" || pathname === "/january";
-    if (tab.href) return pathname === tab.href;
-    return false;
+    return pathname === tab.href;
   };
 
   return (
@@ -69,31 +55,17 @@ export default function BottomTabBar({ onSavedClick }: BottomTabBarProps) {
         {tabs.map((tab) => {
           const active = isActive(tab);
 
-          if (tab.href) {
-            return (
-              <Link
-                key={tab.id}
-                href={tab.href}
-                className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
-                  active ? "text-accent" : "text-foreground/50 hover:text-foreground/70"
-                }`}
-              >
-                {tab.icon}
-                <span className="text-[10px] mt-0.5 font-medium">{tab.label}</span>
-              </Link>
-            );
-          }
-
-          // Saved tab - button instead of link
           return (
-            <button
+            <Link
               key={tab.id}
-              onClick={onSavedClick}
-              className="flex flex-col items-center justify-center flex-1 h-full transition-colors text-foreground/50 hover:text-foreground/70"
+              href={tab.href}
+              className={`flex flex-col items-center justify-center flex-1 h-full transition-colors ${
+                active ? "text-accent" : "text-foreground/50 hover:text-foreground/70"
+              }`}
             >
               {tab.icon}
               <span className="text-[10px] mt-0.5 font-medium">{tab.label}</span>
-            </button>
+            </Link>
           );
         })}
       </div>

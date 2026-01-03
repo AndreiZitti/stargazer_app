@@ -242,6 +242,42 @@ function getSearchResultIcon(number: number): DivIcon {
   });
 }
 
+// Custom icon for saved places
+function getSavedPlaceIcon(label?: string): DivIcon {
+  // Color based on sky quality
+  const colors: Record<string, string> = {
+    'Excellent': '#22c55e',
+    'Great': '#84cc16',
+    'Good': '#eab308',
+    'Moderate': '#f97316',
+    'Poor': '#ef4444',
+  };
+  const color = (label && colors[label]) || '#eab308';
+
+  return new DivIcon({
+    className: 'saved-place-marker',
+    html: `
+      <div style="
+        width: 28px;
+        height: 28px;
+        background: ${color};
+        border: 2px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      ">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+        </svg>
+      </div>
+    `,
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
+  });
+}
+
 function formatDistance(meters: number): string {
   if (meters < 1000) {
     return `${meters}m`;
@@ -275,7 +311,7 @@ export default function LightPollutionMap({
     y: number;
     coords: Coordinates;
   } | null>(null);
-  const { addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
+  const { savedPlaces, addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
   const [cloudForecast, setCloudForecast] = useState<{
     lat: number;
     lng: number;
@@ -799,6 +835,83 @@ export default function LightPollutionMap({
           />
         </>
       )}
+
+      {/* Saved Places markers */}
+      {savedPlaces.map((place) => (
+        <Marker
+          key={`saved-${place.id}`}
+          position={[place.lat, place.lng]}
+          icon={getSavedPlaceIcon(place.label)}
+        >
+          <Popup>
+            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                <svg style={{ width: '20px', height: '20px', color: '#eab308' }} fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+                <div style={{ fontWeight: 'bold' }}>{place.name}</div>
+              </div>
+
+              {/* Info */}
+              <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.6)', marginBottom: '8px' }}>
+                {place.label && <span>{place.label} Sky</span>}
+                {place.bortle && <span> · Bortle {place.bortle}</span>}
+              </div>
+
+              {/* Coordinates */}
+              <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px' }}>
+                {place.lat.toFixed(4)}°, {place.lng.toFixed(4)}°
+              </div>
+
+              {/* Action buttons */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${place.lat},${place.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none' }}
+                  >
+                    🧭 Directions
+                  </a>
+                  <button
+                    onClick={() => setCloudForecast({
+                      lat: place.lat,
+                      lng: place.lng,
+                      name: place.name,
+                    })}
+                    style={{
+                      color: '#6366f1',
+                      fontSize: '12px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    ☁️ Forecast
+                  </button>
+                </div>
+                <button
+                  onClick={() => removeSavedPlace(place.id)}
+                  style={{
+                    padding: '4px',
+                    borderRadius: '4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#ef4444',
+                    fontSize: '12px',
+                  }}
+                  title="Remove from saved"
+                >
+                  Remove
+                </button>
+              </div>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
 
       {/* Search Result markers (numbered pins) */}
       {searchResults.map((result, index) => (
