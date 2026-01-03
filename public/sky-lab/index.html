@@ -361,6 +361,38 @@
   opacity: 1;
 }
 
+/* ========== COMPASS DEBUG DISPLAY ========== */
+#compass-debug {
+  position: fixed;
+  top: max(60px, env(safe-area-inset-top));
+  right: 16px;
+  background: rgba(15,15,25,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 10px;
+  padding: 10px 14px;
+  z-index: 9998;
+  font-family: 'SF Mono', 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: none;
+}
+
+#compass-debug.visible {
+  display: block;
+}
+
+#compass-debug div {
+  margin: 2px 0;
+}
+
+#compass-debug .label {
+  color: rgba(255,255,255,0.5);
+  display: inline-block;
+  width: 50px;
+}
+
 /* ========== DIRECTIONAL ARROW GUIDE ========== */
 #arrow-guide {
   position: fixed;
@@ -530,6 +562,22 @@
 
 <!-- Compass Toast -->
 <div id="compass-toast"></div>
+
+<!-- Compass Debug Display -->
+<div id="compass-debug">
+  <div><span class="label">α:</span> <span id="dbg-alpha">--</span>°</div>
+  <div><span class="label">β:</span> <span id="dbg-beta">--</span>°</div>
+  <div><span class="label">γ:</span> <span id="dbg-gamma">--</span>°</div>
+  <div style="margin-top:6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:6px;">
+    <div><span class="label">Az:</span> <span id="dbg-az">--</span>°</div>
+    <div><span class="label">Alt:</span> <span id="dbg-alt">--</span>°</div>
+  </div>
+  <div style="margin-top:6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:6px;">
+    <div><span class="label">x:</span> <span id="dbg-x">--</span></div>
+    <div><span class="label">y:</span> <span id="dbg-y">--</span></div>
+    <div><span class="label">z:</span> <span id="dbg-z">--</span></div>
+  </div>
+</div>
 
 <!-- Arrow Guide for Object Navigation -->
 <div id="arrow-guide">
@@ -1048,71 +1096,78 @@
     return Promise.resolve('granted');
   }
 
+  // Debug display elements
+  var dbgAlpha = document.getElementById('dbg-alpha');
+  var dbgBeta = document.getElementById('dbg-beta');
+  var dbgGamma = document.getElementById('dbg-gamma');
+  var dbgAz = document.getElementById('dbg-az');
+  var dbgAlt = document.getElementById('dbg-alt');
+  var dbgX = document.getElementById('dbg-x');
+  var dbgY = document.getElementById('dbg-y');
+  var dbgZ = document.getElementById('dbg-z');
+  var compassDebug = document.getElementById('compass-debug');
+
   function updateViewFromOrientation(event) {
     if (!compassActive || compassPaused || !stel) return;
 
-    var alpha = event.alpha;
-    var beta = event.beta;
-    var gamma = event.gamma;
+    var alpha = event.alpha; // Compass: 0=N, 90=E, 180=S, 270=W (clockwise from North)
+    var beta = event.beta;   // Tilt front/back: 0=flat, 90=vertical, 180=upside-down
+    var gamma = event.gamma; // Tilt left/right: -90 to 90
 
     if (alpha === null || beta === null) return;
 
-    // Convert degrees to radians
-    var degToRad = Math.PI / 180;
-    var _alpha = alpha * degToRad;
-    var _beta = beta * degToRad;
-    var _gamma = gamma ? gamma * degToRad : 0;
+    // Update debug display
+    if (dbgAlpha) dbgAlpha.textContent = alpha.toFixed(1);
+    if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
+    if (dbgGamma) dbgGamma.textContent = (gamma || 0).toFixed(1);
 
-    // Build rotation matrix from device orientation (ZXY intrinsic Tait-Bryan angles)
-    // This follows the W3C Device Orientation specification
-    var cA = Math.cos(_alpha);
-    var sA = Math.sin(_alpha);
-    var cB = Math.cos(_beta);
-    var sB = Math.sin(_beta);
-    var cG = Math.cos(_gamma);
-    var sG = Math.sin(_gamma);
+    // Simple direct conversion for phone held vertically (portrait, screen facing user)
+    //
+    // Device orientation gives us:
+    // - alpha: compass heading where device top points (0=N, 90=E, 180=S, 270=W)
+    // - beta: tilt angle (90 = vertical/upright, 0 = flat facing sky, -90 = flat facing ground)
+    //
+    // For sky viewing with phone vertical:
+    // - Azimuth = where we're looking horizontally = alpha (compass direction)
+    // - Altitude = how high we're looking = beta - 90 (so vertical = 0°, tilted up = positive)
 
-    // ZXY rotation matrix components
-    // When device is flat (beta=0, gamma=0), screen faces up
-    // When device is vertical (beta=90), screen faces user
-    var m11 = cA * cG - sA * sB * sG;
-    var m12 = -cB * sA;
-    var m13 = cA * sG + cG * sA * sB;
-    var m21 = cG * sA + cA * sB * sG;
-    var m22 = cA * cB;
-    var m23 = sA * sG - cA * cG * sB;
-    var m31 = -cB * sG;
-    var m32 = sB;
-    var m33 = cB * cG;
+    var azimuthDeg = alpha;
+    var altitudeDeg = beta - 90; // beta=90 → alt=0 (horizon), beta=0 → alt=-90 (straight up... wait)
 
-    // The direction the device screen is facing (normal to screen, pointing away from user)
-    // is the third column of the rotation matrix: [m13, m23, m33]
-    // But we want where the device is "looking" (out the back of the phone, or top when tilted)
-    // For a camera app / AR view, we want the -Z axis of the device in world coordinates
-    // That's: [-m13, -m23, -m33] but we need to account for holding phone vertically
+    // Actually when beta=0 (phone flat, screen up), we look at zenith (+90°)
+    // When beta=90 (phone vertical), we look at horizon (0°)
+    // When beta=180 (phone flat, screen down), we look at nadir (-90°)
+    // So: altitude = 90 - beta
+    altitudeDeg = 90 - beta;
 
-    // When holding phone vertically to look at sky:
-    // - The "look direction" is the device's -Y axis (top of phone points where you look)
-    // - In device frame, that's [0, -1, 0]
-    // - Transform to world: x = m12*(-1) = cB*sA, y = m22*(-1) = -cA*cB, z = m32*(-1) = -sB
+    // Clamp altitude
+    altitudeDeg = Math.max(-90, Math.min(90, altitudeDeg));
 
-    // Actually for AR/sky viewing, the camera looks out the back of the device
-    // When screen faces you, you look through the device at the sky behind it
-    // The look direction is device +Z transformed to world: [m13, m23, m33]
+    // Update debug display
+    if (dbgAz) dbgAz.textContent = azimuthDeg.toFixed(1);
+    if (dbgAlt) dbgAlt.textContent = altitudeDeg.toFixed(1);
 
-    // For Stellarium's coordinate system (azimuthal):
-    // x = East, y = North, z = Up
-    // Device orientation: alpha=0 means North, increases clockwise
+    // Convert to radians
+    var azimuth = azimuthDeg * (Math.PI / 180);
+    var altitude = altitudeDeg * (Math.PI / 180);
 
-    // The device's pointing direction (out the back, through screen toward user's view)
-    // needs to be rotated -90° around X to convert from "screen up" to "screen facing user"
-    // This is equivalent to swapping Y and Z with sign change
+    // Stellarium coordinate system for lookat:
+    // Looking at various references, Stellarium uses azimuthal coordinates where:
+    // The vector [x, y, z] points to where we want to look
+    //
+    // Standard astronomical azimuthal: Az measured from North, clockwise
+    // x = sin(az) * cos(alt)  [East component]
+    // y = cos(az) * cos(alt)  [North component]
+    // z = sin(alt)            [Up component]
 
-    // Final direction vector for Stellarium (where phone is pointing):
-    // Using the Y-axis of device (top of phone) as look direction when held vertically
-    var x = -m12;  // East component
-    var y = -m22;  // North component
-    var z = -m32;  // Up component
+    var x = Math.sin(azimuth) * Math.cos(altitude);
+    var y = Math.cos(azimuth) * Math.cos(altitude);
+    var z = Math.sin(altitude);
+
+    // Update debug display
+    if (dbgX) dbgX.textContent = x.toFixed(3);
+    if (dbgY) dbgY.textContent = y.toFixed(3);
+    if (dbgZ) dbgZ.textContent = z.toFixed(3);
 
     try {
       stel.core.lookat([x, y, z], 0);
@@ -1143,6 +1198,7 @@
         compassPaused = false;
         btnCompass.classList.add('active');
         btnCompass.classList.remove('compass-paused');
+        if (compassDebug) compassDebug.classList.add('visible');
         window.addEventListener('deviceorientation', updateViewFromOrientation);
         showCompassToast('Compass mode active. Point your phone at the sky!', 2500);
         console.log('[Sky Lab] Compass mode started');
@@ -1156,6 +1212,7 @@
       compassActive = true;
       compassPaused = false;
       btnCompass.classList.add('active');
+      if (compassDebug) compassDebug.classList.add('visible');
       window.addEventListener('deviceorientation', updateViewFromOrientation);
 
       // Test if we actually get events
@@ -1182,6 +1239,7 @@
     compassPaused = false;
     btnCompass.classList.remove('active');
     btnCompass.classList.remove('compass-paused');
+    if (compassDebug) compassDebug.classList.remove('visible');
     window.removeEventListener('deviceorientation', updateViewFromOrientation);
     clearArrowTarget(); // Hide arrow guidance when compass stops
     showCompassToast('Compass mode off', 1500);
