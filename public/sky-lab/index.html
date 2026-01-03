@@ -769,17 +769,47 @@
         } catch (e) {}
       }
 
-      // If still not found and we have coordinates, try looking up by position
+      // If still not found and we have coordinates, create a temporary object
       if (!obj && item.ra && item.dec && item.ra !== 0) {
-        console.log('[Sky Lab] Object not in catalog, navigating to coordinates:', item.ra, item.dec);
-        // Convert RA/Dec to radians and create direction vector
-        var ra = item.ra * Math.PI / 180;
-        var dec = item.dec * Math.PI / 180;
-        var x = Math.cos(dec) * Math.cos(ra);
-        var y = Math.cos(dec) * Math.sin(ra);
-        var z = Math.sin(dec);
-        // Look at the coordinates (use ICRS frame)
-        stel.core.lookat([x, y, z], 1);
+        console.log('[Sky Lab] Object not in catalog, creating temporary object at:', item.ra, item.dec);
+        try {
+          // Create a temporary sky object for display
+          // The model format follows Stellarium's createObj API
+          var tempData = {
+            model_data: {
+              ra: item.ra,
+              de: item.dec,
+              vmag: 5.0 // Default magnitude for visibility
+            },
+            names: [item.match],
+            types: item.types || ['DSO']
+          };
+          obj = stel.createObj('dso', tempData);
+          if (obj) {
+            console.log('[Sky Lab] Created temporary object:', obj);
+            obj.update();
+            stel.core.selection = obj;
+            stel.core.lock = obj;
+            stel.core.lookat(obj.azalt, 1);
+          } else {
+            // Fallback: just navigate to coordinates
+            var ra = item.ra * Math.PI / 180;
+            var dec = item.dec * Math.PI / 180;
+            var x = Math.cos(dec) * Math.cos(ra);
+            var y = Math.cos(dec) * Math.sin(ra);
+            var z = Math.sin(dec);
+            stel.core.lookat([x, y, z], 1);
+          }
+        } catch (e) {
+          console.warn('[Sky Lab] Could not create temp object:', e);
+          // Fallback: just navigate to coordinates
+          var ra = item.ra * Math.PI / 180;
+          var dec = item.dec * Math.PI / 180;
+          var x = Math.cos(dec) * Math.cos(ra);
+          var y = Math.cos(dec) * Math.sin(ra);
+          var z = Math.sin(dec);
+          stel.core.lookat([x, y, z], 1);
+        }
         searchOverlay.classList.add('search-hidden');
         searchInput.blur();
         return;

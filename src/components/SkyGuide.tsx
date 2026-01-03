@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { DeepSkyObject, MeteorShower } from "@/lib/types";
+import { DeepSkyObject, MeteorShower, SavedPlace } from "@/lib/types";
 import CelestialCalendar from "./CelestialCalendar";
 import FeaturedDSOCard from "./FeaturedDSOCard";
+import BottomTabBar from "./BottomTabBar";
+import SavedPanel from "./SavedPanel";
 
 // Featured DSOs with local images
 const FEATURED_DSO_IMAGES: Record<string, string> = {
@@ -17,7 +18,7 @@ const FEATURED_DSO_IMAGES: Record<string, string> = {
 };
 
 interface SkyGuideProps {
-  month: "December" | "January";
+  month: string;
   year: number;
   daysInMonth: number;
   dsos: DeepSkyObject[];
@@ -27,7 +28,6 @@ interface SkyGuideProps {
     fullMoon: { date: string; name: string };
     darkSkyWindows: { start: string; end: string; quality: string }[];
   };
-  otherMonth: "December" | "January";
 }
 
 // Color palette for meteor showers
@@ -344,8 +344,8 @@ function getActivePeriodForMonth(
   return { start: activeStart, end: activeEnd };
 }
 
-export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moonData, otherMonth }: SkyGuideProps) {
-  const otherMonthPath = `/${otherMonth.toLowerCase()}`;
+export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moonData }: SkyGuideProps) {
+  const [showSavedPanel, setShowSavedPanel] = useState(false);
 
   // Format data for CelestialCalendar
   const calendarMoonPhases = {
@@ -379,31 +379,13 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
 
   // Calculate current day if viewing current month
   const today = new Date();
-  const currentMonthIdx = month === "December" ? 11 : 0;
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  const currentMonthIdx = monthNames.findIndex(m => m.toLowerCase() === month.toLowerCase());
   const isCurrentMonth = today.getMonth() === currentMonthIdx && today.getFullYear() === year;
   const currentDay = isCurrentMonth ? today.getDate() : undefined;
 
   return (
-    <main className="min-h-screen bg-background">
-      {/* Header */}
-      <div className="border-b border-card-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-foreground/60 hover:text-foreground transition-colors"
-          >
-            {Icons.back}
-            <span>Back to Map</span>
-          </Link>
-          <Link
-            href={otherMonthPath}
-            className="flex items-center gap-2 text-accent hover:text-accent/80 transition-colors"
-          >
-            <span>{otherMonth} Guide</span>
-            {Icons.arrow}
-          </Link>
-        </div>
-      </div>
+    <main className="min-h-screen bg-background pb-16">
 
       {/* Hero */}
       <div className="bg-gradient-to-b from-card to-background border-b border-card-border">
@@ -469,17 +451,16 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
           </div>
         </section>
 
-        {/* Footer nav */}
-        <div className="flex justify-center pt-8 border-t border-card-border">
-          <Link
-            href={otherMonthPath}
-            className="flex items-center gap-2 px-6 py-3 bg-card border border-card-border rounded-lg hover:border-accent transition-colors"
-          >
-            <span>View {otherMonth} Guide</span>
-            {Icons.arrow}
-          </Link>
         </div>
-      </div>
+
+      {/* Bottom Tab Bar */}
+      <BottomTabBar onSavedClick={() => setShowSavedPanel(true)} />
+
+      {/* Saved Panel */}
+      <SavedPanel
+        isOpen={showSavedPanel}
+        onClose={() => setShowSavedPanel(false)}
+      />
     </main>
   );
 }

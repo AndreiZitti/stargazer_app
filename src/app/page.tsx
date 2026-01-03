@@ -1,17 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import MapComponent from "@/components/Map";
 import MapSearchBar from "@/components/MapSearchBar";
-import UserSidebar from "@/components/UserSidebar";
 import OnboardingModal from "@/components/OnboardingModal";
 import SaveToast from "@/components/SaveToast";
 import TutorialOverlay, { TutorialStep } from "@/components/TutorialOverlay";
 import TutorialPrompt from "@/components/TutorialPrompt";
 import HelpButton from "@/components/HelpButton";
 import SpotSearchModal from "@/components/SpotSearchModal";
-import { ScoredSpot, Coordinates, AccessibilityFeature, SavedPlace, SpotSearchResult } from "@/lib/types";
+import BottomTabBar from "@/components/BottomTabBar";
+import SavedPanel from "@/components/SavedPanel";
+import { ScoredSpot, Coordinates, SavedPlace, SpotSearchResult } from "@/lib/types";
 
 // Tutorial steps configuration
 const TUTORIAL_STEPS: TutorialStep[] = [
@@ -26,19 +26,9 @@ const TUTORIAL_STEPS: TutorialStep[] = [
     description: "Discover stargazing spots nearby.",
   },
   {
-    target: "sidebar-toggle",
-    title: "Saved Places",
-    description: "View and manage your saved spots.",
-  },
-  {
-    target: "sky-viewer",
-    title: "Sky Viewer",
-    description: "Interactive star map for tonight.",
-  },
-  {
-    target: "sky-guide",
-    title: "Sky Guide",
-    description: "Monthly celestial events.",
+    target: "bottom-tabs",
+    title: "Navigation",
+    description: "Switch between Map, Sky Viewer, Guide, and Saved Places.",
   },
 ];
 
@@ -107,6 +97,9 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<SpotSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchRadius, setSearchRadius] = useState<number>(40); // km
+
+  // Saved panel state
+  const [showSavedPanel, setShowSavedPanel] = useState(false);
 
   // Check if user has completed onboarding
   useEffect(() => {
@@ -235,35 +228,10 @@ export default function Home() {
   };
 
   return (
-    <main className="h-screen w-screen relative overflow-hidden">
-      {/* User Sidebar */}
-      <UserSidebar onPlaceClick={handleSavedPlaceClick} />
-
-      {/* Top Right Links */}
-      <div className="fixed top-4 right-4 z-[1001] flex gap-2">
+    <main className="h-screen w-screen relative overflow-hidden pb-14">
+      {/* Help Button - Top Right */}
+      <div className="fixed top-4 right-4 z-[1001]">
         <HelpButton onClick={handleStartTutorial} />
-        <Link
-          href="/stellarium"
-          data-tutorial="sky-viewer"
-          className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg px-3 py-2.5 shadow-lg hover:bg-foreground/5 transition-colors flex items-center gap-2"
-        >
-          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-            <path strokeLinecap="round" strokeWidth={1.5} d="M2 12h20" />
-          </svg>
-          <span className="text-sm font-medium">Sky Viewer</span>
-        </Link>
-        <Link
-          href="/december"
-          data-tutorial="sky-guide"
-          className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg px-3 py-2.5 shadow-lg hover:bg-foreground/5 transition-colors flex items-center gap-2"
-        >
-          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-          </svg>
-          <span className="text-sm font-medium">December Guide</span>
-        </Link>
       </div>
 
       {/* Fullscreen Map */}
@@ -430,8 +398,8 @@ export default function Home() {
         </div>
       )}
 
-      {/* Floating Search Bar - Bottom Center */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[1000] flex flex-col items-center gap-2">
+      {/* Floating Search Bar - Bottom Center (above tab bar) */}
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[1000] flex flex-col items-center gap-2">
         <div className="flex items-center gap-2">
           <MapSearchBar onSearch={handleSearch} isLoading={false} />
           {searchLocation && !showSpots && (
@@ -590,6 +558,18 @@ export default function Home() {
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
         onSearch={handleSpotSearch}
+      />
+
+      {/* Bottom Tab Bar */}
+      <div data-tutorial="bottom-tabs">
+        <BottomTabBar onSavedClick={() => setShowSavedPanel(true)} />
+      </div>
+
+      {/* Saved Panel */}
+      <SavedPanel
+        isOpen={showSavedPanel}
+        onClose={() => setShowSavedPanel(false)}
+        onPlaceClick={handleSavedPlaceClick}
       />
     </main>
   );
