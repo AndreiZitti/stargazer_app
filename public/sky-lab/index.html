@@ -1053,37 +1053,66 @@
 
     var alpha = event.alpha;
     var beta = event.beta;
+    var gamma = event.gamma;
 
     if (alpha === null || beta === null) return;
 
-    // Convert device orientation to Stellarium view direction
-    // alpha: compass heading (0 = North, 90 = East, 180 = South, 270 = West)
-    // beta: front-to-back tilt (-180 to 180, 90 = phone vertical screen facing user)
+    // Convert degrees to radians
+    var degToRad = Math.PI / 180;
+    var _alpha = alpha * degToRad;
+    var _beta = beta * degToRad;
+    var _gamma = gamma ? gamma * degToRad : 0;
 
-    // Azimuth: Device alpha goes clockwise (0→90→180→270 for N→E→S→W)
-    // Stellarium's lookat expects: x=sin(az), y=cos(az) where az=0 is North
-    // The device alpha needs to be inverted (360 - alpha) because device orientation
-    // increases clockwise but we need counter-clockwise for correct left/right mapping
-    var azimuth = (360 - alpha) * (Math.PI / 180);
+    // Build rotation matrix from device orientation (ZXY intrinsic Tait-Bryan angles)
+    // This follows the W3C Device Orientation specification
+    var cA = Math.cos(_alpha);
+    var sA = Math.sin(_alpha);
+    var cB = Math.cos(_beta);
+    var sB = Math.sin(_beta);
+    var cG = Math.cos(_gamma);
+    var sG = Math.sin(_gamma);
 
-    // Altitude from device beta:
-    // beta = 90: phone vertical, screen facing user → looking at horizon (alt = 0)
-    // beta = 0: phone flat, screen up → looking at zenith (alt = +90)
-    // beta = 180/-180: phone flat, screen down → looking at ground (alt = -90)
-    // Formula: alt = 90 - beta maps beta=90→0, beta=0→90, beta=180→-90
-    // But we were getting inverted view, so the screen orientation is opposite
-    // The camera/screen looks opposite to where phone back points
-    // So we need: alt = beta - 90, then negate: alt = -(beta - 90) = 90 - beta...
-    // Actually the real issue: when holding phone to look at sky, screen faces you,
-    // so "up" in view should be where phone top points. Let's just negate z.
-    var altitude = (90 - beta) * (Math.PI / 180);
-    altitude = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, altitude));
+    // ZXY rotation matrix components
+    // When device is flat (beta=0, gamma=0), screen faces up
+    // When device is vertical (beta=90), screen faces user
+    var m11 = cA * cG - sA * sB * sG;
+    var m12 = -cB * sA;
+    var m13 = cA * sG + cG * sA * sB;
+    var m21 = cG * sA + cA * sB * sG;
+    var m22 = cA * cB;
+    var m23 = sA * sG - cA * cG * sB;
+    var m31 = -cB * sG;
+    var m32 = sB;
+    var m33 = cB * cG;
 
-    // Convert spherical to Cartesian (Stellarium coordinate system)
-    // Negate z to fix inverted up/down: when pointing phone up, show sky not ground
-    var x = Math.cos(altitude) * Math.sin(azimuth);
-    var y = Math.cos(altitude) * Math.cos(azimuth);
-    var z = -Math.sin(altitude);
+    // The direction the device screen is facing (normal to screen, pointing away from user)
+    // is the third column of the rotation matrix: [m13, m23, m33]
+    // But we want where the device is "looking" (out the back of the phone, or top when tilted)
+    // For a camera app / AR view, we want the -Z axis of the device in world coordinates
+    // That's: [-m13, -m23, -m33] but we need to account for holding phone vertically
+
+    // When holding phone vertically to look at sky:
+    // - The "look direction" is the device's -Y axis (top of phone points where you look)
+    // - In device frame, that's [0, -1, 0]
+    // - Transform to world: x = m12*(-1) = cB*sA, y = m22*(-1) = -cA*cB, z = m32*(-1) = -sB
+
+    // Actually for AR/sky viewing, the camera looks out the back of the device
+    // When screen faces you, you look through the device at the sky behind it
+    // The look direction is device +Z transformed to world: [m13, m23, m33]
+
+    // For Stellarium's coordinate system (azimuthal):
+    // x = East, y = North, z = Up
+    // Device orientation: alpha=0 means North, increases clockwise
+
+    // The device's pointing direction (out the back, through screen toward user's view)
+    // needs to be rotated -90° around X to convert from "screen up" to "screen facing user"
+    // This is equivalent to swapping Y and Z with sign change
+
+    // Final direction vector for Stellarium (where phone is pointing):
+    // Using the Y-axis of device (top of phone) as look direction when held vertically
+    var x = -m12;  // East component
+    var y = -m22;  // North component
+    var z = -m32;  // Up component
 
     try {
       stel.core.lookat([x, y, z], 0);
