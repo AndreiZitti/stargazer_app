@@ -1116,31 +1116,39 @@
 
     if (alpha === null || beta === null) return;
 
-    // Update debug display - raw values
+    // Update debug display - raw values from device
     if (dbgAlpha) dbgAlpha.textContent = alpha.toFixed(1);
     if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
     if (dbgGamma) dbgGamma.textContent = (gamma || 0).toFixed(1);
 
-    // Based on actual device testing:
-    // - alpha=0 points EAST (not North), so we need to add 90° to get North=0
-    // - beta=90 is vertical, beta=0 is flat screen-up, beta<0 or >90 is tilted back
-    // - When pointing DOWN, we were getting z=1, so altitude is inverted
+    // === W3C DeviceOrientation Specification ===
+    // alpha: rotation around Z axis, 0-360°. Per W3C: "alpha is in the opposite
+    //        sense to a compass heading" so compass = (360 - alpha)
+    // beta:  rotation around X axis, -180 to 180°. 0=flat, 90=vertical screen facing user
+    // gamma: rotation around Y axis, -90 to 90°. Left/right tilt
+    //
+    // === Stellarium lookat vector ===
+    // From code analysis: azalt is [x, y, z] where:
+    //   azimuth = atan2(x, y)  → so x=sin(az), y=cos(az), meaning y points North at az=0
+    //   altitude = asin(z)    → z=sin(alt), so z>0 is up, z<0 is down
+    //
+    // === Conversion ===
+    // Compass heading (North=0, East=90): compassHeading = (360 - alpha) % 360
+    // For Stellarium azimuth (North=0, clockwise): azimuth = compassHeading
 
-    // Correct azimuth: shift by 90° so that alpha=0 (East) becomes az=90°
-    // In astronomy: az=0 is North, az=90 is East, az=180 is South, az=270 is West
-    var azimuthDeg = (alpha + 90) % 360;
+    var compassHeading = (360 - alpha) % 360;  // W3C spec: compass = 360 - alpha
+    var azimuthDeg = compassHeading;
 
-    // Correct altitude:
-    // beta=90 (vertical) should be horizon (alt=0)
-    // beta=0 (flat, screen up) should be zenith (alt=+90)
-    // beta=180 (flat, screen down) should be nadir (alt=-90)
-    // Formula: alt = 90 - beta, BUT we observed z was inverted, so negate it
-    var altitudeDeg = -(90 - beta);  // = beta - 90
+    // Altitude: when holding phone vertically (beta=90), looking at horizon (alt=0)
+    // when phone flat screen-up (beta=0), looking at zenith (alt=90)
+    // when phone tilted back past vertical (beta>90), looking above horizon
+    // Formula: alt = 90 - beta
+    var altitudeDeg = 90 - beta;
 
     // Clamp altitude to valid range
     altitudeDeg = Math.max(-90, Math.min(90, altitudeDeg));
 
-    // Update debug display
+    // Update debug display - computed values
     if (dbgAz) dbgAz.textContent = azimuthDeg.toFixed(1);
     if (dbgAlt) dbgAlt.textContent = altitudeDeg.toFixed(1);
 
@@ -1149,7 +1157,8 @@
     var altitude = altitudeDeg * (Math.PI / 180);
 
     // Convert to Stellarium lookat vector:
-    // x = East, y = North, z = Up
+    // Based on Stellarium code: az = atan2(x, y), alt = asin(z)
+    // Therefore: x = sin(az)*cos(alt), y = cos(az)*cos(alt), z = sin(alt)
     var x = Math.sin(azimuth) * Math.cos(altitude);
     var y = Math.cos(azimuth) * Math.cos(altitude);
     var z = Math.sin(altitude);
