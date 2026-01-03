@@ -61,13 +61,11 @@ export async function GET(request: NextRequest) {
     })
   );
 
-  // Filter: must have road access
+  // Prefer spots with road access, but fall back to all spots if none found
   let filteredSpots = spotsWithAccess.filter((spot) => spot.hasRoadAccess);
 
-  // If no car, we'd need additional filtering for public transit
-  // For now, just use all accessible spots (future enhancement)
-  if (!hasCar && filteredSpots.length === 0) {
-    // Fall back to any spots if no car-accessible ones found
+  // If no spots have road access, show all candidates anyway (they'll be marked as remote)
+  if (filteredSpots.length === 0) {
     filteredSpots = spotsWithAccess;
   }
 

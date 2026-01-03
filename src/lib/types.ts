@@ -83,11 +83,12 @@ export interface SpotsResponseV2 {
 // User profile types
 export interface SavedPlace {
   id: string;
-  name: string;
+  name: string; // User-editable custom name
+  address?: string; // Reverse geocoded address
   lat: number;
   lng: number;
   bortle?: number;
-  label?: string;
+  label?: string; // Sky quality label (e.g., "Great for stargazing")
   savedAt: string; // ISO date
   notes?: string;
   autoLoadWeather?: boolean;

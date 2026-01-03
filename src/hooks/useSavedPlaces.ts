@@ -146,17 +146,44 @@ export function useSavedPlaces(user: User | null) {
     scheduleDebouncedSync(newPlaces); // Debounced Supabase sync
   }, [saveToLocalStorage, scheduleDebouncedSync]);
 
-  // Add a place
-  const addPlace = useCallback((place: Omit<SavedPlace, "id" | "savedAt">) => {
+  // Fetch address via reverse geocoding
+  const fetchAddress = useCallback(async (lat: number, lng: number): Promise<string | undefined> => {
+    try {
+      const res = await fetch(`/api/geocode?reverse=true&lat=${lat}&lng=${lng}`);
+      if (!res.ok) return undefined;
+      const data = await res.json();
+      return data.displayName || undefined;
+    } catch {
+      return undefined;
+    }
+  }, []);
+
+  // Add a place (fetches address automatically if not provided)
+  const addPlace = useCallback(async (place: Omit<SavedPlace, "id" | "savedAt">): Promise<SavedPlace> => {
+    // Fetch address if not provided
+    let address = place.address;
+    if (!address) {
+      address = await fetchAddress(place.lat, place.lng);
+    }
+
+    // Generate a default name from address if name looks like a label
+    let name = place.name;
+    if (address && (name.includes("/10") || name.includes("Sky") || name.includes("Bortle"))) {
+      // Name looks auto-generated, use address instead
+      name = address.split(",")[0] || address; // Use first part of address
+    }
+
     const newPlace: SavedPlace = {
       ...place,
+      name,
+      address,
       id: crypto.randomUUID(),
       savedAt: new Date().toISOString(),
     };
     const newPlaces = [newPlace, ...places];
     updatePlaces(newPlaces);
     return newPlace;
-  }, [places, updatePlaces]);
+  }, [places, updatePlaces, fetchAddress]);
 
   // Remove a place
   const removePlace = useCallback((id: string) => {

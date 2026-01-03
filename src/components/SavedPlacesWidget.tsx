@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useUser } from "@/contexts/UserContext";
 import { SavedPlace } from "@/lib/types";
 
@@ -35,9 +35,38 @@ function getCloudColor(cloudPercent: number | undefined): string {
 }
 
 export default function SavedPlacesWidget({ onPlaceClick, userLocation }: SavedPlacesWidgetProps) {
-  const { savedPlaces, isLoading, getWeather, fetchWeather, updateSavedPlace } = useUser();
+  const { savedPlaces, isLoading, getWeather, fetchWeather, updateSavedPlace, removeSavedPlace } = useUser();
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAllModal, setShowAllModal] = useState(false);
+  const [editingPlaceId, setEditingPlaceId] = useState<string | null>(null);
+  const [editName, setEditName] = useState("");
+  const editInputRef = useRef<HTMLInputElement>(null);
+
+  // Focus input when editing starts
+  useEffect(() => {
+    if (editingPlaceId && editInputRef.current) {
+      editInputRef.current.focus();
+      editInputRef.current.select();
+    }
+  }, [editingPlaceId]);
+
+  const startEditing = (place: SavedPlace, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingPlaceId(place.id);
+    setEditName(place.name);
+  };
+
+  const saveEdit = (placeId: string) => {
+    if (editName.trim()) {
+      updateSavedPlace(placeId, { name: editName.trim() });
+    }
+    setEditingPlaceId(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingPlaceId(null);
+    setEditName("");
+  };
 
   // Fetch weather for places with autoLoadWeather
   useEffect(() => {
@@ -118,29 +147,64 @@ export default function SavedPlacesWidget({ onPlaceClick, userLocation }: SavedP
                 const distance = userLocation
                   ? getDistance(userLocation.lat, userLocation.lng, place.lat, place.lng)
                   : null;
+                const isEditing = editingPlaceId === place.id;
 
                 return (
                   <div key={place.id} className="px-3 py-2.5 hover:bg-foreground/5 transition-colors">
-                    <button
-                      onClick={() => handlePlaceClick(place)}
-                      className="w-full text-left"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <svg className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-                          </svg>
-                          <span className="text-sm font-medium truncate">{place.name}</span>
-                        </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <svg className="w-3.5 h-3.5 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                        {isEditing ? (
+                          <input
+                            ref={editInputRef}
+                            type="text"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            onBlur={() => saveEdit(place.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") saveEdit(place.id);
+                              if (e.key === "Escape") cancelEdit();
+                            }}
+                            className="text-sm font-medium bg-foreground/10 border border-accent/50 rounded px-1.5 py-0.5 w-full outline-none"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => handlePlaceClick(place)}
+                            className="text-sm font-medium truncate text-left hover:text-accent transition-colors"
+                          >
+                            {place.name}
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1.5 flex-shrink-0">
+                        {!isEditing && (
+                          <button
+                            onClick={(e) => startEditing(place, e)}
+                            className="p-1 text-foreground/30 hover:text-foreground/60 transition-colors"
+                            title="Edit name"
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </button>
+                        )}
                         {cloud !== undefined && (
                           <span className={`text-sm font-medium ${getCloudColor(cloud)}`}>
                             {cloud}%
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-0.5 text-xs text-foreground/50">
-                        <span>{place.label || `Bortle ${place.bortle}`}</span>
-                        {distance !== null && <span>· {distance}km</span>}
+                    </div>
+                    <button
+                      onClick={() => handlePlaceClick(place)}
+                      className="w-full text-left"
+                    >
+                      <div className="flex items-center gap-2 mt-0.5 text-xs text-foreground/50 ml-5">
+                        <span className="truncate">{place.address || place.label || `Bortle ${place.bortle}`}</span>
+                        {distance !== null && <span className="flex-shrink-0">· {distance}km</span>}
                       </div>
                     </button>
                     {/* Auto-load toggle */}
@@ -219,32 +283,81 @@ export default function SavedPlacesWidget({ onPlaceClick, userLocation }: SavedP
                 const distance = userLocation
                   ? getDistance(userLocation.lat, userLocation.lng, place.lat, place.lng)
                   : null;
+                const isEditing = editingPlaceId === place.id;
 
                 return (
                   <div
                     key={place.id}
                     className="px-4 py-3 hover:bg-foreground/5 transition-colors"
                   >
-                    <button
-                      onClick={() => handlePlaceClick(place)}
-                      className="w-full text-left"
-                    >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2 min-w-0">
-                          <svg className="w-4 h-4 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <svg className="w-4 h-4 text-yellow-400 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                        </svg>
+                        {isEditing ? (
+                          <input
+                            ref={editInputRef}
+                            type="text"
+                            value={editName}
+                            onChange={(e) => setEditName(e.target.value)}
+                            onBlur={() => saveEdit(place.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") saveEdit(place.id);
+                              if (e.key === "Escape") cancelEdit();
+                            }}
+                            className="font-medium bg-foreground/10 border border-accent/50 rounded px-2 py-1 w-full outline-none"
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        ) : (
+                          <button
+                            onClick={() => handlePlaceClick(place)}
+                            className="font-medium truncate text-left hover:text-accent transition-colors"
+                          >
+                            {place.name}
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        {!isEditing && (
+                          <button
+                            onClick={(e) => startEditing(place, e)}
+                            className="p-1.5 text-foreground/30 hover:text-foreground/60 transition-colors"
+                            title="Edit name"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                          </button>
+                        )}
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm("Remove this saved place?")) {
+                              removeSavedPlace(place.id);
+                            }
+                          }}
+                          className="p-1.5 text-foreground/30 hover:text-red-400 transition-colors"
+                          title="Remove"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
-                          <span className="font-medium truncate">{place.name}</span>
-                        </div>
+                        </button>
                         {cloud !== undefined && (
                           <span className={`font-medium ${getCloudColor(cloud)}`}>
                             {cloud}%
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 mt-1 text-sm text-foreground/50">
-                        <span>{place.label || `Bortle ${place.bortle}`}</span>
-                        {distance !== null && <span>· {distance}km</span>}
+                    </div>
+                    <button
+                      onClick={() => handlePlaceClick(place)}
+                      className="w-full text-left"
+                    >
+                      <div className="flex items-center gap-2 mt-1 text-sm text-foreground/50 ml-6">
+                        <span className="truncate">{place.address || place.label || `Bortle ${place.bortle}`}</span>
+                        {distance !== null && <span className="flex-shrink-0">· {distance}km</span>}
                       </div>
                     </button>
                     {/* Auto-load toggle */}

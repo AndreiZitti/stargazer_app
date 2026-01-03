@@ -97,6 +97,7 @@ export default function Home() {
   const [searchResults, setSearchResults] = useState<SpotSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchRadius, setSearchRadius] = useState<number>(40); // km
+  const [hasSearched, setHasSearched] = useState(false); // Track if a search was performed
 
   
   // Check if user has completed onboarding
@@ -208,6 +209,7 @@ export default function Home() {
 
     setSearchRadius(maxDistanceKm);
     setIsSearching(true);
+    setHasSearched(true);
     try {
       const response = await fetch(
         `/api/find-spots?lat=${searchOrigin.lat}&lng=${searchOrigin.lng}&maxDistance=${maxDistanceKm}&hasCar=${hasCar}`
@@ -220,6 +222,7 @@ export default function Home() {
       setMapZoom(9);
     } catch (err) {
       console.error("Failed to search for spots:", err);
+      setSearchResults([]);
     } finally {
       setIsSearching(false);
     }
@@ -311,14 +314,17 @@ export default function Home() {
       )}
 
       {/* Search Results Panel */}
-      {(isSearching || searchResults.length > 0) && (
+      {(isSearching || (hasSearched && searchResults.length >= 0)) && (
         <div className="absolute top-16 right-4 z-[1000] w-80">
           <div className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg shadow-lg overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-card-border">
               <h3 className="font-medium text-sm">Best Stargazing Spots</h3>
               {!isSearching && (
                 <button
-                  onClick={() => setSearchResults([])}
+                  onClick={() => {
+                    setSearchResults([]);
+                    setHasSearched(false);
+                  }}
                   className="text-foreground/60 hover:text-foreground"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -337,8 +343,14 @@ export default function Home() {
                 <span className="text-sm text-foreground/60">Searching for dark skies...</span>
               </div>
             ) : searchResults.length === 0 ? (
-              <div className="p-6 text-center text-foreground/60 text-sm">
-                No spots found in this area
+              <div className="p-6 text-center">
+                <div className="text-foreground/40 mb-2">
+                  <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div className="text-sm font-medium text-foreground/70 mb-1">No accessible spots found</div>
+                <div className="text-xs text-foreground/50">Try increasing the search distance or exploring a different area</div>
               </div>
             ) : (
               <div className="divide-y divide-card-border">
@@ -396,31 +408,6 @@ export default function Home() {
       <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[1000] flex flex-col items-center gap-2">
         <div className="flex items-center gap-2">
           <MapSearchBar onSearch={handleSearch} isLoading={false} />
-          {searchLocation && !showSpots && (
-            <button
-              data-tutorial="find-spots"
-              onClick={() => handleFindSpots(searchLocation)}
-              disabled={isLoadingSpots}
-              className="bg-accent hover:bg-accent-hover disabled:opacity-50 text-white font-medium rounded-full px-4 py-3 shadow-lg transition-colors flex items-center gap-2"
-            >
-              {isLoadingSpots ? (
-                <>
-                  <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  <span className="text-sm">Searching...</span>
-                </>
-              ) : (
-                <>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
-                  <span className="text-sm">Find Dark Skies</span>
-                </>
-              )}
-            </button>
-          )}
         </div>
 
         {/* Layer Controls - hover to reveal */}

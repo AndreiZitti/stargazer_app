@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType, SpotSearchResult } from "@/lib/types";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
-import MapContextMenu from "./MapContextMenu";
 import CloudForecastModal from "./CloudForecastModal";
 import darkSkyPlacesData from "@/data/dark-sky-places.json";
 
@@ -134,17 +133,23 @@ function MapUpdater({ center, zoom }: { center: LatLngExpression; zoom: number }
   return null;
 }
 
-// Component to handle right-click events - returns screen coordinates for context menu
-function RightClickHandler({
+// Component to handle map click events
+function MapClickHandler({
   onRightClick,
+  onMapClick,
 }: {
-  onRightClick: (coords: Coordinates, screenX: number, screenY: number) => void;
+  onRightClick: (coords: Coordinates) => void;
+  onMapClick: () => void;
 }) {
   useMapEvents({
     contextmenu: (e) => {
       e.originalEvent.preventDefault();
       const coords = { lat: e.latlng.lat, lng: e.latlng.lng };
-      onRightClick(coords, e.originalEvent.clientX, e.originalEvent.clientY);
+      onRightClick(coords);
+    },
+    click: () => {
+      // Close popup on map click (but keep the pin)
+      onMapClick();
     },
   });
 
@@ -306,11 +311,7 @@ export default function LightPollutionMap({
   searchRadius = 40,
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
-  const [contextMenu, setContextMenu] = useState<{
-    x: number;
-    y: number;
-    coords: Coordinates;
-  } | null>(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
   const { savedPlaces, addSavedPlace, removeSavedPlace, isPlaceSaved, findSavedPlace } = useUser();
   const [cloudForecast, setCloudForecast] = useState<{
     lat: number;
@@ -343,10 +344,25 @@ export default function LightPollutionMap({
     >
       <ZoomControl position="bottomright" />
       <MapUpdater center={center} zoom={zoom} />
-      <RightClickHandler
-        onRightClick={(coords, screenX, screenY) => {
-          setContextMenu({ x: screenX, y: screenY, coords });
-          setContextSpot(null);
+      <MapClickHandler
+        onRightClick={async (coords) => {
+          // Immediately drop pin and start loading spot info
+          setContextSpot({ ...coords, loading: true });
+          setIsPopupOpen(true);
+
+          // Fetch spot info in background
+          if (onRightClick) {
+            const result = await onRightClick(coords);
+            if (result) {
+              setContextSpot(result);
+            } else {
+              setContextSpot({ ...coords, loading: false });
+            }
+          }
+        }}
+        onMapClick={() => {
+          // Close popup but keep the pin
+          setIsPopupOpen(false);
         }}
       />
 
@@ -442,20 +458,55 @@ export default function LightPollutionMap({
           eventHandlers={{
             add: (e) => {
               // Open popup immediately when marker is added (shows loading state)
+              if (isPopupOpen) {
+                e.target.openPopup();
+              }
+            },
+            click: (e) => {
+              // Re-open popup when clicking on the pin
+              setIsPopupOpen(true);
               e.target.openPopup();
             },
-            popupclose: () => setContextSpot(null),
+            popupclose: () => {
+              setIsPopupOpen(false);
+            },
           }}
         >
           <Popup>
             <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
               {contextSpot.loading ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)' }}>
-                  <svg style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
-                    <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                  </svg>
-                  Loading spot info...
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)', marginBottom: '12px' }}>
+                    <svg style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
+                      <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                    </svg>
+                    Loading spot info...
+                  </div>
+                  {/* Find dark spots button - available while loading */}
+                  <button
+                    onClick={() => onFindSpots?.({ lat: contextSpot.lat, lng: contextSpot.lng })}
+                    style={{
+                      width: '100%',
+                      padding: '10px 12px',
+                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '13px',
+                      fontWeight: '500',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px'
+                    }}
+                  >
+                    <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    Find dark spots nearby
+                  </button>
                 </div>
               ) : (
                 <>
@@ -575,6 +626,32 @@ export default function LightPollutionMap({
                         </svg>
                       </button>
                     </div>
+
+                    {/* Find dark spots nearby button */}
+                    <button
+                      onClick={() => onFindSpots?.({ lat: contextSpot.lat, lng: contextSpot.lng })}
+                      style={{
+                        width: '100%',
+                        marginTop: '12px',
+                        padding: '10px 12px',
+                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        fontSize: '13px',
+                        fontWeight: '500',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px'
+                      }}
+                    >
+                      <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      Find dark spots nearby
+                    </button>
                   </>
                 )}
               </div>
@@ -1034,31 +1111,6 @@ export default function LightPollutionMap({
         </Marker>
       ))}
     </MapContainer>
-
-    {/* Context Menu */}
-    {contextMenu && (
-      <MapContextMenu
-        x={contextMenu.x}
-        y={contextMenu.y}
-        onCheckSpot={async () => {
-          if (onRightClick) {
-            setContextSpot({ ...contextMenu.coords, loading: true });
-            const result = await onRightClick(contextMenu.coords);
-            if (result) {
-              setContextSpot(result);
-            } else {
-              setContextSpot({ ...contextMenu.coords, loading: false });
-            }
-          }
-          setContextMenu(null);
-        }}
-        onFindSpots={() => {
-          onFindSpots?.(contextMenu.coords);
-          setContextMenu(null);
-        }}
-        onClose={() => setContextMenu(null)}
-      />
-    )}
 
     {/* Cloud Forecast Modal */}
     {cloudForecast && (

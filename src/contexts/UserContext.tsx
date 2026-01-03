@@ -24,7 +24,7 @@ interface UserContextType {
   // Saved places (localStorage + Supabase sync)
   savedPlaces: SavedPlace[];
   isLoading: boolean;
-  addSavedPlace: (place: Omit<SavedPlace, "id" | "savedAt">) => void;
+  addSavedPlace: (place: Omit<SavedPlace, "id" | "savedAt">) => Promise<SavedPlace>;
   removeSavedPlace: (id: string) => void;
   updateSavedPlace: (id: string, updates: Partial<SavedPlace>) => void;
   isPlaceSaved: (lat: number, lng: number) => boolean;
