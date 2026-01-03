@@ -1,1 +1,139 @@
-<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Sky Lab - Stargazer</title><meta name=description content="Interactive sky viewer for stargazing."><link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" rel=stylesheet type=text/css><link rel=icon type=image/x-icon href=/sky-lab/static/favicon.ico><link href=/sky-lab/static/css/app.2cc6d43db3447e7c38ea7dfe7006ca91.css rel=stylesheet></head><body><div id=app></div><script type=text/javascript src=/sky-lab/static/js/manifest.c7a1f17f07cae11d7ca9.js></script><script type=text/javascript src=/sky-lab/static/js/vendor.a46a2ffdde3ffbf8a523.js></script><script type=text/javascript src=/sky-lab/static/js/app.fb125edd2ee78de40729.js></script></body></html>
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Sky Lab - Stargazer</title><meta name=description content="Interactive sky viewer for stargazing."><link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" rel=stylesheet type=text/css><link rel=icon type=image/x-icon href=/sky-lab/static/favicon.ico><link href=/sky-lab/static/css/app.2cc6d43db3447e7c38ea7dfe7006ca91.css rel=stylesheet></head><body><div id=app></div>
+<script>
+// Error handling to prevent flickering from ephemeris loading errors
+(function() {
+  var errorShown = false;
+  var suppressPatterns = ['Unknown chunk type', 'eph_load', 'abort(', 'eph-file.c'];
+  // Block .eph file requests that cause parsing errors
+  var blockUrlPatterns = ['.eph', 'gaia_dr2'];
+
+  function shouldSuppress(msg) {
+    if (typeof msg !== 'string') msg = String(msg);
+    for (var i = 0; i < suppressPatterns.length; i++) {
+      if (msg.indexOf(suppressPatterns[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function shouldBlockUrl(url) {
+    if (typeof url !== 'string') return false;
+    for (var i = 0; i < blockUrlPatterns.length; i++) {
+      if (url.indexOf(blockUrlPatterns[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function showWarningOnce() {
+    if (!errorShown) {
+      errorShown = true;
+      console.info('[Sky Lab] Extended star catalog disabled - using core rendering');
+    }
+  }
+
+  // Intercept XHR to block problematic .eph file requests
+  var OrigXHR = window.XMLHttpRequest;
+  window.XMLHttpRequest = function() {
+    var xhr = new OrigXHR();
+    var origOpen = xhr.open;
+    var origSend = xhr.send;
+    xhr._blocked = false;
+
+    xhr.open = function(method, url) {
+      if (shouldBlockUrl(url)) {
+        showWarningOnce();
+        this._blocked = true;
+        // Don't call origOpen for blocked URLs - prevent request entirely
+        return;
+      }
+      return origOpen.apply(this, arguments);
+    };
+
+    xhr.send = function() {
+      if (this._blocked) {
+        var self = this;
+        // Simulate a failed request without actually making one
+        setTimeout(function() {
+          Object.defineProperty(self, 'status', { value: 0 });
+          Object.defineProperty(self, 'readyState', { value: 4 });
+          Object.defineProperty(self, 'response', { value: null });
+          Object.defineProperty(self, 'responseText', { value: '' });
+          if (self.onreadystatechange) self.onreadystatechange();
+          if (self.onerror) self.onerror(new Error('Blocked'));
+          if (self.onloadend) self.onloadend();
+        }, 0);
+        return;
+      }
+      return origSend.apply(this, arguments);
+    };
+    return xhr;
+  };
+
+  // Intercept fetch() to block problematic .eph file requests
+  var origFetch = window.fetch;
+  window.fetch = function(url, options) {
+    var urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : String(url));
+    if (shouldBlockUrl(urlStr)) {
+      showWarningOnce();
+      // Return a rejected promise or empty response
+      return Promise.resolve(new Response(null, { status: 404, statusText: 'Blocked' }));
+    }
+    return origFetch.apply(this, arguments);
+  };
+
+  // Store original console methods
+  var origLog = console.log;
+  var origWarn = console.warn;
+  var origError = console.error;
+
+  // Override console methods to suppress ephemeris errors
+  console.log = function() {
+    var msg = Array.prototype.join.call(arguments, ' ');
+    if (shouldSuppress(msg)) { showWarningOnce(); return; }
+    origLog.apply(console, arguments);
+  };
+  console.warn = function() {
+    var msg = Array.prototype.join.call(arguments, ' ');
+    if (shouldSuppress(msg)) { showWarningOnce(); return; }
+    origWarn.apply(console, arguments);
+  };
+  console.error = function() {
+    var msg = Array.prototype.join.call(arguments, ' ');
+    if (shouldSuppress(msg)) { showWarningOnce(); return; }
+    origError.apply(console, arguments);
+  };
+
+  // Global error handler
+  window.addEventListener('error', function(e) {
+    if (e.message && shouldSuppress(e.message)) {
+      e.preventDefault();
+      showWarningOnce();
+      return true;
+    }
+  });
+
+  window.addEventListener('unhandledrejection', function(e) {
+    if (e.reason && shouldSuppress(String(e.reason))) {
+      e.preventDefault();
+      showWarningOnce();
+      return true;
+    }
+  });
+
+  // Pre-configure StelWebEngine module
+  window.StelWebEngine = {
+    print: function(text) {
+      if (shouldSuppress(text)) { showWarningOnce(); return; }
+      origLog.call(console, text);
+    },
+    printErr: function(text) {
+      if (shouldSuppress(text)) { showWarningOnce(); return; }
+      origWarn.call(console, text);
+    },
+    onAbort: function(what) {
+      showWarningOnce();
+      // Don't throw - swallow the abort
+    }
+  };
+})();
+</script>
+<script type=text/javascript src=/sky-lab/static/js/manifest.c7a1f17f07cae11d7ca9.js></script><script type=text/javascript src=/sky-lab/static/js/vendor.a46a2ffdde3ffbf8a523.js></script><script type=text/javascript src=/sky-lab/static/js/app.14b094410fbcd537a6ca.js></script></body></html>
