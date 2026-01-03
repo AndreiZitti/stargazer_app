@@ -1066,14 +1066,24 @@
     // increases clockwise but we need counter-clockwise for correct left/right mapping
     var azimuth = (360 - alpha) * (Math.PI / 180);
 
-    // Altitude: when beta = 90, phone is vertical (horizon), when beta = 0, pointing at zenith
+    // Altitude from device beta:
+    // beta = 90: phone vertical, screen facing user → looking at horizon (alt = 0)
+    // beta = 0: phone flat, screen up → looking at zenith (alt = +90)
+    // beta = 180/-180: phone flat, screen down → looking at ground (alt = -90)
+    // Formula: alt = 90 - beta maps beta=90→0, beta=0→90, beta=180→-90
+    // But we were getting inverted view, so the screen orientation is opposite
+    // The camera/screen looks opposite to where phone back points
+    // So we need: alt = beta - 90, then negate: alt = -(beta - 90) = 90 - beta...
+    // Actually the real issue: when holding phone to look at sky, screen faces you,
+    // so "up" in view should be where phone top points. Let's just negate z.
     var altitude = (90 - beta) * (Math.PI / 180);
     altitude = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, altitude));
 
     // Convert spherical to Cartesian (Stellarium coordinate system)
+    // Negate z to fix inverted up/down: when pointing phone up, show sky not ground
     var x = Math.cos(altitude) * Math.sin(azimuth);
     var y = Math.cos(altitude) * Math.cos(azimuth);
-    var z = Math.sin(altitude);
+    var z = -Math.sin(altitude);
 
     try {
       stel.core.lookat([x, y, z], 0);
