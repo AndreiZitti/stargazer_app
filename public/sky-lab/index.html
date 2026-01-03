@@ -1121,47 +1121,54 @@
     if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
     if (dbgGamma) dbgGamma.textContent = (gamma || 0).toFixed(1);
 
-    // === W3C DeviceOrientation Specification ===
-    // alpha: rotation around Z axis, 0-360°. Per W3C: "alpha is in the opposite
-    //        sense to a compass heading" so compass = (360 - alpha)
-    // beta:  rotation around X axis, -180 to 180°. 0=flat, 90=vertical screen facing user
-    // gamma: rotation around Y axis, -90 to 90°. Left/right tilt
-    //
-    // === Stellarium lookat vector ===
-    // From code analysis: azalt is [x, y, z] where:
-    //   azimuth = atan2(x, y)  → so x=sin(az), y=cos(az), meaning y points North at az=0
-    //   altitude = asin(z)    → z=sin(alt), so z>0 is up, z<0 is down
-    //
-    // === Conversion ===
-    // Compass heading (North=0, East=90): compassHeading = (360 - alpha) % 360
-    // For Stellarium azimuth (North=0, clockwise): azimuth = compassHeading
+    // === Implementation based on AstroHopper (GPL, artyom-beilis/skyhopper) ===
+    // Uses ZXY rotation matrix from W3C Device Orientation spec
+    // Forward direction is device Y-axis [0,1,0] (top of phone when held vertically)
 
-    var compassHeading = (360 - alpha) % 360;  // W3C spec: compass = 360 - alpha
-    var azimuthDeg = compassHeading;
+    var degToRad = Math.PI / 180;
+    var _x = beta ? beta * degToRad : 0;
+    var _y = gamma ? gamma * degToRad : 0;
+    var _z = alpha ? alpha * degToRad : 0;
 
-    // Altitude: when holding phone vertically (beta=90), looking at horizon (alt=0)
-    // when phone flat screen-up (beta=0), looking at zenith (alt=90)
-    // when phone tilted back past vertical (beta>90), looking above horizon
-    // Formula: alt = 90 - beta
-    var altitudeDeg = 90 - beta;
+    var cX = Math.cos(_x);
+    var cY = Math.cos(_y);
+    var cZ = Math.cos(_z);
+    var sX = Math.sin(_x);
+    var sY = Math.sin(_y);
+    var sZ = Math.sin(_z);
 
-    // Clamp altitude to valid range
-    altitudeDeg = Math.max(-90, Math.min(90, altitudeDeg));
+    // ZXY rotation matrix construction (W3C spec)
+    var m11 = cZ * cY - sZ * sX * sY;
+    var m12 = -cX * sZ;
+    var m13 = cY * sZ * sX + cZ * sY;
+    var m21 = cY * sZ + cZ * sX * sY;
+    var m22 = cZ * cX;
+    var m23 = sZ * sY - cZ * cY * sX;
+    var m31 = -cX * sY;
+    var m32 = sX;
+    var m33 = cX * cY;
+
+    // Forward direction = device Y-axis [0,1,0] transformed by rotation matrix
+    // fwd = M * [0,1,0] = [m12, m22, m32]
+    var fwd_x = m12;  // East component
+    var fwd_y = m22;  // North component
+    var fwd_z = m32;  // Up component
+
+    // Extract altitude and azimuth from forward vector
+    // (Same as AstroHopper: alt = asin(fwd[2]), az = atan2(fwd[0], fwd[1]))
+    var altitudeDeg = Math.asin(fwd_z) / Math.PI * 180;
+    var azimuthDeg = Math.atan2(fwd_x, fwd_y) / Math.PI * 180;
+    if (azimuthDeg < 0) azimuthDeg += 360;
 
     // Update debug display - computed values
     if (dbgAz) dbgAz.textContent = azimuthDeg.toFixed(1);
     if (dbgAlt) dbgAlt.textContent = altitudeDeg.toFixed(1);
 
-    // Convert to radians
-    var azimuth = azimuthDeg * (Math.PI / 180);
-    var altitude = altitudeDeg * (Math.PI / 180);
-
-    // Convert to Stellarium lookat vector:
-    // Based on Stellarium code: az = atan2(x, y), alt = asin(z)
-    // Therefore: x = sin(az)*cos(alt), y = cos(az)*cos(alt), z = sin(alt)
-    var x = Math.sin(azimuth) * Math.cos(altitude);
-    var y = Math.cos(azimuth) * Math.cos(altitude);
-    var z = Math.sin(altitude);
+    // For Stellarium lookat: use the forward vector directly
+    // Stellarium uses same convention: az = atan2(x, y), alt = asin(z)
+    var x = fwd_x;
+    var y = fwd_y;
+    var z = fwd_z;
 
     // Update debug display
     if (dbgX) dbgX.textContent = x.toFixed(3);
