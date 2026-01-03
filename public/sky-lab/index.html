@@ -4,7 +4,17 @@
 .bottom-button, .tbtcontainer, .tmenubt { display: none !important; }
 .v-navigation-drawer--right { display: none !important; }
 #stel-canvas { height: 100vh !important; }
-.v-toolbar { display: none !important; }
+.v-toolbar, .tsearch { display: none !important; }
+.v-toolbar__content, .skysource-search, header.v-toolbar { display: none !important; }
+.v-btn--floating, .v-speed-dial { display: none !important; }
+.stel-panel, .v-menu__content { display: none !important; }
+/* Hide Vue app search but not our custom elements */
+.v-text-field, .v-input { display: none !important; }
+#app .toolbar, #app [class*="search"] { display: none !important; }
+/* Hide ALL original info panels, cards, dialogs */
+.v-card, .v-dialog, .v-sheet:not(.stel) { display: none !important; }
+.v-overlay, .v-bottom-sheet { display: none !important; }
+.selection-info, .object-info, .info-panel { display: none !important; }
 
 /* ========== MINIMAL TOOLBAR ========== */
 #skylab-toolbar {
@@ -279,6 +289,77 @@
   border-color: rgba(100,149,237,0.6);
   background: rgba(255,255,255,0.18);
 }
+
+/* Search suggestions */
+#search-suggestions {
+  margin-top: 8px;
+  max-height: 50vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  background: rgba(15,15,25,0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.search-suggestion {
+  padding: 14px 18px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.15s;
+}
+
+.search-suggestion:last-child {
+  border-bottom: none;
+}
+
+.search-suggestion:hover, .search-suggestion:active {
+  background: rgba(255,255,255,0.1);
+}
+
+.suggestion-name {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.suggestion-type {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 2px;
+}
+
+#search-loading {
+  padding: 14px 18px;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Compass toast */
+#compass-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15,15,25,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  z-index: 10001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  max-width: 80%;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+#compass-toast.visible {
+  opacity: 1;
+}
 </style>
 </head><body><div id=app></div>
 
@@ -354,8 +435,12 @@
 
 <!-- Search Overlay -->
 <div id="skylab-search" class="search-hidden">
-  <input type="text" id="search-input" placeholder="Search stars, planets, nebulae...">
+  <input type="text" id="search-input" placeholder="Search stars, planets, nebulae..." autocomplete="off">
+  <div id="search-suggestions"></div>
 </div>
+
+<!-- Compass Toast -->
+<div id="compass-toast"></div>
 <script>
 // Error handling to prevent flickering from ephemeris loading errors
 (function() {
@@ -478,6 +563,7 @@
 
   // Pre-configure StelWebEngine module
   window.StelWebEngine = {
+    wasmFile: '/sky-lab/static/js/stellarium-web-engine.wasm',
     print: function(text) {
       if (shouldSuppress(text)) { showWarningOnce(); return; }
       origLog.call(console, text);
@@ -499,372 +585,656 @@
 (function() {
   'use strict';
 
-  // Wait for Stellarium to initialize
-  function waitForStel(callback, maxWait) {
-    maxWait = maxWait || 10000;
-    var startTime = Date.now();
-    var checkInterval = setInterval(function() {
-      if (window.$stel && window.$stel.core) {
-        clearInterval(checkInterval);
-        callback();
-      } else if (Date.now() - startTime > maxWait) {
-        clearInterval(checkInterval);
-        console.warn('[Sky Lab] Stellarium not found after timeout');
+  console.log('[Sky Lab] Minimal UI script loaded');
+
+  // ========== DOM ELEMENTS ==========
+  var btnSearch = document.getElementById('btn-search');
+  var btnConstellations = document.getElementById('btn-constellations');
+  var btnCompass = document.getElementById('btn-compass');
+  var btnSettings = document.getElementById('btn-settings');
+  var settingsPanel = document.getElementById('skylab-settings');
+  var btnCloseSettings = document.getElementById('btn-close-settings');
+  var searchOverlay = document.getElementById('skylab-search');
+  var searchInput = document.getElementById('search-input');
+  var searchSuggestions = document.getElementById('search-suggestions');
+  var compassToast = document.getElementById('compass-toast');
+
+  // Toggles
+  var toggleAtmosphere = document.getElementById('toggle-atmosphere');
+  var toggleLandscape = document.getElementById('toggle-landscape');
+  var toggleDsos = document.getElementById('toggle-dsos');
+  var toggleAzimuthal = document.getElementById('toggle-azimuthal');
+  var toggleEquatorial = document.getElementById('toggle-equatorial');
+
+  // Date/Time/Location
+  var inputDate = document.getElementById('input-date');
+  var inputTime = document.getElementById('input-time');
+  var locationDisplay = document.getElementById('location-display');
+
+  // Info card
+  var infoCard = document.getElementById('skylab-info-card');
+  var cardName = document.getElementById('card-name');
+  var cardType = document.getElementById('card-type');
+  var cardMag = document.getElementById('card-mag');
+  var cardPos = document.getElementById('card-pos');
+
+  // Stellarium reference (will be set when available)
+  var stel = null;
+
+  // ========== SETTINGS PANEL (works immediately) ==========
+  btnSettings.addEventListener('click', function() {
+    console.log('[Sky Lab] Settings clicked');
+    var isHidden = settingsPanel.classList.contains('panel-hidden');
+    if (isHidden) {
+      settingsPanel.classList.remove('panel-hidden');
+      if (stel) {
+        syncToggles();
+        syncDateTime();
+        updateLocationDisplay();
       }
-    }, 100);
+    } else {
+      settingsPanel.classList.add('panel-hidden');
+    }
+  });
+
+  btnCloseSettings.addEventListener('click', function() {
+    settingsPanel.classList.add('panel-hidden');
+  });
+
+  // ========== SEARCH WITH SUGGESTIONS ==========
+  var searchDebounce = null;
+  var currentSearchResults = [];
+
+  btnSearch.addEventListener('click', function() {
+    console.log('[Sky Lab] Search clicked');
+    var isHidden = searchOverlay.classList.contains('search-hidden');
+    if (isHidden) {
+      searchOverlay.classList.remove('search-hidden');
+      searchInput.focus();
+      searchInput.value = '';
+      searchSuggestions.innerHTML = '';
+    } else {
+      searchOverlay.classList.add('search-hidden');
+      searchInput.blur();
+    }
+  });
+
+  function searchSkySources(query) {
+    if (!query || query.length < 2) {
+      searchSuggestions.innerHTML = '';
+      return;
+    }
+
+    searchSuggestions.innerHTML = '<div id="search-loading">Searching...</div>';
+
+    fetch('/api/skysources?q=' + encodeURIComponent(query))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        currentSearchResults = data || [];
+        renderSuggestions();
+      })
+      .catch(function(err) {
+        console.warn('[Sky Lab] Search error:', err);
+        searchSuggestions.innerHTML = '<div id="search-loading">Search unavailable</div>';
+      });
   }
 
-  waitForStel(function() {
-    var stel = window.$stel;
-    console.log('[Sky Lab] Minimal UI initializing...');
+  function renderSuggestions() {
+    if (!currentSearchResults.length) {
+      searchSuggestions.innerHTML = '<div id="search-loading">No results found</div>';
+      return;
+    }
 
-    // ========== DOM ELEMENTS ==========
-    var btnSearch = document.getElementById('btn-search');
-    var btnConstellations = document.getElementById('btn-constellations');
-    var btnCompass = document.getElementById('btn-compass');
-    var btnSettings = document.getElementById('btn-settings');
-    var settingsPanel = document.getElementById('skylab-settings');
-    var btnCloseSettings = document.getElementById('btn-close-settings');
-    var searchOverlay = document.getElementById('skylab-search');
-    var searchInput = document.getElementById('search-input');
+    var html = currentSearchResults.slice(0, 10).map(function(item, i) {
+      var name = item.match || item.short_name || item.names_i18n?.[0] || 'Unknown';
+      var type = item.types?.[0] || '';
+      return '<div class="search-suggestion" data-index="' + i + '">' +
+        '<div class="suggestion-name">' + escapeHtml(name) + '</div>' +
+        (type ? '<div class="suggestion-type">' + escapeHtml(type) + '</div>' : '') +
+        '</div>';
+    }).join('');
 
-    // Toggles
-    var toggleAtmosphere = document.getElementById('toggle-atmosphere');
-    var toggleLandscape = document.getElementById('toggle-landscape');
-    var toggleDsos = document.getElementById('toggle-dsos');
-    var toggleAzimuthal = document.getElementById('toggle-azimuthal');
-    var toggleEquatorial = document.getElementById('toggle-equatorial');
+    searchSuggestions.innerHTML = html;
 
-    // Date/Time/Location
-    var inputDate = document.getElementById('input-date');
-    var inputTime = document.getElementById('input-time');
-    var locationDisplay = document.getElementById('location-display');
+    // Add click handlers
+    searchSuggestions.querySelectorAll('.search-suggestion').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var index = parseInt(this.getAttribute('data-index'));
+        selectSearchResult(currentSearchResults[index]);
+      });
+    });
+  }
 
-    // Info card
-    var infoCard = document.getElementById('skylab-info-card');
-    var cardName = document.getElementById('card-name');
-    var cardType = document.getElementById('card-type');
-    var cardMag = document.getElementById('card-mag');
-    var cardPos = document.getElementById('card-pos');
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
 
-    // ========== SYNC INITIAL STATES ==========
-    function syncToggles() {
+  function selectSearchResult(item) {
+    if (!stel || !item) return;
+
+    console.log('[Sky Lab] Selected:', item);
+
+    try {
+      var obj = null;
+
+      // Build list of names to try (in order of priority)
+      var namesToTry = [];
+
+      // Add match name and variations
+      if (item.match) {
+        namesToTry.push(item.match);
+        // Try without extra spaces (M  42 -> M42)
+        namesToTry.push(item.match.replace(/\s+/g, ''));
+        // Try with single space (M  42 -> M 42)
+        namesToTry.push(item.match.replace(/\s+/g, ' '));
+      }
+
+      // Add all aliases from API
+      if (item.names_i18n) {
+        item.names_i18n.forEach(function(name) {
+          namesToTry.push(name);
+          // Also try compact version
+          namesToTry.push(name.replace(/\s+/g, ''));
+        });
+      }
+
+      // Add common catalog prefixes
+      if (item.match) {
+        var match = item.match.replace(/\s+/g, '');
+        // Try with NAME prefix
+        namesToTry.push('NAME ' + item.match);
+        // For Messier objects
+        if (/^M\d+$/i.test(match)) {
+          namesToTry.push(match.toUpperCase());
+          namesToTry.push('M ' + match.slice(1));
+        }
+        // For NGC objects
+        if (/^NGC\d+$/i.test(match)) {
+          namesToTry.push(match.toUpperCase());
+          namesToTry.push('NGC ' + match.slice(3));
+        }
+      }
+
+      // Try each name until we find a match
+      for (var i = 0; i < namesToTry.length && !obj; i++) {
+        var name = namesToTry[i];
+        if (!name) continue;
+        try {
+          obj = stel.getObj(name);
+          if (obj) {
+            console.log('[Sky Lab] Found via:', name);
+          }
+        } catch (e) {}
+      }
+
+      // If still not found and we have coordinates, try looking up by position
+      if (!obj && item.ra && item.dec && item.ra !== 0) {
+        console.log('[Sky Lab] Object not in catalog, navigating to coordinates:', item.ra, item.dec);
+        // Convert RA/Dec to radians and create direction vector
+        var ra = item.ra * Math.PI / 180;
+        var dec = item.dec * Math.PI / 180;
+        var x = Math.cos(dec) * Math.cos(ra);
+        var y = Math.cos(dec) * Math.sin(ra);
+        var z = Math.sin(dec);
+        // Look at the coordinates (use ICRS frame)
+        stel.core.lookat([x, y, z], 1);
+        searchOverlay.classList.add('search-hidden');
+        searchInput.blur();
+        return;
+      }
+
+      if (obj) {
+        // Set selection and lock (from original app pattern)
+        stel.core.selection = obj;
+        stel.core.lock = obj;
+        obj.update();
+        stel.core.lookat(obj.azalt, 1);
+        console.log('[Sky Lab] Locked to object');
+      } else {
+        console.warn('[Sky Lab] Could not find object in Stellarium catalog');
+      }
+    } catch (e) {
+      console.warn('[Sky Lab] Selection error:', e);
+    }
+
+    searchOverlay.classList.add('search-hidden');
+    searchInput.blur();
+  }
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchDebounce);
+    var query = this.value.trim();
+    searchDebounce = setTimeout(function() {
+      searchSkySources(query);
+    }, 250);
+  });
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentSearchResults.length > 0) {
+        selectSearchResult(currentSearchResults[0]);
+      }
+    } else if (e.key === 'Escape') {
+      searchOverlay.classList.add('search-hidden');
+    }
+  });
+
+  // Close search when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!searchOverlay.contains(e.target) && e.target !== btnSearch && !btnSearch.contains(e.target)) {
+      searchOverlay.classList.add('search-hidden');
+    }
+  });
+
+  // ========== CONSTELLATIONS TOGGLE ==========
+  var constellationsVisible = false;
+
+  function toggleConstellations() {
+    if (!stel || !stel.core) {
+      console.warn('[Sky Lab] Stellarium not ready for constellations toggle');
+      btnConstellations.classList.toggle('active');
+      return;
+    }
+
+    constellationsVisible = !constellationsVisible;
+    console.log('[Sky Lab] Setting constellations to:', constellationsVisible);
+
+    // The correct API path from the original app is: stel.core.constellations.lines.visible
+    try {
+      stel.core.constellations.lines.visible = constellationsVisible;
+      console.log('[Sky Lab] Constellations set successfully');
+    } catch (e) {
+      console.error('[Sky Lab] Constellation toggle failed:', e);
+      // Debug what's available
+      console.log('[Sky Lab] stel.core.constellations:', stel.core.constellations);
+      if (stel.core.constellations) {
+        console.log('[Sky Lab] constellations.lines:', stel.core.constellations.lines);
+      }
+    }
+
+    btnConstellations.classList.toggle('active', constellationsVisible);
+  }
+
+  btnConstellations.addEventListener('click', function() {
+    console.log('[Sky Lab] Constellations clicked');
+    toggleConstellations();
+  });
+
+  // ========== COMPASS / AR MODE ==========
+  var compassActive = false;
+  var compassPaused = false;
+  var compassToastTimeout = null;
+
+  function showCompassToast(message, duration) {
+    duration = duration || 3000;
+    compassToast.textContent = message;
+    compassToast.classList.add('visible');
+    clearTimeout(compassToastTimeout);
+    compassToastTimeout = setTimeout(function() {
+      compassToast.classList.remove('visible');
+    }, duration);
+  }
+
+  function isSecureContext() {
+    return window.isSecureContext ||
+           window.location.protocol === 'https:' ||
+           window.location.hostname === 'localhost' ||
+           window.location.hostname === '127.0.0.1';
+  }
+
+  function hasOrientationSupport() {
+    return typeof DeviceOrientationEvent !== 'undefined';
+  }
+
+  function requestOrientationPermission() {
+    // iOS 13+ requires explicit permission
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+      return DeviceOrientationEvent.requestPermission();
+    }
+    // Other browsers grant by default
+    return Promise.resolve('granted');
+  }
+
+  function updateViewFromOrientation(event) {
+    if (!compassActive || compassPaused || !stel) return;
+
+    var alpha = event.alpha;
+    var beta = event.beta;
+
+    if (alpha === null || beta === null) return;
+
+    var azimuth = (360 - alpha) * (Math.PI / 180);
+    var altitude = (90 - Math.abs(beta)) * (Math.PI / 180);
+    if (beta < 0) altitude = -altitude;
+    altitude = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, altitude));
+
+    var x = Math.cos(altitude) * Math.sin(azimuth);
+    var y = Math.cos(altitude) * Math.cos(azimuth);
+    var z = Math.sin(altitude);
+
+    try {
+      stel.core.lookat([x, -y, z], 0);
+    } catch (e) {}
+  }
+
+  function startCompass() {
+    // Check for secure context (HTTPS)
+    if (!isSecureContext()) {
+      showCompassToast('Compass requires HTTPS. Please access via secure connection.', 4000);
+      console.warn('[Sky Lab] Compass requires secure context (HTTPS)');
+      return;
+    }
+
+    // Check for device orientation support
+    if (!hasOrientationSupport()) {
+      showCompassToast('Device orientation not supported on this device.', 3000);
+      console.warn('[Sky Lab] DeviceOrientationEvent not supported');
+      return;
+    }
+
+    requestOrientationPermission().then(function(permission) {
+      if (permission === 'granted') {
+        compassActive = true;
+        compassPaused = false;
+        btnCompass.classList.add('active');
+        btnCompass.classList.remove('compass-paused');
+        window.addEventListener('deviceorientation', updateViewFromOrientation);
+        showCompassToast('Compass mode active. Point your phone at the sky!', 2500);
+        console.log('[Sky Lab] Compass mode started');
+      } else {
+        showCompassToast('Motion sensor permission denied. Enable in device settings.', 4000);
+        console.warn('[Sky Lab] Permission denied:', permission);
+      }
+    }).catch(function(err) {
+      console.log('[Sky Lab] Permission error, trying anyway:', err);
+      // On some Android devices, no permission is needed
+      compassActive = true;
+      compassPaused = false;
+      btnCompass.classList.add('active');
+      window.addEventListener('deviceorientation', updateViewFromOrientation);
+
+      // Test if we actually get events
+      var testTimeout = setTimeout(function() {
+        if (compassActive) {
+          showCompassToast('Compass may not work on this device. Try moving your phone.', 3000);
+        }
+      }, 2000);
+
+      // Clear test timeout if we get an event
+      var testHandler = function(e) {
+        if (e.alpha !== null) {
+          clearTimeout(testTimeout);
+          showCompassToast('Compass mode active!', 2000);
+          window.removeEventListener('deviceorientation', testHandler);
+        }
+      };
+      window.addEventListener('deviceorientation', testHandler);
+    });
+  }
+
+  function stopCompass() {
+    compassActive = false;
+    compassPaused = false;
+    btnCompass.classList.remove('active');
+    btnCompass.classList.remove('compass-paused');
+    window.removeEventListener('deviceorientation', updateViewFromOrientation);
+    showCompassToast('Compass mode off', 1500);
+    console.log('[Sky Lab] Compass mode stopped');
+  }
+
+  function pauseCompass() {
+    if (compassActive && !compassPaused) {
+      compassPaused = true;
+      btnCompass.classList.add('compass-paused');
+    }
+  }
+
+  function resumeCompass() {
+    if (compassActive && compassPaused) {
+      compassPaused = false;
+      btnCompass.classList.remove('compass-paused');
+      showCompassToast('Compass resumed', 1500);
+    }
+  }
+
+  btnCompass.addEventListener('click', function() {
+    console.log('[Sky Lab] Compass clicked');
+    if (!compassActive) {
+      startCompass();
+    } else if (compassPaused) {
+      resumeCompass();
+    } else {
+      stopCompass();
+    }
+  });
+
+  // ========== SYNC FUNCTIONS (need stel) ==========
+  function syncToggles() {
+    if (!stel || !stel.core) return;
+    try {
       if (stel.core.atmosphere) toggleAtmosphere.checked = stel.core.atmosphere.visible;
       if (stel.core.landscape) toggleLandscape.checked = stel.core.landscape.visible;
       if (stel.core.dsos) toggleDsos.checked = stel.core.dsos.visible;
       if (stel.core.lines && stel.core.lines.azimuthal) toggleAzimuthal.checked = stel.core.lines.azimuthal.visible;
       if (stel.core.lines && stel.core.lines.equatorial) toggleEquatorial.checked = stel.core.lines.equatorial.visible;
-      if (stel.core.constellations && stel.core.constellations.lines) {
-        btnConstellations.classList.toggle('active', stel.core.constellations.lines.visible);
-      }
-    }
 
-    function syncDateTime() {
+      // Sync constellation state - same path as original app
       try {
-        var d = new Date();
-        if (stel.core.observer && typeof stel.core.observer.utc !== 'undefined') {
-          d.setMJD(stel.core.observer.utc);
-        }
-        inputDate.value = d.toISOString().split('T')[0];
-        inputTime.value = d.toTimeString().slice(0, 5);
+        constellationsVisible = stel.core.constellations.lines.visible;
+        btnConstellations.classList.toggle('active', constellationsVisible);
       } catch (e) {
-        console.warn('[Sky Lab] DateTime sync error:', e);
+        console.log('[Sky Lab] Could not sync constellation state:', e.message);
       }
-    }
+    } catch (e) { console.warn('[Sky Lab] syncToggles error:', e); }
+  }
 
-    function updateLocationDisplay() {
-      try {
-        var obs = stel.core.observer;
-        if (obs && typeof obs.latitude !== 'undefined') {
-          var lat = (obs.latitude * 180 / Math.PI).toFixed(2);
-          var lon = (obs.longitude * 180 / Math.PI).toFixed(2);
-          locationDisplay.textContent = lat + ', ' + lon;
+  function syncDateTime() {
+    if (!stel || !stel.core) return;
+    try {
+      var d = new Date();
+      if (stel.core.observer && typeof stel.core.observer.utc !== 'undefined') {
+        d.setMJD(stel.core.observer.utc);
+      }
+      inputDate.value = d.toISOString().split('T')[0];
+      inputTime.value = d.toTimeString().slice(0, 5);
+    } catch (e) { console.warn('[Sky Lab] syncDateTime error:', e); }
+  }
+
+  function updateLocationDisplay() {
+    if (!stel || !stel.core) return;
+    try {
+      var obs = stel.core.observer;
+      if (obs && typeof obs.latitude !== 'undefined') {
+        var lat = (obs.latitude * 180 / Math.PI).toFixed(2);
+        var lon = (obs.longitude * 180 / Math.PI).toFixed(2);
+        locationDisplay.textContent = lat + ', ' + lon;
+      }
+    } catch (e) {
+      locationDisplay.textContent = 'Location unavailable';
+    }
+  }
+
+  // ========== SETTINGS TOGGLES ==========
+  toggleAtmosphere.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.atmosphere) stel.core.atmosphere.visible = this.checked;
+  });
+  toggleLandscape.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.landscape) stel.core.landscape.visible = this.checked;
+  });
+  toggleDsos.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.dsos) stel.core.dsos.visible = this.checked;
+  });
+  toggleAzimuthal.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.lines && stel.core.lines.azimuthal) stel.core.lines.azimuthal.visible = this.checked;
+  });
+  toggleEquatorial.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.lines && stel.core.lines.equatorial) stel.core.lines.equatorial.visible = this.checked;
+  });
+
+  // ========== DATE/TIME ==========
+  inputDate.addEventListener('change', function() {
+    if (!stel || !stel.core) return;
+    try {
+      var d = new Date(this.value + 'T' + inputTime.value);
+      if (!isNaN(d.getTime()) && typeof d.getMJD === 'function') {
+        stel.core.observer.utc = d.getMJD();
+      }
+    } catch (e) { console.warn('[Sky Lab] Date change error:', e); }
+  });
+
+  inputTime.addEventListener('change', function() {
+    if (!stel || !stel.core) return;
+    try {
+      var d = new Date(inputDate.value + 'T' + this.value);
+      if (!isNaN(d.getTime()) && typeof d.getMJD === 'function') {
+        stel.core.observer.utc = d.getMJD();
+      }
+    } catch (e) { console.warn('[Sky Lab] Time change error:', e); }
+  });
+
+  // ========== INFO CARD ==========
+  function updateInfoCard() {
+    if (!stel || !stel.core) return;
+    try {
+      var selection = stel.core.selection;
+      if (!selection || !selection.nsid) {
+        infoCard.classList.add('card-hidden');
+        return;
+      }
+
+      selection.update();
+
+      var name = 'Unknown';
+      if (selection.designations && selection.designations.length > 0) {
+        name = selection.designations[0];
+      } else if (selection.names && selection.names.length > 0) {
+        name = selection.names[0];
+      }
+      cardName.textContent = name;
+
+      var type = selection.type_name || (selection.types && selection.types[0]) || 'Object';
+      cardType.textContent = type;
+
+      var mag = selection.vmag;
+      cardMag.textContent = (mag && !isNaN(mag)) ? 'Mag: ' + mag.toFixed(2) : 'Mag: --';
+
+      var azalt = selection.azalt;
+      if (azalt && azalt.length >= 2) {
+        var az = ((azalt[0] * 180 / Math.PI) + 360) % 360;
+        var alt = azalt[1] * 180 / Math.PI;
+        cardPos.textContent = 'Alt: ' + alt.toFixed(0) + ' Az: ' + az.toFixed(0);
+      } else {
+        cardPos.textContent = 'Alt: -- Az: --';
+      }
+
+      infoCard.classList.remove('card-hidden');
+    } catch (e) {
+      infoCard.classList.add('card-hidden');
+    }
+  }
+
+  infoCard.addEventListener('click', function() {
+    if (stel && stel.core) {
+      try { stel.core.selection = null; } catch (e) {}
+    }
+    infoCard.classList.add('card-hidden');
+  });
+
+  // ========== WAIT FOR STELLARIUM ==========
+  function initStellariumBindings() {
+    var attempts = 0;
+    var checkInterval = setInterval(function() {
+      attempts++;
+      // Check multiple ways to access Stellarium engine
+      var engine = null;
+
+      // Method 1: Direct window.$stel
+      if (window.$stel && window.$stel.core) {
+        engine = window.$stel;
+        console.log('[Sky Lab] Found via window.$stel');
+      }
+      // Method 2: StelWebEngine module
+      else if (window.StelWebEngine && window.StelWebEngine.core) {
+        engine = window.StelWebEngine;
+        console.log('[Sky Lab] Found via StelWebEngine');
+      }
+      // Method 3: Vue app instance
+      else if (window.__vueApp__ && window.__vueApp__.$stel) {
+        engine = window.__vueApp__.$stel;
+        console.log('[Sky Lab] Found via Vue app');
+      }
+      // Method 4: Get from Vue component on #app
+      else {
+        var appEl = document.getElementById('app');
+        if (appEl && appEl.__vue__ && appEl.__vue__.$stel) {
+          engine = appEl.__vue__.$stel;
+          console.log('[Sky Lab] Found via #app.__vue__');
         }
-      } catch (e) {
-        locationDisplay.textContent = 'Location unavailable';
       }
-    }
 
-    // Initial sync
-    setTimeout(function() {
-      syncToggles();
-      syncDateTime();
-      updateLocationDisplay();
-    }, 500);
+      // Debug logging every 5 attempts
+      if (attempts % 25 === 0) {
+        console.log('[Sky Lab] Still searching... attempts:', attempts);
+        console.log('[Sky Lab] window.$stel:', !!window.$stel);
+        console.log('[Sky Lab] StelWebEngine:', !!window.StelWebEngine, window.StelWebEngine ? !!window.StelWebEngine.core : 'N/A');
+        var appEl = document.getElementById('app');
+        console.log('[Sky Lab] #app.__vue__:', appEl && !!appEl.__vue__);
+      }
 
-    // ========== SETTINGS PANEL ==========
-    btnSettings.addEventListener('click', function() {
-      var isHidden = settingsPanel.classList.contains('panel-hidden');
-      if (isHidden) {
-        settingsPanel.classList.remove('panel-hidden');
+      if (engine && engine.core) {
+        clearInterval(checkInterval);
+        stel = engine;
+        console.log('[Sky Lab] Stellarium found, binding complete');
+
+        // Initial sync
         syncToggles();
         syncDateTime();
         updateLocationDisplay();
-      } else {
-        settingsPanel.classList.add('panel-hidden');
-      }
-    });
 
-    btnCloseSettings.addEventListener('click', function() {
-      settingsPanel.classList.add('panel-hidden');
-    });
-
-    // ========== CONSTELLATIONS TOGGLE ==========
-    btnConstellations.addEventListener('click', function() {
-      if (stel.core.constellations && stel.core.constellations.lines) {
-        var newState = !stel.core.constellations.lines.visible;
-        stel.core.constellations.lines.visible = newState;
-        btnConstellations.classList.toggle('active', newState);
-      }
-    });
-
-    // ========== SETTINGS TOGGLES ==========
-    toggleAtmosphere.addEventListener('change', function() {
-      if (stel.core.atmosphere) stel.core.atmosphere.visible = this.checked;
-    });
-    toggleLandscape.addEventListener('change', function() {
-      if (stel.core.landscape) stel.core.landscape.visible = this.checked;
-    });
-    toggleDsos.addEventListener('change', function() {
-      if (stel.core.dsos) stel.core.dsos.visible = this.checked;
-    });
-    toggleAzimuthal.addEventListener('change', function() {
-      if (stel.core.lines && stel.core.lines.azimuthal) stel.core.lines.azimuthal.visible = this.checked;
-    });
-    toggleEquatorial.addEventListener('change', function() {
-      if (stel.core.lines && stel.core.lines.equatorial) stel.core.lines.equatorial.visible = this.checked;
-    });
-
-    // ========== DATE/TIME ==========
-    inputDate.addEventListener('change', function() {
-      try {
-        var d = new Date(this.value + 'T' + inputTime.value);
-        if (!isNaN(d.getTime()) && typeof d.getMJD === 'function') {
-          stel.core.observer.utc = d.getMJD();
-        }
-      } catch (e) { console.warn('[Sky Lab] Date change error:', e); }
-    });
-
-    inputTime.addEventListener('change', function() {
-      try {
-        var d = new Date(inputDate.value + 'T' + this.value);
-        if (!isNaN(d.getTime()) && typeof d.getMJD === 'function') {
-          stel.core.observer.utc = d.getMJD();
-        }
-      } catch (e) { console.warn('[Sky Lab] Time change error:', e); }
-    });
-
-    // ========== SEARCH ==========
-    btnSearch.addEventListener('click', function() {
-      var isHidden = searchOverlay.classList.contains('search-hidden');
-      if (isHidden) {
-        searchOverlay.classList.remove('search-hidden');
-        searchInput.focus();
-      } else {
-        searchOverlay.classList.add('search-hidden');
-        searchInput.blur();
-      }
-    });
-
-    // Try to use the original search functionality
-    searchInput.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        var query = this.value.trim();
-        if (query) {
-          // Try to find the original search and trigger it
-          var origSearch = document.querySelector('.skysource-search input, .v-text-field input');
-          if (origSearch) {
-            origSearch.value = query;
-            origSearch.dispatchEvent(new Event('input', { bubbles: true }));
-          }
-        }
-        searchOverlay.classList.add('search-hidden');
-      } else if (e.key === 'Escape') {
-        searchOverlay.classList.add('search-hidden');
-      }
-    });
-
-    // Close search when clicking outside
-    document.addEventListener('click', function(e) {
-      if (!searchOverlay.contains(e.target) && e.target !== btnSearch && !btnSearch.contains(e.target)) {
-        searchOverlay.classList.add('search-hidden');
-      }
-    });
-
-    // ========== COMPASS / AR MODE ==========
-    var compassActive = false;
-    var compassPaused = false;
-
-    function requestOrientationPermission() {
-      if (typeof DeviceOrientationEvent !== 'undefined' &&
-          typeof DeviceOrientationEvent.requestPermission === 'function') {
-        return DeviceOrientationEvent.requestPermission();
-      }
-      return Promise.resolve('granted');
-    }
-
-    function updateViewFromOrientation(event) {
-      if (!compassActive || compassPaused) return;
-
-      var alpha = event.alpha;
-      var beta = event.beta;
-
-      if (alpha === null || beta === null) return;
-
-      // alpha: compass direction (0 = North, 90 = East)
-      // beta: front-back tilt (-180 to 180, 90 = phone upright)
-      var azimuth = (360 - alpha) * (Math.PI / 180);
-      var altitude = (90 - Math.abs(beta)) * (Math.PI / 180);
-      if (beta < 0) altitude = -altitude;
-
-      // Clamp altitude
-      altitude = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, altitude));
-
-      // Convert to cartesian for lookat (azalt frame)
-      var x = Math.cos(altitude) * Math.sin(azimuth);
-      var y = Math.cos(altitude) * Math.cos(azimuth);
-      var z = Math.sin(altitude);
-
-      try {
-        stel.core.lookat([x, -y, z], 0);
-      } catch (e) {}
-    }
-
-    function startCompass() {
-      requestOrientationPermission().then(function(permission) {
-        if (permission === 'granted') {
-          compassActive = true;
-          compassPaused = false;
-          btnCompass.classList.add('active');
-          btnCompass.classList.remove('compass-paused');
-          window.addEventListener('deviceorientation', updateViewFromOrientation);
-          console.log('[Sky Lab] Compass mode started');
-        } else {
-          alert('Motion sensor permission denied. Please enable in device settings.');
-        }
-      }).catch(function(err) {
-        console.error('[Sky Lab] Compass permission error:', err);
-        // Try without permission on Android
-        compassActive = true;
-        compassPaused = false;
-        btnCompass.classList.add('active');
-        window.addEventListener('deviceorientation', updateViewFromOrientation);
-      });
-    }
-
-    function stopCompass() {
-      compassActive = false;
-      compassPaused = false;
-      btnCompass.classList.remove('active');
-      btnCompass.classList.remove('compass-paused');
-      window.removeEventListener('deviceorientation', updateViewFromOrientation);
-      console.log('[Sky Lab] Compass mode stopped');
-    }
-
-    function pauseCompass() {
-      if (compassActive && !compassPaused) {
-        compassPaused = true;
-        btnCompass.classList.add('compass-paused');
-      }
-    }
-
-    function resumeCompass() {
-      if (compassActive && compassPaused) {
-        compassPaused = false;
-        btnCompass.classList.remove('compass-paused');
-      }
-    }
-
-    btnCompass.addEventListener('click', function() {
-      if (!compassActive) {
-        startCompass();
-      } else if (compassPaused) {
-        resumeCompass();
-      } else {
-        stopCompass();
-      }
-    });
-
-    // Pause compass on user interaction
-    var canvas = document.getElementById('stel-canvas') || document.querySelector('canvas');
-    if (canvas) {
-      canvas.addEventListener('mousedown', pauseCompass);
-      canvas.addEventListener('touchstart', pauseCompass);
-    }
-
-    // ========== OBJECT INFO CARD ==========
-    function updateInfoCard() {
-      try {
-        var selection = stel.core.selection;
-        if (!selection || !selection.nsid) {
-          infoCard.classList.add('card-hidden');
-          return;
+        // Setup canvas interaction for compass pause
+        var canvas = document.getElementById('stel-canvas') || document.querySelector('canvas');
+        if (canvas) {
+          canvas.addEventListener('mousedown', pauseCompass);
+          canvas.addEventListener('touchstart', pauseCompass);
         }
 
-        selection.update();
+        // Poll for selection changes
+        var lastSelectionId = null;
+        setInterval(function() {
+          try {
+            var sel = stel.core.selection;
+            var selId = sel ? sel.nsid : null;
+            if (selId !== lastSelectionId) {
+              lastSelectionId = selId;
+              updateInfoCard();
+            } else if (selId) {
+              updateInfoCard();
+            }
+          } catch (e) {}
+        }, 500);
 
-        // Name
-        var name = 'Unknown';
-        if (selection.designations && selection.designations.length > 0) {
-          name = selection.designations[0];
-        } else if (selection.names && selection.names.length > 0) {
-          name = selection.names[0];
-        }
-        cardName.textContent = name;
-
-        // Type
-        var type = selection.type_name || (selection.types && selection.types[0]) || 'Object';
-        cardType.textContent = type;
-
-        // Magnitude
-        var mag = selection.vmag;
-        cardMag.textContent = (mag && !isNaN(mag)) ? 'Mag: ' + mag.toFixed(2) : 'Mag: --';
-
-        // Position
-        var azalt = selection.azalt;
-        if (azalt && azalt.length >= 2) {
-          var az = ((azalt[0] * 180 / Math.PI) + 360) % 360;
-          var alt = azalt[1] * 180 / Math.PI;
-          cardPos.textContent = 'Alt: ' + alt.toFixed(0) + ' Az: ' + az.toFixed(0);
-        } else {
-          cardPos.textContent = 'Alt: -- Az: --';
-        }
-
-        infoCard.classList.remove('card-hidden');
-      } catch (e) {
-        infoCard.classList.add('card-hidden');
+        // Update location periodically
+        setInterval(updateLocationDisplay, 5000);
       }
-    }
+    }, 200);
 
-    // Poll for selection changes
-    var lastSelectionId = null;
-    setInterval(function() {
-      try {
-        var sel = stel.core.selection;
-        var selId = sel ? sel.nsid : null;
-        if (selId !== lastSelectionId) {
-          lastSelectionId = selId;
-          updateInfoCard();
-        } else if (selId) {
-          // Update position continuously
-          updateInfoCard();
-        }
-      } catch (e) {}
-    }, 500);
+    // Give up after 30 seconds
+    setTimeout(function() {
+      clearInterval(checkInterval);
+      if (!stel) {
+        console.warn('[Sky Lab] Stellarium not found after 30s');
+      }
+    }, 30000);
+  }
 
-    // Dismiss card on tap
-    infoCard.addEventListener('click', function() {
-      try {
-        stel.core.selection = null;
-      } catch (e) {}
-      infoCard.classList.add('card-hidden');
-    });
+  // Start looking for Stellarium
+  initStellariumBindings();
 
-    // Update location periodically
-    setInterval(updateLocationDisplay, 5000);
-
-    console.log('[Sky Lab] Minimal UI initialized');
-  });
+  console.log('[Sky Lab] UI handlers attached');
 })();
 </script>
 </body></html>

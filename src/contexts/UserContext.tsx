@@ -31,7 +31,7 @@ interface UserContextType {
   findSavedPlace: (lat: number, lng: number) => SavedPlace | undefined;
   // Weather cache (in-memory only)
   getWeather: (lat: number, lng: number) => WeatherCacheEntry | undefined;
-  fetchWeather: (lat: number, lng: number) => Promise<CloudForecast | null>;
+  fetchWeather: (lat: number, lng: number, forceRefresh?: boolean) => Promise<CloudForecast | null>;
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -76,8 +76,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
     return undefined;
   }, [weatherCache, getCacheKey]);
 
-  const fetchWeather = useCallback(async (lat: number, lng: number): Promise<CloudForecast | null> => {
+  const fetchWeather = useCallback(async (lat: number, lng: number, forceRefresh = false): Promise<CloudForecast | null> => {
     const key = getCacheKey(lat, lng);
+
+    // Check cache first (unless force refresh)
+    if (!forceRefresh) {
+      const cached = weatherCache.get(key);
+      if (cached && Date.now() - cached.fetchedAt < WEATHER_CACHE_TTL) {
+        return cached.forecast;
+      }
+    }
+
     try {
       const res = await fetch(`/api/cloud-forecast?lat=${lat}&lng=${lng}`);
       if (!res.ok) return null;
@@ -91,7 +100,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
     } catch {
       return null;
     }
-  }, [getCacheKey]);
+  }, [getCacheKey, weatherCache]);
 
   // Load auth state and profile on mount
   useEffect(() => {
