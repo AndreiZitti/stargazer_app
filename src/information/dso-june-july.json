@@ -1,0 +1,973 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-08",
+    "coverage": ["June", "July"],
+    "total_objects": 12,
+    "notes": "Master DSO data for June-July stargazing guide - Milky Way season!"
+  },
+  "objects": [
+    {
+      "id": "M8",
+      "names": {
+        "primary": "Lagoon Nebula",
+        "catalog": ["NGC 6523", "Sharpless 25"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "18h 03m 37s",
+        "ra_decimal": 18.060,
+        "dec": "-24° 23′ 12″",
+        "dec_decimal": -24.387
+      },
+      "physical": {
+        "type": "Emission Nebula with Open Cluster",
+        "type_short": "EN+OC",
+        "constellation": "Sagittarius",
+        "magnitude_visual": 6.0,
+        "surface_brightness": 13.0,
+        "size_arcmin": "90 × 40",
+        "distance_ly": 4100
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Visible to the naked eye as a hazy patch in the Milky Way, about 5° north of the 'lid' of the Sagittarius Teapot. On dark nights, it appears as a distinct bright spot in the Milky Way.",
+        "constellation_context": "In Sagittarius, above the Teapot's 'lid'",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Teapot asterism in Sagittarius — unmistakable in summer skies"},
+          {"step": 2, "instruction": "Locate the 'lid' of the Teapot (λ Sagittarii)"},
+          {"step": 3, "instruction": "M8 is about 5° north of the lid — a naked-eye fuzzy patch in the Milky Way"}
+        ],
+        "nearby_bright_stars": ["λ Sagittarii (Teapot lid, S)", "μ Sagittarii (SW)"]
+      },
+      "observation": {
+        "naked_eye": "Clearly visible as a bright patch in the Milky Way. One of the finest naked-eye nebulae in the northern summer sky.",
+        "binoculars": "Spectacular! A glowing cloud of gas split by a dark lane (the 'lagoon'). The open cluster NGC 6530 is embedded in the eastern portion.",
+        "small_telescope": "The dark lagoon is prominent, dividing the nebula. The Hourglass Nebula (a bright region within M8) becomes visible. The star cluster sparkles against the nebulosity.",
+        "large_telescope": "Intricate details emerge — filaments, dark globules, and the complex structure of the Hourglass region where a hot young star is sculpting its surroundings.",
+        "best_magnification": "Low to medium (25-60×) for overall view; higher for Hourglass detail"
+      },
+      "science": {
+        "short_description": "A giant stellar nursery 4,100 light-years away — one of only two star-forming nebulae visible to the naked eye from mid-northern latitudes.",
+        "full_description": "The Lagoon Nebula is one of the finest examples of an active star-forming region visible from Earth. The young cluster NGC 6530 (only about 2 million years old) is emerging from the cloud of gas and dust. The bright Hourglass Nebula within M8 contains the very young star Herschel 36, whose intense radiation is sculpting the surrounding gas into dramatic columns and ridges. The nebula spans about 110 light-years and contains enough gas to form thousands of stars.",
+        "interesting_facts": [
+          "One of only two star-forming nebulae visible to naked eye from mid-northern latitudes",
+          "The dark 'lagoon' is a lane of obscuring dust in front of the nebula",
+          "Contains Bok globules — dense clumps that may collapse to form stars",
+          "Giovanni Hodierna discovered it before 1654"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 135,
+        "ideal_focal_length_mm": "300-500",
+        "notes": "Excellent H-alpha target. Large enough for shorter focal lengths. Often imaged with M20 (Trifid)."
+      },
+      "stellarium": {
+        "skysource_id": "M8",
+        "default_fov": 4,
+        "views": {
+          "context": {"description": "Sagittarius Teapot region", "fov": 20, "center": "Sagittarius"},
+          "medium": {"description": "Lagoon Nebula", "fov": 4, "center": "M8"},
+          "detail": {"description": "Hourglass region", "fov": 1, "center": "M8"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2018/21/4150-Image.html",
+          "credit": "NASA, ESA, STScI",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M20 (Trifid)", "NGC 6530", "M21"]
+    },
+    {
+      "id": "M20",
+      "names": {
+        "primary": "Trifid Nebula",
+        "catalog": ["NGC 6514"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "18h 02m 23s",
+        "ra_decimal": 18.040,
+        "dec": "-23° 01′ 48″",
+        "dec_decimal": -23.030
+      },
+      "physical": {
+        "type": "Emission/Reflection Nebula",
+        "type_short": "EN+RN",
+        "constellation": "Sagittarius",
+        "magnitude_visual": 6.3,
+        "size_arcmin": "28",
+        "distance_ly": 5200
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located just 1.3° northwest of the Lagoon Nebula (M8) — find M8 first, then nudge northwest.",
+        "constellation_context": "In Sagittarius, northwest of the Lagoon Nebula",
+        "star_hop": [
+          {"step": 1, "instruction": "Find M8 (Lagoon Nebula) using the Teapot"},
+          {"step": 2, "instruction": "Move about 1.3° northwest"},
+          {"step": 3, "instruction": "M20 appears as a smaller, round glow — the dark 'trifid' lanes require a telescope to see"}
+        ],
+        "nearby_bright_stars": ["M8 (Lagoon, SE)", "M21 (NE)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible (though close to naked-eye M8)",
+        "binoculars": "Appears as a small, round nebula near M8. Both fit in the same binocular field.",
+        "small_telescope": "The three dark lanes that give the nebula its name become visible, dividing the pink emission nebula into three lobes. The blue reflection nebula is visible north of the pink emission region.",
+        "large_telescope": "A gorgeous sight — pink emission nebula with dark rifts, adjoining blue reflection nebula, and a young star cluster. One of the most colorful objects through a telescope.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "A unique nebula combining red emission nebula, blue reflection nebula, and dark obscuring dust — all in one stunning package.",
+        "full_description": "The Trifid Nebula is a rare combination of three different types of nebula. The pink/red emission portion is hydrogen gas ionized by a hot young star (HD 164492). The blue reflection nebula is unrelated gas simply reflecting the light of nearby stars. Dark dust lanes — the 'trifid' (three-lobed) feature — cross the emission region. At only 300,000 years old, this is an extremely young star-forming region; the central star hasn't yet dispersed its natal cloud.",
+        "interesting_facts": [
+          "Combines emission (pink), reflection (blue), and dark nebulae in one object",
+          "The name 'Trifid' means 'divided into three lobes'",
+          "Only about 300,000 years old — extremely young",
+          "The jet-like features in HST images are evaporating gas pillars similar to the Pillars of Creation"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "Frame with M8 for a spectacular dual-nebula shot. Narrowband reveals the emission regions beautifully."
+      },
+      "stellarium": {
+        "skysource_id": "M20",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "M8-M20 region", "fov": 5, "center": "M8"},
+          "medium": {"description": "Trifid Nebula", "fov": 2, "center": "M20"},
+          "detail": {"description": "Central region", "fov": 0.5, "center": "M20"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/1999/42/899-Image.html",
+          "credit": "NASA, ESA and Jeff Hester (Arizona State University)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M8 (Lagoon)", "M21", "NGC 6559"]
+    },
+    {
+      "id": "M16",
+      "names": {
+        "primary": "Eagle Nebula",
+        "catalog": ["NGC 6611", "IC 4703"],
+        "other": ["Star Queen Nebula"]
+      },
+      "coordinates": {
+        "ra": "18h 18m 48s",
+        "ra_decimal": 18.313,
+        "dec": "-13° 47′ 00″",
+        "dec_decimal": -13.783
+      },
+      "physical": {
+        "type": "Emission Nebula with Open Cluster",
+        "type_short": "EN+OC",
+        "constellation": "Serpens",
+        "magnitude_visual": 6.4,
+        "size_arcmin": "35 × 28",
+        "distance_ly": 7000
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "The cluster may be glimpsed as a faint fuzzy spot in dark skies. Located in Serpens Cauda (the Serpent's tail), about 2.5° west of γ Scuti.",
+        "constellation_context": "In Serpens Cauda, north of the Sagittarius Teapot",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Teapot of Sagittarius and look about 12° north"},
+          {"step": 2, "instruction": "Alternatively, start from Altair and move about 20° southwest"},
+          {"step": 3, "instruction": "M16 appears as a fuzzy patch — the open cluster is more obvious than the nebula itself"}
+        ],
+        "nearby_bright_stars": ["γ Scuti (E)", "Altair (NE)", "λ Aquilae (N)"]
+      },
+      "observation": {
+        "naked_eye": "The cluster may be glimpsed under excellent dark sky conditions",
+        "binoculars": "The open cluster NGC 6611 is obvious — a scattered group of bright stars. The nebulosity is challenging.",
+        "small_telescope": "The cluster is easy. The surrounding nebula requires an OIII or UHC filter and good conditions. The 'Pillars of Creation' are NOT visible in amateur scopes.",
+        "large_telescope": "Nebulosity becomes more apparent with filters. Dark lanes and structure visible. The famous pillars remain a photographic target only.",
+        "best_magnification": "Low (25-50×) for cluster; low with nebula filter for nebulosity",
+        "special_equipment": "OIII or UHC filter strongly recommended for nebulosity"
+      },
+      "science": {
+        "short_description": "Home of the famous 'Pillars of Creation' — dense columns of gas and dust where new stars are being born, captured in one of Hubble's most iconic images.",
+        "full_description": "The Eagle Nebula achieved worldwide fame when the Hubble Space Telescope captured the 'Pillars of Creation' in 1995 — finger-like columns of gas and dust several light-years long, within which new stars are forming. The young open cluster NGC 6611 (1-2 million years old) is dispersing its natal cloud through radiation and stellar winds. The pillars are 'evaporating gaseous globules' (EGGs) that will eventually be destroyed but may spawn new stars before they're gone.",
+        "interesting_facts": [
+          "The 'Pillars of Creation' image is one of the most famous Hubble photos ever taken",
+          "The pillars are about 4-5 light-years long",
+          "Evidence suggests the pillars may have already been destroyed by a supernova 6,000 years ago — but that light hasn't reached us yet",
+          "The cluster contains over 460 stars"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 400,
+        "ideal_focal_length_mm": "800-2000",
+        "notes": "SHO (Hubble palette) narrowband imaging is ideal for revealing the pillars and structure."
+      },
+      "stellarium": {
+        "skysource_id": "M16",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Serpens/Scutum region", "fov": 15, "center": "Serpens Cauda"},
+          "medium": {"description": "Eagle Nebula", "fov": 2, "center": "M16"},
+          "detail": {"description": "Cluster core", "fov": 0.5, "center": "M16"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/Hubble Heritage Team",
+          "search_url": "https://hubblesite.org/contents/media/images/2015/01/3471-Image.html",
+          "credit": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M17 (Swan)", "NGC 6604", "NGC 6611"]
+    },
+    {
+      "id": "M17",
+      "names": {
+        "primary": "Swan Nebula",
+        "catalog": ["NGC 6618", "Sharpless 45"],
+        "other": ["Omega Nebula", "Checkmark Nebula", "Lobster Nebula"]
+      },
+      "coordinates": {
+        "ra": "18h 20m 26s",
+        "ra_decimal": 18.340,
+        "dec": "-16° 10′ 36″",
+        "dec_decimal": -16.177
+      },
+      "physical": {
+        "type": "Emission Nebula",
+        "type_short": "EN",
+        "constellation": "Sagittarius",
+        "magnitude_visual": 6.0,
+        "size_arcmin": "46 × 37",
+        "distance_ly": 5500
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "May be glimpsed as a faint fuzzy patch under excellent conditions. Located about 2° south of the Eagle Nebula (M16).",
+        "constellation_context": "In northern Sagittarius, south of the Eagle Nebula",
+        "star_hop": [
+          {"step": 1, "instruction": "Find M16 (Eagle Nebula) as described above"},
+          {"step": 2, "instruction": "Move about 2° south"},
+          {"step": 3, "instruction": "M17 appears as a brighter glow than M16 — the 'swan' shape requires a telescope"}
+        ],
+        "nearby_bright_stars": ["M16 (N)", "γ Scuti (NE)"]
+      },
+      "observation": {
+        "naked_eye": "May be glimpsed as a faint fuzzy spot under excellent dark skies",
+        "binoculars": "A clearly non-stellar glow, brighter than nearby M16",
+        "small_telescope": "The distinctive 'swan' or 'checkmark' shape becomes visible — a long bright bar with a hook at one end. One of the finest emission nebulae in the sky.",
+        "large_telescope": "Spectacular structure with multiple bright and dark regions. The 'swan' can also be seen as a '2' or Greek letter Omega (Ω).",
+        "best_magnification": "Low to medium (30-75×)"
+      },
+      "science": {
+        "short_description": "One of the brightest and most massive star-forming regions in our galaxy — a stellar nursery rivaling the Orion Nebula.",
+        "full_description": "The Swan Nebula is one of the most luminous star-forming regions known. The visible nebula (shaped like a swan, checkmark, or number 2) is just the brightest part of a much larger cloud containing 30,000 solar masses of gas — enough to form 10,000 stars. About 35 hot, young O and B stars illuminate the visible portion, while hundreds more form within the obscured regions. At 5,500 light-years away, it would rival the Orion Nebula in apparent brightness if it were at the same distance.",
+        "interesting_facts": [
+          "Contains an estimated 800 stars, with 100 of spectral type earlier than B9",
+          "One of the most luminous HII regions in our galaxy",
+          "The bright part is only a small fraction of the entire molecular cloud",
+          "First discovered by Philippe Loys de Chéseaux in 1745"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "Excellent narrowband target. The 'swan' structure photographs beautifully."
+      },
+      "stellarium": {
+        "skysource_id": "M17",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "M16-M17 region", "fov": 8, "center": "M17"},
+          "medium": {"description": "Swan Nebula", "fov": 2, "center": "M17"},
+          "detail": {"description": "Nebula core", "fov": 0.5, "center": "M17"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso0925a/",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M16 (Eagle)", "M18", "M24 (Sagittarius Star Cloud)"]
+    },
+    {
+      "id": "M13",
+      "names": {
+        "primary": "Hercules Cluster",
+        "catalog": ["NGC 6205"],
+        "other": ["Great Globular Cluster in Hercules"]
+      },
+      "coordinates": {
+        "ra": "16h 41m 41.2s",
+        "ra_decimal": 16.695,
+        "dec": "+36° 27′ 36″",
+        "dec_decimal": 36.460
+      },
+      "physical": {
+        "type": "Globular Cluster",
+        "type_short": "GC",
+        "constellation": "Hercules",
+        "magnitude_visual": 5.8,
+        "size_arcmin": "20",
+        "distance_ly": 25100
+      },
+      "visibility": {
+        "best_months": ["May", "June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Visible to the naked eye as a fuzzy 'star' under dark skies. Located on the western edge of the Keystone asterism in Hercules, about one-third of the way from η to ζ Herculis.",
+        "constellation_context": "In Hercules, on the side of the Keystone facing Vega",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Summer Triangle (Vega, Deneb, Altair)"},
+          {"step": 2, "instruction": "Look about 20° southwest of Vega to find the Keystone of Hercules — a trapezoidal pattern of 4 stars"},
+          {"step": 3, "instruction": "M13 lies on the western side of the Keystone, between η and ζ Herculis, about one-third of the way from η to ζ"}
+        ],
+        "nearby_bright_stars": ["Vega (NE)", "η Herculis (S)", "ζ Herculis (N)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a fuzzy 'star' that doesn't quite focus — one of the few globular clusters visible to the naked eye",
+        "binoculars": "A bright, round, concentrated glow. Clearly non-stellar but not resolved into stars.",
+        "small_telescope": "Spectacular! The outer stars begin to resolve at 50×+. At 100×, the cluster sparkles with hundreds of stars against a granular core. Look for the distinctive 'propeller' dark lanes.",
+        "large_telescope": "Thousands of stars resolved. The 'propeller' pattern (three dark lanes radiating from center) becomes more obvious. Chains of stars radiate outward.",
+        "best_magnification": "Medium to high (75-200×) for maximum resolution"
+      },
+      "science": {
+        "short_description": "The finest globular cluster visible from northern latitudes — a spherical city of 300,000 ancient stars bound together by gravity.",
+        "full_description": "M13 contains approximately 300,000 stars packed into a sphere about 145 light-years in diameter. At 11.65 billion years old, its stars are among the oldest in our galaxy. The core is extremely dense — if you lived on a planet near the center, your night sky would contain thousands of stars brighter than Venus. In 1974, the Arecibo radio telescope transmitted a message toward M13 as a demonstration of human technology.",
+        "interesting_facts": [
+          "Contains about 300,000 stars in a 145 light-year sphere",
+          "Target of the Arecibo Message in 1974 (won't arrive for 25,000 years)",
+          "The 'propeller' dark lanes were once thought to be gaps but are actually dust lanes",
+          "Contains a small planetary nebula (Pease 1) visible only in large telescopes"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "One of the most rewarding globular clusters to photograph. Resolves beautifully with good seeing."
+      },
+      "stellarium": {
+        "skysource_id": "M13",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Hercules Keystone", "fov": 15, "center": "Hercules"},
+          "medium": {"description": "M13 cluster", "fov": 1, "center": "M13"},
+          "detail": {"description": "Core detail", "fov": 0.3, "center": "M13"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2008/40/2443-Image.html",
+          "credit": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M92", "M5", "M3"]
+    },
+    {
+      "id": "M57",
+      "names": {
+        "primary": "Ring Nebula",
+        "catalog": ["NGC 6720"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "18h 53m 35.1s",
+        "ra_decimal": 18.893,
+        "dec": "+33° 01′ 45″",
+        "dec_decimal": 33.029
+      },
+      "physical": {
+        "type": "Planetary Nebula",
+        "type_short": "PN",
+        "constellation": "Lyra",
+        "magnitude_visual": 8.8,
+        "size_arcmin": "1.4 × 1.0",
+        "distance_ly": 2300
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August", "September"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located between the stars Sulafat (γ Lyrae) and Sheliak (β Lyrae), the two southern stars of the Lyra parallelogram.",
+        "constellation_context": "In Lyra, between the southern stars of the parallelogram",
+        "star_hop": [
+          {"step": 1, "instruction": "Find brilliant Vega — one of the brightest stars in the summer sky"},
+          {"step": 2, "instruction": "Just south of Vega is a small parallelogram of stars (the body of the lyre). Find β Lyrae (Sheliak) and γ Lyrae (Sulafat)"},
+          {"step": 3, "instruction": "M57 lies almost exactly midway between these two stars — look for a small, perfectly circular 'star' that doesn't focus"}
+        ],
+        "nearby_bright_stars": ["Vega (N)", "Sulafat (γ Lyr, NE)", "Sheliak (β Lyr, NW)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "May appear as a slightly fuzzy star under excellent conditions",
+        "small_telescope": "A small, bright, perfectly round disk. The 'ring' structure appears as a darker center. Unmistakable once you've seen it.",
+        "large_telescope": "The ring structure is obvious — a gray-green doughnut shape. The central star (mag 15.0) requires about 12\" aperture to see. Slight color visible in larger instruments.",
+        "best_magnification": "High (150-300×) — small object rewards magnification"
+      },
+      "science": {
+        "short_description": "The archetypal planetary nebula — a shell of gas expelled by a dying star, now illuminated by the hot stellar remnant at its center.",
+        "full_description": "The Ring Nebula is a textbook example of a planetary nebula — the expelled outer layers of a Sun-like star near the end of its life. The 'ring' shape is actually a barrel-shaped shell that we happen to view end-on. The central star, now a white dwarf with a surface temperature of 125,000 K, ejected this gas about 4,000 years ago. The nebula is still expanding at about 20 km/s and will eventually disperse into the interstellar medium.",
+        "interesting_facts": [
+          "The ring shape is an illusion — we're looking down the barrel of a cylinder",
+          "The central star is about 200 times more luminous than the Sun but very small (Earth-sized)",
+          "Contains about 0.2 solar masses of gas",
+          "Will expand and fade over the next 20,000 years"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 1000,
+        "ideal_focal_length_mm": "2000-3000",
+        "notes": "Small target requiring longer focal lengths. Narrowband reveals the outer halo structures."
+      },
+      "stellarium": {
+        "skysource_id": "M57",
+        "default_fov": 0.5,
+        "views": {
+          "context": {"description": "Lyra constellation", "fov": 10, "center": "Lyra"},
+          "medium": {"description": "M57 location", "fov": 1, "center": "M57"},
+          "detail": {"description": "Ring detail", "fov": 0.1, "center": "M57"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/Hubble Heritage Team",
+          "search_url": "https://hubblesite.org/contents/media/images/2013/13/3168-Image.html",
+          "credit": "NASA, ESA, and C. Robert O'Dell (Vanderbilt University)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M27 (Dumbbell)", "NGC 6826 (Blinking Nebula)", "M97 (Owl)"]
+    },
+    {
+      "id": "Albireo",
+      "names": {
+        "primary": "Albireo",
+        "catalog": ["β Cygni", "HIP 95947"],
+        "other": ["Beak of the Swan"]
+      },
+      "coordinates": {
+        "ra": "19h 30m 43.3s",
+        "ra_decimal": 19.512,
+        "dec": "+27° 57′ 35″",
+        "dec_decimal": 27.960
+      },
+      "physical": {
+        "type": "Double Star",
+        "type_short": "**",
+        "constellation": "Cygnus",
+        "magnitude_visual": 3.1,
+        "size_arcmin": null,
+        "distance_ly": 415
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August", "September"],
+        "peak_month": "August",
+        "difficulty": "easy",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Albireo is the star at the foot of the Northern Cross (or the head/beak of Cygnus the Swan). It marks one end of the Summer Triangle's 'stem'.",
+        "constellation_context": "The head star of Cygnus the Swan",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Summer Triangle (Vega, Deneb, Altair)"},
+          {"step": 2, "instruction": "Deneb is in Cygnus — follow the 'body' of the swan (the Northern Cross) from Deneb toward Altair"},
+          {"step": 3, "instruction": "Albireo is at the bottom of the cross, about halfway between Deneb and Altair"}
+        ],
+        "nearby_bright_stars": ["Deneb (N)", "Vega (W)", "Altair (S)"]
+      },
+      "observation": {
+        "naked_eye": "A moderately bright star at the head of Cygnus. Appears single.",
+        "binoculars": "The pair may just be split in 10×50 binoculars held very steady. Colors begin to be apparent.",
+        "small_telescope": "Stunning! One of the finest double stars in the sky. The primary is golden-orange (mag 3.1), the secondary is blue-green (mag 5.1). Separation is 35 arcseconds — very easy split. The color contrast is legendary.",
+        "large_telescope": "No improvement over small telescopes — low power gives the prettiest view of this wide, colorful pair.",
+        "best_magnification": "Low to medium (40-75×)"
+      },
+      "science": {
+        "short_description": "Perhaps the most beautiful double star in the sky — a striking contrast of golden-orange and blue-green, easy to split in any telescope.",
+        "full_description": "Albireo has been called the most beautiful double star visible in small telescopes. The primary (Albireo A) is a K3 giant star with a golden-orange color, while the secondary (Albireo B) is a B8 dwarf appearing blue or blue-green. Whether this is a true binary system or an optical double (two stars that appear close but are actually at different distances) is still debated — proper motion studies are inconclusive. Regardless of their physical relationship, the color contrast makes this a perennial favorite.",
+        "interesting_facts": [
+          "The pair has been a favorite of amateur astronomers for centuries",
+          "Whether it's a true binary system is still uncertain — they may be unrelated stars along the same line of sight",
+          "Albireo A is itself a close binary (too close to resolve), discovered spectroscopically",
+          "The name may derive from the Arabic for 'hen's beak'"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000+",
+        "notes": "The challenge is capturing the color contrast accurately. Wide separation makes it an easy target."
+      },
+      "stellarium": {
+        "skysource_id": "Albireo",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Northern Cross", "fov": 25, "center": "Cygnus"},
+          "medium": {"description": "Albireo", "fov": 2, "center": "Albireo"},
+          "detail": {"description": "Double star", "fov": 0.2, "center": "Albireo"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Custom observation",
+          "search_url": null,
+          "credit": "Double star photo",
+          "license": "To create"
+        }
+      },
+      "related_objects": ["Cor Caroli", "Castor", "ε Lyrae (Double Double)"]
+    },
+    {
+      "id": "M22",
+      "names": {
+        "primary": "M22",
+        "catalog": ["NGC 6656"],
+        "other": ["Sagittarius Cluster"]
+      },
+      "coordinates": {
+        "ra": "18h 36m 23.9s",
+        "ra_decimal": 18.607,
+        "dec": "-23° 54′ 17″",
+        "dec_decimal": -23.905
+      },
+      "physical": {
+        "type": "Globular Cluster",
+        "type_short": "GC",
+        "constellation": "Sagittarius",
+        "magnitude_visual": 5.1,
+        "size_arcmin": "32",
+        "distance_ly": 10600
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Visible to the naked eye as a fuzzy star in dark skies. Located about 2.5° northeast of Kaus Borealis (λ Sagittarii), the star at the top of the Teapot's lid.",
+        "constellation_context": "Just above the Teapot's lid in Sagittarius",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Teapot of Sagittarius"},
+          {"step": 2, "instruction": "Locate Kaus Borealis (λ Sag), the top of the lid"},
+          {"step": 3, "instruction": "M22 is about 2.5° northeast — visible to the naked eye as a fuzzy spot"}
+        ],
+        "nearby_bright_stars": ["Kaus Borealis (λ Sag, SW)", "Nunki (σ Sag, W)"]
+      },
+      "observation": {
+        "naked_eye": "Clearly visible as a fuzzy 'star' under reasonably dark skies — one of the brightest globular clusters in the sky",
+        "binoculars": "A bright, slightly grainy glow. Among the finest globular clusters for binoculars.",
+        "small_telescope": "Resolves into stars more easily than M13 due to its looser core. Hundreds of stars visible at moderate magnification.",
+        "large_telescope": "Spectacular — thousands of stars resolved, with multiple chains and patterns. The loose core is fully resolved.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "One of the nearest and brightest globular clusters — if it weren't so far south, it would rival M13 in fame.",
+        "full_description": "M22 is one of the closest globular clusters to Earth at only 10,600 light-years. It contains about 83,000 stars and would be much more famous if it weren't located low in the sky for northern observers. Remarkably, M22 contains two stellar-mass black holes confirmed through radio observations — the first globular cluster definitively shown to contain multiple black holes. The cluster is about 12 billion years old.",
+        "interesting_facts": [
+          "One of only four globulars visible to naked eye from mid-northern latitudes",
+          "Contains two confirmed stellar-mass black holes",
+          "The first globular cluster discovered (1665 by Abraham Ihle)",
+          "Contains a planetary nebula (IRAS 18333-2357) — extremely rare in a globular cluster"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-1500",
+        "notes": "Low declination may cause atmospheric smearing for northern observers. One of the easiest globulars to resolve."
+      },
+      "stellarium": {
+        "skysource_id": "M22",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Teapot region", "fov": 15, "center": "Sagittarius"},
+          "medium": {"description": "M22 cluster", "fov": 2, "center": "M22"},
+          "detail": {"description": "Core detail", "fov": 0.5, "center": "M22"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/",
+          "credit": "ESA/Hubble & NASA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M28", "M55", "M13"]
+    },
+    {
+      "id": "M4",
+      "names": {
+        "primary": "M4",
+        "catalog": ["NGC 6121"],
+        "other": ["Cat's Eye Cluster"]
+      },
+      "coordinates": {
+        "ra": "16h 23m 35.2s",
+        "ra_decimal": 16.393,
+        "dec": "-26° 31′ 32″",
+        "dec_decimal": -26.526
+      },
+      "physical": {
+        "type": "Globular Cluster",
+        "type_short": "GC",
+        "constellation": "Scorpius",
+        "magnitude_visual": 5.9,
+        "size_arcmin": "26",
+        "distance_ly": 7200
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "May be glimpsed as a fuzzy patch near Antares. Located just 1.3° west of the bright orange star Antares — one of the easiest globulars to find.",
+        "constellation_context": "In Scorpius, immediately west of Antares",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Antares — the bright orange 'heart' of Scorpius, low in the south in summer"},
+          {"step": 2, "instruction": "Look just 1.3° west (to the right if you're in the Northern Hemisphere)"},
+          {"step": 3, "instruction": "M4 appears as a fuzzy patch nearly as bright as Antares"}
+        ],
+        "nearby_bright_stars": ["Antares (α Sco, E)", "σ Scorpii (N)"]
+      },
+      "observation": {
+        "naked_eye": "May be glimpsed under dark skies as a faint fuzzy patch near brilliant Antares",
+        "binoculars": "Clearly visible as a fuzzy glow west of Antares. One of the finest binocular globular clusters.",
+        "small_telescope": "Easily resolved into stars — one of the loosest and easiest globular clusters to resolve. Note the distinctive central 'bar' of stars running north-south through the core.",
+        "large_telescope": "Fully resolved with a distinctive bar-like structure through the center. The cluster appears almost 'sparse' compared to denser globulars like M13.",
+        "best_magnification": "Low to medium (50-100×)"
+      },
+      "science": {
+        "short_description": "The nearest globular cluster to Earth and one of the easiest to resolve — notable for its loose structure and central bar of stars.",
+        "full_description": "M4 is the closest globular cluster to Earth, at only 7,200 light-years. Its relative proximity and loose structure make it one of the easiest globulars to resolve into individual stars. A distinctive feature is the 'bar' of stars running through its core — clearly visible in small telescopes. In 2003, Hubble discovered a planet orbiting a pulsar in M4 — one of the oldest known planetary systems. The cluster is about 12.2 billion years old.",
+        "interesting_facts": [
+          "The closest globular cluster to Earth (7,200 light-years)",
+          "Contains a planet orbiting a pulsar — about 13 billion years old",
+          "The central 'bar' of stars is unique among well-known globulars",
+          "First globular cluster to have individual stars resolved (1764 by Messier)"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "Include Antares for context. Low altitude may cause atmospheric smearing for northern observers."
+      },
+      "stellarium": {
+        "skysource_id": "M4",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Antares region", "fov": 10, "center": "Antares"},
+          "medium": {"description": "M4 cluster", "fov": 2, "center": "M4"},
+          "detail": {"description": "Central bar", "fov": 0.5, "center": "M4"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/1995/32/280-Image.html",
+          "credit": "NASA, ESA and H. Richer (University of British Columbia)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M80", "Antares", "M19"]
+    },
+    {
+      "id": "M7",
+      "names": {
+        "primary": "Ptolemy's Cluster",
+        "catalog": ["NGC 6475"],
+        "other": ["Scorpius Cluster"]
+      },
+      "coordinates": {
+        "ra": "17h 53m 51s",
+        "ra_decimal": 17.897,
+        "dec": "-34° 47′ 34″",
+        "dec_decimal": -34.793
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Scorpius",
+        "magnitude_visual": 3.3,
+        "size_arcmin": "80",
+        "distance_ly": 980
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Easily visible to the naked eye as a bright, fuzzy patch in the Scorpion's tail. Located about 5° northeast of the stinger stars (Shaula and Lesath).",
+        "constellation_context": "In the tail of Scorpius, near the stinger",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Scorpius low in the southern sky — its distinctive curved tail is unmistakable"},
+          {"step": 2, "instruction": "Locate Shaula and Lesath — the two bright stars at the stinger"},
+          {"step": 3, "instruction": "M7 is about 5° to the northeast — visible to naked eye as a bright misty patch"}
+        ],
+        "nearby_bright_stars": ["Shaula (λ Sco, SW)", "Lesath (υ Sco, SW)", "M6 (NW)"]
+      },
+      "observation": {
+        "naked_eye": "Easily visible as a bright, hazy patch — known since ancient times. Ptolemy described it as a 'nebula following the sting of Scorpius.'",
+        "binoculars": "Spectacular! About 80 stars visible in a rich field. Several yellow and orange giant stars stand out among the blue-white members.",
+        "small_telescope": "Too large for most telescopes — use lowest power. Individual stars beautifully resolved against the Milky Way background.",
+        "large_telescope": "Actually less impressive at higher magnifications — the cluster loses its context and impact. Stick to low power.",
+        "best_magnification": "Very low (10-25×)"
+      },
+      "science": {
+        "short_description": "One of the most prominent open clusters in the sky — known since antiquity and recorded by Ptolemy around 130 AD.",
+        "full_description": "M7 is one of the most ancient recognized star clusters, noted by Ptolemy as early as 130 AD. At about 220 million years old, it's mature enough to have evolved several yellow and orange giant stars, providing beautiful color contrast with its younger blue-white members. The cluster contains about 100 stars spread over an area larger than the full moon, making it one of the most impressive clusters for binoculars.",
+        "interesting_facts": [
+          "Known to Ptolemy around 130 AD — one of the earliest recorded deep-sky objects",
+          "Located against the central Milky Way, providing a spectacular backdrop",
+          "M6 (Butterfly Cluster) lies only 3.5° to the northwest — both visible together in binoculars",
+          "Contains about 100 stars in a volume about 25 light-years across"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 85,
+        "ideal_focal_length_mm": "135-200",
+        "notes": "Very wide field target. Include M6 and the Milky Way for context."
+      },
+      "stellarium": {
+        "skysource_id": "M7",
+        "default_fov": 4,
+        "views": {
+          "context": {"description": "Scorpius tail", "fov": 15, "center": "Scorpius"},
+          "medium": {"description": "M6 and M7", "fov": 6, "center": "M7"},
+          "detail": {"description": "M7 cluster", "fov": 3, "center": "M7"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso0934a/",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M6 (Butterfly)", "NGC 6441", "M62"]
+    },
+    {
+      "id": "M11",
+      "names": {
+        "primary": "Wild Duck Cluster",
+        "catalog": ["NGC 6705"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "18h 51m 06s",
+        "ra_decimal": 18.852,
+        "dec": "-06° 16′ 12″",
+        "dec_decimal": -6.270
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Scutum",
+        "magnitude_visual": 5.8,
+        "size_arcmin": "14",
+        "distance_ly": 6200
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August", "September"],
+        "peak_month": "August",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "May be glimpsed as a fuzzy patch in dark skies. Located in the small constellation Scutum, in the dense star clouds of the Scutum Star Cloud.",
+        "constellation_context": "In Scutum, within the Scutum Star Cloud",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Altair, then look about 10° southwest"},
+          {"step": 2, "instruction": "The Scutum Star Cloud is a noticeably bright patch of Milky Way"},
+          {"step": 3, "instruction": "M11 is the brightest cluster in this region — look for a concentrated glow against the star cloud"}
+        ],
+        "nearby_bright_stars": ["Altair (NE)", "λ Aquilae (N)"]
+      },
+      "observation": {
+        "naked_eye": "May be glimpsed as a faint fuzzy patch in dark skies, embedded in the Scutum Star Cloud",
+        "binoculars": "A compact, bright glow — noticeably denser than the surrounding star cloud",
+        "small_telescope": "Spectacular! One of the richest open clusters known. Hundreds of stars in a compact, triangular pattern resembling a flock of wild ducks in flight. A bright star stands at the 'apex' of the V.",
+        "large_telescope": "Thousands of stars resolvable. The density rivals some globular clusters. Intricate star chains and patterns throughout.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "One of the richest and most compact open clusters known — resembling a flock of wild ducks in flight.",
+        "full_description": "M11 contains approximately 2,900 stars, making it one of the most populous open clusters known. Its compactness and richness initially led some observers to mistake it for a globular cluster. At about 220 million years old, it's middle-aged for an open cluster. The distinctive V-shape (resembling flying ducks) has a bright 8th-magnitude star at its apex, making the pattern immediately recognizable.",
+        "interesting_facts": [
+          "Contains about 2,900 stars — one of the richest open clusters",
+          "The name comes from its V-shaped pattern resembling a flock of ducks",
+          "The bright star at the apex of the V is a yellow giant unrelated to the cluster (a foreground star)",
+          "Mass estimate is about 11,000 solar masses"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-800",
+        "notes": "Include the surrounding Scutum Star Cloud for context."
+      },
+      "stellarium": {
+        "skysource_id": "M11",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Scutum Star Cloud", "fov": 8, "center": "Scutum"},
+          "medium": {"description": "Wild Duck Cluster", "fov": 1, "center": "M11"},
+          "detail": {"description": "Core detail", "fov": 0.3, "center": "M11"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso0817a/",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M26", "M18", "Scutum Star Cloud"]
+    },
+    {
+      "id": "MilkyWayCore",
+      "names": {
+        "primary": "Milky Way Core",
+        "catalog": ["Sagittarius A*"],
+        "other": ["Galactic Center", "Great Rift region"]
+      },
+      "coordinates": {
+        "ra": "17h 45m 40s",
+        "ra_decimal": 17.761,
+        "dec": "-29° 00′ 28″",
+        "dec_decimal": -29.008
+      },
+      "physical": {
+        "type": "Galactic Center",
+        "type_short": "GC",
+        "constellation": "Sagittarius",
+        "magnitude_visual": null,
+        "size_arcmin": "3000+ (region)",
+        "distance_ly": 26000
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August"],
+        "peak_month": "July",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "naked_eye"
+      },
+      "finding": {
+        "naked_eye_guide": "Look south on a dark summer night. The Milky Way arches overhead, and the brightest, widest portion marks the direction of the galactic center, in and around Sagittarius. The dark 'Great Rift' bisects the Milky Way above this point.",
+        "constellation_context": "Centered in Sagittarius, extending through Scorpius and Ophiuchus",
+        "star_hop": [
+          {"step": 1, "instruction": "Find a dark location far from city lights — this is essential"},
+          {"step": 2, "instruction": "Look south (in the Northern Hemisphere) on a moonless summer night"},
+          {"step": 3, "instruction": "The bright, bulging portion of the Milky Way around Sagittarius is the core region — scan slowly with binoculars to find countless clusters, nebulae, and star clouds"}
+        ],
+        "nearby_bright_stars": ["Antares (Scorpius)", "Nunki (Sagittarius)", "Altair (Aquila)"]
+      },
+      "observation": {
+        "naked_eye": "A breathtaking river of light arching across the sky, brightest and widest in Sagittarius. Dark lanes (the Great Rift) create complex structure. One of nature's most magnificent sights.",
+        "binoculars": "Transform the milky glow into countless stars, clusters, and nebulae. Sweep slowly through Sagittarius and Scorpius for one of the most rewarding binocular experiences possible.",
+        "small_telescope": "Individual objects (M8, M20, M17, M22, etc.) become detailed targets. The sheer density of stars in some regions is overwhelming.",
+        "large_telescope": "Best used for individual targets rather than sweeping. The context of the naked-eye view is lost.",
+        "best_magnification": "Naked eye or binoculars for the full experience"
+      },
+      "science": {
+        "short_description": "The center of our home galaxy — a supermassive black hole surrounded by billions of stars, visible as the brightest part of the Milky Way band.",
+        "full_description": "When you gaze at the bright bulge of the Milky Way in Sagittarius, you're looking toward the center of our galaxy — 26,000 light-years away. A supermassive black hole called Sagittarius A* (about 4 million solar masses) lurks at the very center, surrounded by a dense cluster of ancient stars. We can't see the core directly because it's hidden behind vast clouds of dust, but infrared and radio telescopes have revealed its secrets. The Event Horizon Telescope imaged Sgr A* in 2022.",
+        "interesting_facts": [
+          "The supermassive black hole Sagittarius A* was imaged by the Event Horizon Telescope in 2022",
+          "The core region contains about 10 billion stars in a relatively small volume",
+          "Dust blocks over 99.99% of the visible light from the actual center",
+          "Stars near the black hole orbit at speeds up to 3% the speed of light"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 14,
+        "ideal_focal_length_mm": "14-35",
+        "notes": "Wide-angle is essential. A tracker allows longer exposures. Best photographed from dark, southern locations."
+      },
+      "stellarium": {
+        "skysource_id": "Milky Way",
+        "default_fov": 120,
+        "views": {
+          "context": {"description": "Full summer Milky Way", "fov": 180, "center": "Sagittarius"},
+          "medium": {"description": "Core region", "fov": 50, "center": "Sagittarius"},
+          "detail": {"description": "Sagittarius star clouds", "fov": 20, "center": "M8"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO/Serge Brunier",
+          "search_url": "https://www.eso.org/public/images/eso0932a/",
+          "credit": "ESO/S. Brunier",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M24 (Sagittarius Star Cloud)", "M8", "M17", "Great Rift"]
+    }
+  ]
+}
