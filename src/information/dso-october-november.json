@@ -1,0 +1,892 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-08",
+    "coverage": ["October", "November"],
+    "total_objects": 12,
+    "notes": "Master DSO data for October-November stargazing guide - Autumn skies with Andromeda at peak"
+  },
+  "objects": [
+    {
+      "id": "M31_peak",
+      "names": {
+        "primary": "Andromeda Galaxy",
+        "catalog": ["NGC 224"],
+        "other": ["Great Andromeda Nebula"]
+      },
+      "coordinates": {
+        "ra": "00h 42m 44s",
+        "ra_decimal": 0.712,
+        "dec": "+41° 16′ 09″",
+        "dec_decimal": 41.269
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Andromeda",
+        "magnitude_visual": 3.4,
+        "size_arcmin": "190 × 60",
+        "distance_ly": 2537000
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Now at its highest and best! Find the W-shape of Cassiopeia high overhead. The second 'V' of the W points like an arrow toward Andromeda. M31 appears as an elongated smudge visible from even suburban locations on clear nights.",
+        "constellation_context": "In Andromeda, between Cassiopeia and Pegasus",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Cassiopeia's W shape high overhead (or high in the north)"},
+          {"step": 2, "instruction": "Use the deeper V of the W as an arrow pointing toward Andromeda"},
+          {"step": 3, "instruction": "Find the star Mirach (β And), then hop to μ And, then slightly further to M31"}
+        ],
+        "nearby_bright_stars": ["Mirach (β And)", "Alpheratz (α And)", "Schedar (α Cas)"]
+      },
+      "observation": {
+        "naked_eye": "At its best position — the farthest object visible to the unaided eye. The elongated smudge spans 3° (six full moons). Under excellent conditions, the bright core is obvious and the disk extends impressively.",
+        "binoculars": "Spectacular! The bright central core with its dimmer disk extending outward. M32 and M110 satellites visible. Under dark skies, the full extent is breathtaking.",
+        "small_telescope": "Core and inner regions show well. Look for the dark dust lane crossing in front of the core on the northwest side. Best at lowest power.",
+        "large_telescope": "Dark lanes become more prominent. Individual star clouds (NGC 206) and associations may be glimpsed in the outer spiral arms.",
+        "best_magnification": "Lowest possible — M31 is huge (over 3°)"
+      },
+      "science": {
+        "short_description": "Our nearest large galactic neighbor — at autumn peak, high overhead and perfectly positioned for observation. A trillion stars 2.5 million light-years away.",
+        "full_description": "October and November offer the best views of M31 in the northern hemisphere, with the galaxy riding high overhead on autumn evenings. The light you see tonight left Andromeda 2.5 million years ago, before modern humans existed. This massive spiral galaxy is approaching the Milky Way at 110 km/s and will collide with us in about 4.5 billion years. Tonight, from a dark site, you can trace the disk spanning six full moon widths — one of astronomy's most spectacular naked-eye sights.",
+        "interesting_facts": [
+          "Autumn is the optimal viewing season — M31 passes nearly overhead for mid-northern observers",
+          "Contains approximately one trillion stars (2× the Milky Way)",
+          "The first galaxy photographed showing spiral structure (Isaac Roberts, 1888)",
+          "Home to the largest known stellar-mass black hole (~100 solar masses) discovered in 2007"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 100,
+        "ideal_focal_length_mm": "200-500",
+        "notes": "Peak season for M31 imaging. Include satellites M32 and M110. Wide field captures the full disk; longer focal lengths show dust lanes."
+      },
+      "stellarium": {
+        "skysource_id": "M31",
+        "default_fov": 6,
+        "views": {
+          "context": {"description": "Autumn sky with Cassiopeia pointer", "fov": 50, "center": "Andromeda"},
+          "medium": {"description": "M31 with satellites", "fov": 6, "center": "M31"},
+          "detail": {"description": "M31 core and dust lanes", "fov": 2, "center": "M31"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/JPL-Caltech",
+          "search_url": "https://www.nasa.gov/mission_pages/galex/pia15416.html",
+          "credit": "NASA/JPL-Caltech",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M32", "M110", "NGC 206", "M33"]
+    },
+    {
+      "id": "NGC869_NGC884_peak",
+      "names": {
+        "primary": "Double Cluster",
+        "catalog": ["NGC 869", "NGC 884", "Caldwell 14"],
+        "other": ["h and χ Persei", "Sword Handle"]
+      },
+      "coordinates": {
+        "ra": "02h 20m 00s",
+        "ra_decimal": 2.333,
+        "dec": "+57° 08′ 00″",
+        "dec_decimal": 57.133
+      },
+      "physical": {
+        "type": "Open Cluster (double)",
+        "type_short": "OC+OC",
+        "constellation": "Perseus",
+        "magnitude_visual": 3.7,
+        "size_arcmin": "60 (combined)",
+        "distance_ly": 7500
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Now at excellent height! Draw an imaginary line between Cassiopeia and Perseus — the Double Cluster lies roughly halfway between, appearing as a hazy patch in the Milky Way.",
+        "constellation_context": "Between Cassiopeia and Perseus",
+        "star_hop": [
+          {"step": 1, "instruction": "Locate Cassiopeia's W shape, prominent in autumn skies"},
+          {"step": 2, "instruction": "From the middle star (γ Cas), draw a line through δ Cas (next star in the W)"},
+          {"step": 3, "instruction": "Continue this line about 8° to find a fuzzy patch — this is the Double Cluster"}
+        ],
+        "nearby_bright_stars": ["Mirfak (α Per)", "Ruchbah (δ Cas)"]
+      },
+      "observation": {
+        "naked_eye": "At peak visibility — appears as a bright, misty patch between Cassiopeia and Perseus. Under dark skies, you may sense it's elongated or 'double.'",
+        "binoculars": "One of the finest binocular objects in the entire sky! Two distinct clusters fill the field, each rich with dozens of blue-white stars. Several red giants provide color contrast.",
+        "small_telescope": "Resolves into hundreds of individual stars. Note NGC 869 has a more compact core, while NGC 884 is looser with more prominent red giants.",
+        "large_telescope": "Individual stars beautifully resolved, but use low power to fit both clusters in the field of view.",
+        "best_magnification": "Low (25-40×) to fit both clusters in one field of view"
+      },
+      "science": {
+        "short_description": "Twin star clusters born together 14 million years ago — a magnificent pair visible since antiquity, now at their best autumn viewing position.",
+        "full_description": "The Double Cluster is at its highest and best in autumn. These twin clusters were born from the same molecular cloud about 14 million years ago and remain close companions, separated by only a few hundred light-years. Each contains several hundred stars, making this one of the richest star cluster regions visible to northern observers. Hipparchus noted them in 130 BC, and they've been favorites ever since.",
+        "interesting_facts": [
+          "Both clusters are only 14 million years old — young cosmic infants",
+          "They're approaching us at about 22 km/s",
+          "Contains several red supergiant stars despite the clusters' youth",
+          "The apparent separation is about 0.5° — they nearly touch in a binocular field"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "300-500",
+        "notes": "Autumn peak — excellent for imaging. The red giants provide nice color contrast against blue-white cluster members."
+      },
+      "stellarium": {
+        "skysource_id": "NGC869",
+        "default_fov": 4,
+        "views": {
+          "context": {"description": "Cassiopeia-Perseus region", "fov": 30, "center": "Perseus"},
+          "medium": {"description": "Both clusters", "fov": 4, "center": "NGC869"},
+          "detail": {"description": "NGC 869 close-up", "fov": 1.5, "center": "NGC869"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESA/Hubble",
+          "search_url": "https://esahubble.org/images/?search=double+cluster",
+          "credit": "ESA/Hubble & NASA",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["Stock 2", "IC 1805 (Heart Nebula)", "Mirfak"]
+    },
+    {
+      "id": "M15",
+      "names": {
+        "primary": "M15",
+        "catalog": ["NGC 7078", "Great Pegasus Cluster"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "21h 29m 58.3s",
+        "ra_decimal": 21.500,
+        "dec": "+12° 10′ 01″",
+        "dec_decimal": 12.167
+      },
+      "physical": {
+        "type": "Globular Cluster",
+        "type_short": "GC",
+        "constellation": "Pegasus",
+        "magnitude_visual": 6.2,
+        "size_arcmin": "18",
+        "distance_ly": 33600
+      },
+      "visibility": {
+        "best_months": ["September", "October", "November"],
+        "peak_month": "October",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not easily visible to naked eye. Located in Pegasus, about 4° northwest of the star Enif (ε Pegasi), the 'nose' of the flying horse.",
+        "constellation_context": "In Pegasus, northwest of Enif",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Great Square of Pegasus"},
+          {"step": 2, "instruction": "Locate Enif (ε Peg), the bright star marking Pegasus's nose, about 12° west of the square"},
+          {"step": 3, "instruction": "M15 is about 4° northwest of Enif — a fuzzy 'star' in binoculars"}
+        ],
+        "nearby_bright_stars": ["Enif (ε Peg, SE)", "Baham (θ Peg, NE)"]
+      },
+      "observation": {
+        "naked_eye": "May be glimpsed under excellent conditions as a faint fuzzy spot",
+        "binoculars": "A bright, concentrated fuzzy 'star' — clearly non-stellar",
+        "small_telescope": "One of the most concentrated globular clusters known. The dense core may appear almost stellar. Outer stars begin to resolve at 100×+.",
+        "large_telescope": "Despite high magnification, the extremely dense core resists resolution. The outer regions resolve beautifully. Contains a planetary nebula (Pease 1) near the core — extremely challenging.",
+        "best_magnification": "Medium to high (75-200×)"
+      },
+      "science": {
+        "short_description": "One of the most densely concentrated globular clusters known — possibly harboring a rare intermediate-mass black hole at its core.",
+        "full_description": "M15 is one of the most densely concentrated globular clusters in the Milky Way. Its core has undergone 'core collapse' — a gravitational runaway that has packed stars to incredible densities. Evidence suggests M15 may contain an intermediate-mass black hole (about 4,000 solar masses) at its center, though this remains debated. The cluster also contains one of only four known planetary nebulae in globular clusters (Pease 1).",
+        "interesting_facts": [
+          "One of only about 20 globular clusters known to have undergone core collapse",
+          "May contain an intermediate-mass black hole of ~4,000 solar masses",
+          "Contains the planetary nebula Pease 1 — one of only four in any globular cluster",
+          "About 12 billion years old with 100,000+ stars"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "The extremely dense core makes this a good test of image resolution."
+      },
+      "stellarium": {
+        "skysource_id": "M15",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Pegasus region", "fov": 15, "center": "Pegasus"},
+          "medium": {"description": "M15 cluster", "fov": 1, "center": "M15"},
+          "detail": {"description": "Core detail", "fov": 0.3, "center": "M15"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2020/52/4743-Image.html",
+          "credit": "ESA/Hubble & NASA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M2", "M13", "Pease 1"]
+    },
+    {
+      "id": "M52",
+      "names": {
+        "primary": "M52",
+        "catalog": ["NGC 7654"],
+        "other": ["Salt and Pepper Cluster"]
+      },
+      "coordinates": {
+        "ra": "23h 24m 48s",
+        "ra_decimal": 23.413,
+        "dec": "+61° 35′ 36″",
+        "dec_decimal": 61.593
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Cassiopeia",
+        "magnitude_visual": 6.9,
+        "size_arcmin": "13",
+        "distance_ly": 5000
+      },
+      "visibility": {
+        "best_months": ["September", "October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Cassiopeia, about 6° southwest of Caph (β Cas), the star at the eastern end of Cassiopeia's W.",
+        "constellation_context": "In western Cassiopeia",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Cassiopeia's W shape, prominent in autumn evenings"},
+          {"step": 2, "instruction": "Locate Caph (β Cas), the star at the eastern tip of the W"},
+          {"step": 3, "instruction": "Draw a line from Caph through Schedar (α Cas) and continue about the same distance — M52 is nearby"}
+        ],
+        "nearby_bright_stars": ["Caph (β Cas, NE)", "Schedar (α Cas, SE)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "A compact, bright haze with a hint of graininess",
+        "small_telescope": "A rich, concentrated cluster with about 100 stars visible. A bright yellow star (actually a foreground star) lies near the southwestern edge, adding color contrast.",
+        "large_telescope": "Fully resolved — over 200 stars in a compact area. The fan or wedge shape becomes apparent.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "A rich, compact open cluster in Cassiopeia — one of Messier's original discoveries and still one of the finest clusters in the autumn sky.",
+        "full_description": "M52 is a rich open cluster containing about 190 confirmed members, with over 200 visible in larger amateur telescopes. At 35-55 million years old, it's a young-to-middle-aged cluster. The prominent yellow-orange star near the cluster's edge is actually a foreground star unrelated to the cluster, but it adds beautiful color contrast. M52 was one of Messier's original discoveries (1774).",
+        "interesting_facts": [
+          "Contains about 190 confirmed member stars",
+          "The prominent yellow star is a foreground object, not a cluster member",
+          "Charles Messier discovered it while tracking a comet in 1774",
+          "Nearby NGC 7635 (Bubble Nebula) makes an excellent secondary target"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-800",
+        "notes": "Include NGC 7635 (Bubble Nebula) nearby for a cluster+nebula combination."
+      },
+      "stellarium": {
+        "skysource_id": "M52",
+        "default_fov": 1.5,
+        "views": {
+          "context": {"description": "Western Cassiopeia", "fov": 15, "center": "Cassiopeia"},
+          "medium": {"description": "M52 cluster", "fov": 1.5, "center": "M52"},
+          "detail": {"description": "Cluster core", "fov": 0.5, "center": "M52"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=M52",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["NGC 7635 (Bubble Nebula)", "NGC 7654", "M103"]
+    },
+    {
+      "id": "NGC7789",
+      "names": {
+        "primary": "Caroline's Rose",
+        "catalog": ["NGC 7789", "Caldwell 56"],
+        "other": ["The White Rose Cluster", "Herschel's Spiral Cluster"]
+      },
+      "coordinates": {
+        "ra": "23h 57m 24s",
+        "ra_decimal": 23.957,
+        "dec": "+56° 42′ 30″",
+        "dec_decimal": 56.708
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Cassiopeia",
+        "magnitude_visual": 6.7,
+        "size_arcmin": "16",
+        "distance_ly": 7600
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Cassiopeia, about 3° southwest of Caph (β Cas).",
+        "constellation_context": "In Cassiopeia, near Caph",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Caph (β Cas), the star at the eastern tip of Cassiopeia's W"},
+          {"step": 2, "instruction": "Move about 3° southwest"},
+          {"step": 3, "instruction": "NGC 7789 appears as a large, faint, grainy patch — noticeably larger than M52"}
+        ],
+        "nearby_bright_stars": ["Caph (β Cas, NE)", "σ Cas (N)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "A large, faint, grainy glow — surprisingly large for a cluster. Requires dark skies.",
+        "small_telescope": "One of the finest open clusters in the sky. Hundreds of faint stars create a mottled, rose-like appearance with dark lanes threading through. The name 'Caroline's Rose' comes from the flower-like pattern.",
+        "large_telescope": "Spectacular — over 1,000 stars visible in a complex pattern of star chains and dark loops. The 'rose petal' structure becomes obvious.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "One of the richest open clusters in the sky — discovered by Caroline Herschel in 1783, its intricate pattern resembles a blooming rose.",
+        "full_description": "NGC 7789 is one of the finest open clusters in the northern sky, containing over 1,000 stars. At 1.6 billion years old, it's quite old for an open cluster and contains many red giant stars that have evolved off the main sequence. The dark lanes threading through the cluster create a rose-like pattern, earning it the name 'Caroline's Rose' in honor of its discoverer, Caroline Herschel (William Herschel's sister and a renowned astronomer in her own right).",
+        "interesting_facts": [
+          "Discovered by Caroline Herschel on October 30, 1783",
+          "Contains over 1,000 stars — one of the richest open clusters",
+          "The 'rose petal' pattern is created by dark dust lanes in front of the cluster",
+          "At 1.6 billion years old, contains many evolved red giant stars"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "The many faint stars require longer exposures. The rose pattern photographs beautifully."
+      },
+      "stellarium": {
+        "skysource_id": "NGC7789",
+        "default_fov": 1.5,
+        "views": {
+          "context": {"description": "Cassiopeia region", "fov": 15, "center": "Cassiopeia"},
+          "medium": {"description": "Caroline's Rose", "fov": 1.5, "center": "NGC7789"},
+          "detail": {"description": "Cluster core", "fov": 0.5, "center": "NGC7789"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=NGC7789",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M52", "NGC 7654", "Stock 2"]
+    },
+    {
+      "id": "NGC457",
+      "names": {
+        "primary": "Owl Cluster",
+        "catalog": ["NGC 457", "Caldwell 13"],
+        "other": ["E.T. Cluster", "Dragonfly Cluster", "Phi Cassiopeiae Cluster"]
+      },
+      "coordinates": {
+        "ra": "01h 19m 32s",
+        "ra_decimal": 1.326,
+        "dec": "+58° 17′ 27″",
+        "dec_decimal": 58.291
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Cassiopeia",
+        "magnitude_visual": 6.4,
+        "size_arcmin": "13",
+        "distance_ly": 7900
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December", "January"],
+        "peak_month": "November",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Cassiopeia, about 2° south of δ Cassiopeiae (Ruchbah).",
+        "constellation_context": "In Cassiopeia, south of the W",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Cassiopeia's W shape"},
+          {"step": 2, "instruction": "Locate δ Cas (Ruchbah), near the middle of the W"},
+          {"step": 3, "instruction": "Move about 2° south to find NGC 457 — a distinctive cluster with two bright 'eyes'"}
+        ],
+        "nearby_bright_stars": ["Ruchbah (δ Cas, N)", "φ Cas (in cluster)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "A distinctive cluster with two bright stars forming 'eyes' and fainter stars spreading out like wings or arms",
+        "small_telescope": "Spectacular! The unmistakable owl/alien pattern emerges — two bright 'eyes' (φ Cas and HD 7902), body, and spreading wings. Often compared to E.T. with outstretched arms.",
+        "large_telescope": "More stars resolved, but the pattern is actually best at lower magnification where the 'figure' is apparent.",
+        "best_magnification": "Low to medium (25-75×)"
+      },
+      "science": {
+        "short_description": "An instantly recognizable cluster whose bright stars form a pattern resembling an owl's face or the alien E.T. — a favorite at star parties.",
+        "full_description": "NGC 457 is famous for its distinctive pattern resembling an owl (or the movie alien E.T. with outstretched arms). The two brightest stars form the 'eyes' — φ Cassiopeiae (mag 5.0) and HD 7902 (mag 7.0). Whether φ Cas is actually a cluster member is debated; if so, at magnitude 5 and spectral type F0, it would be one of the most luminous stars known. The cluster is young (about 21 million years) and contains roughly 150 stars.",
+        "interesting_facts": [
+          "Nicknamed 'E.T. Cluster' after the 1982 Spielberg film",
+          "Whether the bright star φ Cas is a member is debated — if so, it's extremely luminous",
+          "Only 21 million years old — very young for an open cluster",
+          "One of the most popular star party objects due to its distinctive shape"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "300-500",
+        "notes": "Easy to capture the distinctive pattern. A favorite for public outreach images."
+      },
+      "stellarium": {
+        "skysource_id": "NGC457",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Cassiopeia W", "fov": 15, "center": "Cassiopeia"},
+          "medium": {"description": "Owl Cluster", "fov": 1, "center": "NGC457"},
+          "detail": {"description": "Cluster detail", "fov": 0.3, "center": "NGC457"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=NGC457",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["NGC 436", "M103", "NGC 663"]
+    },
+    {
+      "id": "M76",
+      "names": {
+        "primary": "Little Dumbbell Nebula",
+        "catalog": ["NGC 650/651"],
+        "other": ["Cork Nebula", "Butterfly Nebula", "Barbell Nebula"]
+      },
+      "coordinates": {
+        "ra": "01h 42m 19.7s",
+        "ra_decimal": 1.706,
+        "dec": "+51° 34′ 31″",
+        "dec_decimal": 51.575
+      },
+      "physical": {
+        "type": "Planetary Nebula",
+        "type_short": "PN",
+        "constellation": "Perseus",
+        "magnitude_visual": 10.1,
+        "size_arcmin": "2.7 × 1.8",
+        "distance_ly": 2500
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "moderate",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Perseus, about 1° north-northwest of the star φ Persei.",
+        "constellation_context": "In northern Perseus, near the Andromeda border",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the distinctive Y-shape of Perseus rising in the autumn sky"},
+          {"step": 2, "instruction": "Locate φ Persei, a 4th magnitude star in northern Perseus"},
+          {"step": 3, "instruction": "M76 is about 1° north-northwest of φ Per — look for a small, faint glow"}
+        ],
+        "nearby_bright_stars": ["φ Persei (S)", "51 Andromedae (W)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Extremely challenging — may appear as a very faint star that doesn't quite focus",
+        "small_telescope": "A small, elongated glow. The two-lobed 'dumbbell' shape requires good conditions and moderate magnification. Often appears as a small rectangle.",
+        "large_telescope": "The bilobed structure becomes apparent — two brighter regions connected by a fainter waist. Sometimes described as looking like a cork or peanut.",
+        "best_magnification": "Medium to high (75-150×)"
+      },
+      "science": {
+        "short_description": "A miniature version of the Dumbbell Nebula — the faintest Messier object, but rewarding for patient observers.",
+        "full_description": "M76 is often called the 'Little Dumbbell' for its resemblance to M27, though it's smaller and much fainter. It was originally catalogued as two objects (NGC 650 and NGC 651) because its two lobes were thought to be separate nebulae. The central star, at magnitude 16.6, is one of the hottest known central stars of planetary nebulae (about 60,000 K). M76 is considered the faintest Messier object, making it a challenge even for experienced observers.",
+        "interesting_facts": [
+          "The faintest object in the Messier catalog (magnitude 10.1)",
+          "Originally catalogued as two separate objects (NGC 650 and 651)",
+          "The central star is extremely hot — about 60,000 K",
+          "Discovered by Pierre Méchain in 1780"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 800,
+        "ideal_focal_length_mm": "1500-2500",
+        "notes": "Small and faint — requires longer focal length and good conditions. Narrowband imaging reveals structure."
+      },
+      "stellarium": {
+        "skysource_id": "M76",
+        "default_fov": 0.5,
+        "views": {
+          "context": {"description": "Northern Perseus", "fov": 10, "center": "Perseus"},
+          "medium": {"description": "M76 area", "fov": 1, "center": "M76"},
+          "detail": {"description": "Nebula detail", "fov": 0.2, "center": "M76"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/",
+          "credit": "ESA/Hubble & NASA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M27 (Dumbbell)", "M57 (Ring)", "NGC 40"]
+    },
+    {
+      "id": "NGC891",
+      "names": {
+        "primary": "NGC 891",
+        "catalog": ["Caldwell 23"],
+        "other": ["Silver Sliver Galaxy"]
+      },
+      "coordinates": {
+        "ra": "02h 22m 33.4s",
+        "ra_decimal": 2.376,
+        "dec": "+42° 20′ 57″",
+        "dec_decimal": 42.349
+      },
+      "physical": {
+        "type": "Edge-on Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Andromeda",
+        "magnitude_visual": 9.9,
+        "size_arcmin": "13.5 × 2.5",
+        "distance_ly": 30000000
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "moderate",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Andromeda, about 3.5° east of γ Andromedae (Almach).",
+        "constellation_context": "In Andromeda, east of the bright double star Almach",
+        "star_hop": [
+          {"step": 1, "instruction": "Find γ Andromedae (Almach), a beautiful double star in eastern Andromeda"},
+          {"step": 2, "instruction": "Move about 3.5° east"},
+          {"step": 3, "instruction": "NGC 891 appears as a thin streak of light — one of the finest edge-on galaxies visible"}
+        ],
+        "nearby_bright_stars": ["Almach (γ And, W)", "Mirach (β And, SW)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Very challenging — may be glimpsed as a thin streak under excellent conditions",
+        "small_telescope": "A beautiful edge-on streak with a dark dust lane bisecting it (in larger scopes). The dust lane makes it look like a ghostly slash.",
+        "large_telescope": "The central dust lane becomes prominent — one of the most striking edge-on galaxies. Often compared to what our Milky Way might look like from outside.",
+        "best_magnification": "Medium to high (75-150×)"
+      },
+      "science": {
+        "short_description": "A stunning edge-on spiral galaxy with a prominent dust lane — often considered what our Milky Way might look like seen from the outside.",
+        "full_description": "NGC 891 is one of the most spectacular edge-on spiral galaxies visible in amateur telescopes. Its prominent central dust lane, clearly bisecting the galaxy, makes it a striking target. Astronomers often use NGC 891 as a model for understanding our own Milky Way, as the two galaxies appear remarkably similar in size, type, and structure. The galaxy's disk is warped slightly at the edges, evidence of past gravitational interactions.",
+        "interesting_facts": [
+          "Often called a 'twin' to our Milky Way due to structural similarities",
+          "The dust lane extends the full length of the visible disk",
+          "A slight warp in the outer disk suggests a past interaction with another galaxy",
+          "Discovered by William Herschel in 1784"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "The dust lane provides excellent contrast. One of the most photogenic edge-on galaxies."
+      },
+      "stellarium": {
+        "skysource_id": "NGC891",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Andromeda region", "fov": 10, "center": "Andromeda"},
+          "medium": {"description": "NGC 891", "fov": 1, "center": "NGC891"},
+          "detail": {"description": "Dust lane detail", "fov": 0.3, "center": "NGC891"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Adam Block/Mount Lemmon SkyCenter",
+          "search_url": "https://apod.nasa.gov/apod/ap100523.html",
+          "credit": "Adam Block/Mount Lemmon SkyCenter",
+          "license": "Used with permission"
+        }
+      },
+      "related_objects": ["NGC 4565", "M104", "NGC 4631"]
+    },
+    {
+      "id": "NGC1499",
+      "names": {
+        "primary": "California Nebula",
+        "catalog": ["NGC 1499", "Sharpless 220"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "04h 03m 18s",
+        "ra_decimal": 4.055,
+        "dec": "+36° 25′ 18″",
+        "dec_decimal": 36.422
+      },
+      "physical": {
+        "type": "Emission Nebula",
+        "type_short": "EN",
+        "constellation": "Perseus",
+        "magnitude_visual": 5.0,
+        "size_arcmin": "145 × 40",
+        "distance_ly": 1000
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December", "January"],
+        "peak_month": "November",
+        "difficulty": "challenging",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Extremely challenging to see visually despite its large size and brightness. Located in Perseus, about 1° north of the star ξ Persei (Menkhib).",
+        "constellation_context": "In Perseus, near the star Menkhib",
+        "star_hop": [
+          {"step": 1, "instruction": "Find ξ Persei (Menkhib), a 4th magnitude star in southwestern Perseus"},
+          {"step": 2, "instruction": "The California Nebula stretches about 2.5° long, starting from just north of Menkhib"},
+          {"step": 3, "instruction": "An H-beta filter is essential for visual observation — without it, the nebula is nearly invisible"}
+        ],
+        "nearby_bright_stars": ["ξ Persei (Menkhib, S)", "ε Persei (W)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible under normal conditions, even though technically bright enough",
+        "binoculars": "Extremely challenging without an H-beta filter. With filter, the California shape may emerge from a dark site.",
+        "small_telescope": "An H-beta filter is mandatory. The distinctive state outline becomes recognizable. Sweep slowly to trace the full extent.",
+        "large_telescope": "Individual bright and dark regions visible within the nebula. Without a filter, the nebula remains essentially invisible.",
+        "best_magnification": "Very low — binoculars or RFT telescope",
+        "special_equipment": "H-beta filter essential for visual observation"
+      },
+      "science": {
+        "short_description": "A large emission nebula shaped like the state of California — only 1,000 light-years away but notoriously difficult to see visually.",
+        "full_description": "The California Nebula is illuminated by the nearby hot O-type star ξ Persei (Menkhib), which excites the hydrogen gas to emit its characteristic red glow. Despite being relatively close (1,000 light-years) and having an integrated magnitude that should make it visible, the nebula's light is spread over such a large area that its surface brightness is extremely low. It's one of the prime examples of an object better photographed than observed visually.",
+        "interesting_facts": [
+          "One of the largest emission nebulae in the sky (2.5° × 1°)",
+          "Named for its resemblance to the US state of California",
+          "Ionized by the hot star ξ Persei (spectral type O7.5)",
+          "A classic example of an object that's 'bright' but has low surface brightness"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 85,
+        "ideal_focal_length_mm": "135-200",
+        "notes": "Excellent H-alpha target. Wide field required for the full nebula. Often shot as a widefield with the Pleiades."
+      },
+      "stellarium": {
+        "skysource_id": "NGC1499",
+        "default_fov": 5,
+        "views": {
+          "context": {"description": "Perseus region", "fov": 20, "center": "Perseus"},
+          "medium": {"description": "California Nebula", "fov": 5, "center": "NGC1499"},
+          "detail": {"description": "Central region", "fov": 2, "center": "NGC1499"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Rogelio Bernal Andreo",
+          "search_url": "https://apod.nasa.gov/apod/ap090912.html",
+          "credit": "Rogelio Bernal Andreo (Deep Sky Colors)",
+          "license": "Used with permission"
+        }
+      },
+      "related_objects": ["M45 (Pleiades)", "IC 348", "NGC 1333"]
+    },
+    {
+      "id": "M103",
+      "names": {
+        "primary": "M103",
+        "catalog": ["NGC 581"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "01h 33m 23s",
+        "ra_decimal": 1.556,
+        "dec": "+60° 39′ 00″",
+        "dec_decimal": 60.650
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Cassiopeia",
+        "magnitude_visual": 7.4,
+        "size_arcmin": "6",
+        "distance_ly": 10000
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Cassiopeia, about 1° northeast of δ Cassiopeiae (Ruchbah).",
+        "constellation_context": "In Cassiopeia, near Ruchbah",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Cassiopeia's W shape"},
+          {"step": 2, "instruction": "Locate δ Cas (Ruchbah), near the middle of the W"},
+          {"step": 3, "instruction": "M103 is just about 1° northeast of Ruchbah — a small, compact cluster"}
+        ],
+        "nearby_bright_stars": ["Ruchbah (δ Cas, SW)", "ε Cas (W)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "A small, compact glow with a few brighter stars",
+        "small_telescope": "A small but attractive cluster with about 40 stars visible. A red giant star (Struve 131) lies near the center, adding color contrast. The cluster forms a distinctive fan or arrowhead shape.",
+        "large_telescope": "Fully resolved with nice star chains. The surrounding star field is rich.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "A compact, pretty open cluster — the last object added to Messier's original catalog, discovered by his colleague Pierre Méchain.",
+        "full_description": "M103 was the last object in Messier's original catalog (objects 104-110 were added later by other astronomers). It's a relatively distant cluster at about 10,000 light-years, placing it in the outer Perseus arm of our galaxy. The red giant star near the cluster's center (Struve 131) is actually a foreground star, not a cluster member. At 25 million years old, the cluster is young and contains several blue-white main sequence stars.",
+        "interesting_facts": [
+          "The last object in Messier's original 1781 catalog",
+          "Discovered by Pierre Méchain in 1781",
+          "The red giant near the center is a foreground star, not a member",
+          "About 25 million years old — quite young"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-800",
+        "notes": "Small but compact cluster. Include the surrounding rich Cassiopeia star field."
+      },
+      "stellarium": {
+        "skysource_id": "M103",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Cassiopeia W", "fov": 15, "center": "Cassiopeia"},
+          "medium": {"description": "M103 cluster", "fov": 1, "center": "M103"},
+          "detail": {"description": "Cluster core", "fov": 0.3, "center": "M103"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=M103",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["NGC 457 (Owl)", "NGC 663", "NGC 654"]
+    },
+    {
+      "id": "Almach",
+      "names": {
+        "primary": "Almach",
+        "catalog": ["γ Andromedae", "HIP 9640"],
+        "other": ["Gamma And"]
+      },
+      "coordinates": {
+        "ra": "02h 03m 53.9s",
+        "ra_decimal": 2.065,
+        "dec": "+42° 19′ 47″",
+        "dec_decimal": 42.330
+      },
+      "physical": {
+        "type": "Multiple Star System",
+        "type_short": "**",
+        "constellation": "Andromeda",
+        "magnitude_visual": 2.1,
+        "size_arcmin": null,
+        "distance_ly": 355
+      },
+      "visibility": {
+        "best_months": ["October", "November", "December"],
+        "peak_month": "November",
+        "difficulty": "easy",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Almach is easily visible to the naked eye as a 2nd magnitude star, marking the 'foot' of the princess Andromeda. It's the easternmost bright star in the line extending from the Great Square.",
+        "constellation_context": "The eastern terminus of the Andromeda chain",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Great Square of Pegasus"},
+          {"step": 2, "instruction": "Locate Alpheratz at the northeast corner — this star is shared with Andromeda"},
+          {"step": 3, "instruction": "Follow the chain of bright stars northeast: Alpheratz → Mirach → Almach (3 stars in a curved line)"}
+        ],
+        "nearby_bright_stars": ["Mirach (β And, SW)", "Algol (β Per, E)", "NGC 891 (E)"]
+      },
+      "observation": {
+        "naked_eye": "A bright 2nd magnitude star, appearing single",
+        "binoculars": "Still appears as a single bright star — the components are too close to split",
+        "small_telescope": "A spectacular double star! The primary is golden-orange (mag 2.1), the secondary is blue-green (mag 5.0). Separation is about 10 arcseconds. One of the finest color-contrast doubles in the sky, rivaling Albireo.",
+        "large_telescope": "The secondary star (γ And B) is itself a close double, but the 0.5\" separation requires excellent seeing and moderate aperture to split.",
+        "best_magnification": "Medium (75-100×) for the main pair"
+      },
+      "science": {
+        "short_description": "One of the most beautiful double stars in the sky — a stunning orange-and-blue pair that rivals Albireo in color contrast.",
+        "full_description": "Almach is a quadruple star system, though amateur telescopes show it as a striking double. The primary (γ And A) is an orange giant star, while the secondary (γ And B) appears blue-green. What appears as the secondary is actually itself a triple star system: a close binary pair with a period of 64 years, orbited by a third component. The color contrast between the golden primary and blue secondary makes Almach a perennial favorite.",
+        "interesting_facts": [
+          "Often considered as beautiful as or superior to Albireo for color contrast",
+          "Actually a quadruple system — the blue component is itself triple",
+          "The name comes from the Arabic for 'desert lynx'",
+          "The primary is about 2,000 times more luminous than the Sun"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000+",
+        "notes": "Capturing the color contrast requires careful exposure to avoid overexposing the bright primary."
+      },
+      "stellarium": {
+        "skysource_id": "Almach",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Andromeda chain", "fov": 15, "center": "Andromeda"},
+          "medium": {"description": "Almach", "fov": 1, "center": "Almach"},
+          "detail": {"description": "Double star", "fov": 0.1, "center": "Almach"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Custom observation",
+          "search_url": null,
+          "credit": "Double star photo",
+          "license": "To create"
+        }
+      },
+      "related_objects": ["Albireo", "NGC 891", "M31"]
+    }
+  ]
+}
