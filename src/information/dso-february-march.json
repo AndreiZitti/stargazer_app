@@ -1,0 +1,892 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-08",
+    "coverage": ["February", "March"],
+    "total_objects": 12,
+    "notes": "Master DSO data for February-March stargazing guide"
+  },
+  "objects": [
+    {
+      "id": "M44",
+      "names": {
+        "primary": "Beehive Cluster",
+        "catalog": ["NGC 2632", "Praesepe"],
+        "other": ["The Manger"]
+      },
+      "coordinates": {
+        "ra": "08h 40m 24s",
+        "ra_decimal": 8.673,
+        "dec": "+19° 41′ 00″",
+        "dec_decimal": 19.683
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Cancer",
+        "magnitude_visual": 3.7,
+        "size_arcmin": "95",
+        "distance_ly": 577
+      },
+      "visibility": {
+        "best_months": ["February", "March", "April"],
+        "peak_month": "March",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Cancer is a faint constellation between bright Gemini and Leo. The Beehive appears as a fuzzy patch right in the center of Cancer — look for the dim 'cloud' midway between Pollux (Gemini) and Regulus (Leo).",
+        "constellation_context": "At the heart of Cancer the Crab",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Pollux and Castor in Gemini, then find Regulus in Leo"},
+          {"step": 2, "instruction": "The Beehive lies roughly midway between these two landmarks"},
+          {"step": 3, "instruction": "Look for a fuzzy patch — Cancer's stars are faint, but the cluster stands out as a misty glow"}
+        ],
+        "nearby_bright_stars": ["Asellus Borealis (γ Cnc, N)", "Asellus Australis (δ Cnc, S)", "Pollux (W)", "Regulus (E)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a hazy patch in dark skies. Ancient observers called it the 'Little Cloud' or 'Little Mist.' Used historically as a weather predictor — if invisible on a clear night, rain was expected.",
+        "binoculars": "Superb! Dozens of stars scatter across the field like bees around a hive. 7×50s or 10×50s provide the ideal view — one of the finest binocular objects in the entire sky.",
+        "small_telescope": "Individual stars beautifully resolved, but the cluster is so large (1.5°) it may not fit in the field. Use lowest power possible. Several orange giant stars visible among blue-white members.",
+        "large_telescope": "Too spread out for high magnification. Best appreciated at low power or through binoculars.",
+        "best_magnification": "Low (15-30×) — the cluster spans 1.5°, larger than the Moon"
+      },
+      "science": {
+        "short_description": "One of the nearest open clusters to Earth, known since antiquity. A swarm of over 1,000 stars drifting through space together.",
+        "full_description": "The Beehive Cluster contains over 1,000 gravitationally bound stars, with about 350 bright enough to see in amateur telescopes. At 700 million years old, it has had time to develop red giant stars while retaining many blue-white main sequence members. The cluster shares a common origin and similar age with the Hyades, suggesting they may have been born from the same giant molecular cloud.",
+        "interesting_facts": [
+          "Galileo first resolved it into stars in 1609 with his telescope",
+          "Known since antiquity — mentioned by Aratus in 260 BC and Hipparchus in 130 BC",
+          "Contains at least 5 confirmed exoplanets (hot Jupiters)",
+          "The name 'Praesepe' means 'manger' in Latin — the two adjacent stars were called 'donkeys'"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 85,
+        "ideal_focal_length_mm": "135-200",
+        "notes": "Very wide target — standard camera lenses work well. Include surrounding star field for context."
+      },
+      "stellarium": {
+        "skysource_id": "M44",
+        "default_fov": 5,
+        "views": {
+          "context": {"description": "Cancer constellation", "fov": 30, "center": "Cancer"},
+          "medium": {"description": "Beehive Cluster", "fov": 5, "center": "M44"},
+          "detail": {"description": "Cluster core", "fov": 2, "center": "M44"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/JPL-Caltech",
+          "search_url": "https://www.nasa.gov/multimedia/imagegallery/image_feature_2186.html",
+          "credit": "NASA/JPL-Caltech",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M67", "Hyades"]
+    },
+    {
+      "id": "M81",
+      "names": {
+        "primary": "Bode's Galaxy",
+        "catalog": ["NGC 3031"],
+        "other": ["Bode's Nebula"]
+      },
+      "coordinates": {
+        "ra": "09h 55m 33.2s",
+        "ra_decimal": 9.926,
+        "dec": "+69° 03′ 55″",
+        "dec_decimal": 69.065
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Ursa Major",
+        "magnitude_visual": 6.9,
+        "size_arcmin": "26.9 × 14.1",
+        "distance_ly": 11800000
+      },
+      "visibility": {
+        "best_months": ["February", "March", "April", "May"],
+        "peak_month": "March",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "M81 is not visible to the naked eye. Locate it by drawing a diagonal line across the bowl of the Big Dipper from Phecda (γ UMa) through Dubhe (α UMa), then continue about the same distance beyond to find M81/M82.",
+        "constellation_context": "Northwest of the Big Dipper's bowl in Ursa Major",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Big Dipper asterism — unmistakable in the northern sky"},
+          {"step": 2, "instruction": "Draw a line from Phecda (lower-left bowl star) through Dubhe (upper-right bowl star)"},
+          {"step": 3, "instruction": "Continue this line about 10° (one fist at arm's length) to find a pair of fuzzy patches — M81 and M82"}
+        ],
+        "nearby_bright_stars": ["Dubhe (α UMa, SE)", "24 UMa (S)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as a faint, elongated glow. M82 should be visible in the same field, about 38 arcminutes to the north.",
+        "small_telescope": "Bright oval core with fainter outer regions. The spiral arms are difficult to see without larger apertures. M82 provides striking contrast as a thin streak nearby.",
+        "large_telescope": "Spiral structure becomes visible, especially with averted vision. Dark dust lanes may be glimpsed in the inner arms. A stunning pair with M82.",
+        "best_magnification": "Medium (75-100×) for detail; low power to see both M81 and M82 together"
+      },
+      "science": {
+        "short_description": "A grand design spiral galaxy nearly 12 million light-years away, interacting gravitationally with its neighbor M82.",
+        "full_description": "M81 is one of the brightest galaxies in Earth's sky and a superb example of a grand design spiral. Its gravitational interaction with M82 (which passed close by about 300 million years ago) has triggered intense star formation in both galaxies. M81's nucleus hosts a supermassive black hole of about 70 million solar masses. The galaxy is the largest member of the M81 Group, one of the groups nearest to our Local Group.",
+        "interesting_facts": [
+          "Discovered by Johann Elert Bode in 1774, hence 'Bode's Galaxy'",
+          "One of the most detailed spiral galaxies visible from Earth",
+          "Supernova SN 1993J was one of the brightest supernovae of the 20th century",
+          "M81 and M82 fit together in one binocular field — a beautiful pairing"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "Frame to include M82 for iconic pairing. H-alpha data reveals faint tidal streams between the galaxies."
+      },
+      "stellarium": {
+        "skysource_id": "M81",
+        "default_fov": 3,
+        "views": {
+          "context": {"description": "Big Dipper region", "fov": 30, "center": "Ursa Major"},
+          "medium": {"description": "M81/M82 pair", "fov": 3, "center": "M81"},
+          "detail": {"description": "M81 close-up", "fov": 1, "center": "M81"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2007/19/2134-Image.html",
+          "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M82", "NGC 3077", "Holmberg IX"]
+    },
+    {
+      "id": "M82",
+      "names": {
+        "primary": "Cigar Galaxy",
+        "catalog": ["NGC 3034"],
+        "other": ["Starburst Galaxy"]
+      },
+      "coordinates": {
+        "ra": "09h 55m 52.2s",
+        "ra_decimal": 9.931,
+        "dec": "+69° 40′ 47″",
+        "dec_decimal": 69.680
+      },
+      "physical": {
+        "type": "Irregular/Starburst Galaxy",
+        "type_short": "Gal",
+        "constellation": "Ursa Major",
+        "magnitude_visual": 8.4,
+        "size_arcmin": "11.2 × 4.3",
+        "distance_ly": 11500000
+      },
+      "visibility": {
+        "best_months": ["February", "March", "April", "May"],
+        "peak_month": "March",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Found 38 arcminutes north of M81 — same star-hop from the Big Dipper.",
+        "constellation_context": "Northwest of Big Dipper, companion to M81",
+        "star_hop": [
+          {"step": 1, "instruction": "Use same method as M81 — diagonal through Big Dipper bowl"},
+          {"step": 2, "instruction": "M82 is the more northern of the two fuzzy objects"},
+          {"step": 3, "instruction": "Appears as an edge-on streak compared to M81's oval shape"}
+        ],
+        "nearby_bright_stars": ["Dubhe (α UMa, SE)", "24 UMa (S)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as a thin streak or cigar shape. The contrast with nearby M81's oval shape is striking.",
+        "small_telescope": "Mottled texture visible — the galaxy appears irregular with bright and dark patches along its length. Distinctly different from typical smooth galaxies.",
+        "large_telescope": "Complex structure with dark lanes and bright knots. Under good conditions, the chaotic 'explosion' at the core region becomes apparent.",
+        "best_magnification": "Medium to high (75-150×) for detail"
+      },
+      "science": {
+        "short_description": "A galaxy in the throes of explosive star formation, triggered by a close encounter with M81 about 300 million years ago.",
+        "full_description": "M82 is the prototype starburst galaxy — forming stars at a rate 10 times higher than 'normal' galaxies. This frenzy was triggered by its close gravitational encounter with M81. The galaxy is ejecting huge plumes of hot gas above and below its disk, visible in X-ray and hydrogen-alpha images. The core harbors intense star-forming regions and the remnant of the closest supernova of recent decades (SN 2014J).",
+        "interesting_facts": [
+          "Star formation rate is about 10 solar masses per year (vs 1-3 for Milky Way)",
+          "SN 2014J was the closest Type Ia supernova in over 40 years",
+          "Bipolar superwind plumes extend 10,000+ light-years above/below the disk",
+          "First thought to be an irregular galaxy, but now known to be a disturbed spiral seen edge-on"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "800-1500",
+        "notes": "H-alpha filter reveals dramatic outflow plumes extending perpendicular to the disk."
+      },
+      "stellarium": {
+        "skysource_id": "M82",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "M81/M82 field", "fov": 3, "center": "M81"},
+          "medium": {"description": "M82 detail", "fov": 1, "center": "M82"},
+          "detail": {"description": "Core region", "fov": 0.3, "center": "M82"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/Hubble Heritage Team",
+          "search_url": "https://hubblesite.org/contents/media/images/2006/14/1892-Image.html",
+          "credit": "NASA, ESA and the Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M81", "NGC 3077"]
+    },
+    {
+      "id": "M46",
+      "names": {
+        "primary": "M46",
+        "catalog": ["NGC 2437"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "07h 41m 46s",
+        "ra_decimal": 7.696,
+        "dec": "-14° 48′ 36″",
+        "dec_decimal": -14.810
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Puppis",
+        "magnitude_visual": 6.1,
+        "size_arcmin": "27",
+        "distance_ly": 5400
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye (barely, under excellent conditions). Located in Puppis, east of Canis Major. Find Sirius, then look about 14° east.",
+        "constellation_context": "In Puppis, the stern of the ancient ship Argo",
+        "star_hop": [
+          {"step": 1, "instruction": "Locate Sirius, the brightest star in the sky"},
+          {"step": 2, "instruction": "Look about 14° east (almost one and a half fist-widths at arm's length)"},
+          {"step": 3, "instruction": "M46 and M47 are close together — M46 is the eastern (left) cluster, appearing smaller and grainier"}
+        ],
+        "nearby_bright_stars": ["Sirius (W)", "M47 (W)", "α Monocerotis (N)"]
+      },
+      "observation": {
+        "naked_eye": "Visible only under excellent dark sky conditions as a faint hazy spot",
+        "binoculars": "A grainy glow with individual stars barely resolved. M47 appears brighter and more scattered to the west.",
+        "small_telescope": "Rich cluster of faint stars — over 150 stars visible. Look for NGC 2438, a planetary nebula superimposed on the cluster (but not physically associated).",
+        "large_telescope": "The planetary nebula NGC 2438 shows as a distinct ring near the cluster's northern edge. Hundreds of faint stars resolved.",
+        "best_magnification": "Medium (50-100×) to resolve stars and see the planetary nebula"
+      },
+      "science": {
+        "short_description": "A rich open cluster with a bonus — a planetary nebula (NGC 2438) is superimposed in the same field, creating a stunning false association.",
+        "full_description": "M46 contains over 500 stars in a volume about 30 light-years across. At 300 million years old, it's a mature cluster with a mix of stellar types. The planetary nebula NGC 2438 appears to lie within the cluster but is actually much closer to us (about 2,900 light-years). This chance alignment creates one of the most photogenic cluster+nebula combinations in the sky.",
+        "interesting_facts": [
+          "The planetary nebula NGC 2438 is a foreground object at about 2,900 ly — half the cluster's distance",
+          "One of the richest open clusters visible from mid-northern latitudes",
+          "Contains about 500 stars, with 150 brighter than magnitude 13",
+          "M46 and M47 were both discovered on the same night (Feb 19, 1771) by Charles Messier"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner-intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-800",
+        "notes": "Frame to include both M46 and M47. Narrowband can enhance the planetary nebula NGC 2438."
+      },
+      "stellarium": {
+        "skysource_id": "M46",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Puppis region", "fov": 15, "center": "Puppis"},
+          "medium": {"description": "M46 and M47", "fov": 4, "center": "M46"},
+          "detail": {"description": "M46 with NGC 2438", "fov": 1.5, "center": "M46"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/?search=M46",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M47", "NGC 2438", "NGC 2423"]
+    },
+    {
+      "id": "M47",
+      "names": {
+        "primary": "M47",
+        "catalog": ["NGC 2422"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "07h 36m 36s",
+        "ra_decimal": 7.610,
+        "dec": "-14° 30′ 00″",
+        "dec_decimal": -14.500
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Puppis",
+        "magnitude_visual": 4.4,
+        "size_arcmin": "30",
+        "distance_ly": 1600
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Visible as a hazy patch in dark skies, about 12° east of Sirius. Easier to spot than its neighbor M46.",
+        "constellation_context": "In Puppis, close to the Canis Major border",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Sirius, then look about 12° east (one fist at arm's length)"},
+          {"step": 2, "instruction": "M47 appears as a scattered collection of moderately bright stars"},
+          {"step": 3, "instruction": "M46 lies about 1.5° further east — more compact and fainter"}
+        ],
+        "nearby_bright_stars": ["Sirius (W)", "M46 (E)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a fuzzy patch in dark skies. The cluster's brighter stars may give it a slightly granular appearance.",
+        "binoculars": "Excellent — about 30 bright stars loosely scattered across the field. Several bright blue-white stars stand out.",
+        "small_telescope": "Open, sparse cluster with about 50 stars. A bright double star (Sigma 1121) lies near the center. Nice color contrast among members.",
+        "large_telescope": "Stars become widely spaced at higher magnifications. Best at low power to appreciate the overall pattern.",
+        "best_magnification": "Low (25-50×) to frame the whole cluster"
+      },
+      "science": {
+        "short_description": "A bright, loose open cluster — the closer neighbor of M46, providing a striking visual contrast in depth and richness.",
+        "full_description": "M47 is a young cluster at about 78 million years old, containing around 50 stars in a volume about 12 light-years across. Its proximity (1,600 light-years vs M46's 5,400) explains why its stars appear brighter and more scattered. The cluster includes several bright B-type stars and a notable double star system near its center.",
+        "interesting_facts": [
+          "One of the most 'lost' Messier objects — Messier's coordinates were wrong, and it wasn't properly identified until 1959",
+          "About 3.5 times closer to us than neighboring M46",
+          "Contains a bright double star (Sigma 1121) with components of magnitudes 7.4 and 7.9",
+          "The cluster is about 78 million years old — young enough to have many hot blue stars"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "300-500",
+        "notes": "Wide field image can capture both M46 and M47 — a great demonstration of cluster distance contrasts."
+      },
+      "stellarium": {
+        "skysource_id": "M47",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "M46-M47 field", "fov": 5, "center": "M47"},
+          "medium": {"description": "M47 cluster", "fov": 2, "center": "M47"},
+          "detail": {"description": "Cluster core", "fov": 1, "center": "M47"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/?search=M47",
+          "credit": "ESO/Digitized Sky Survey 2",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M46", "M93", "NGC 2423"]
+    },
+    {
+      "id": "NGC2359",
+      "names": {
+        "primary": "Thor's Helmet",
+        "catalog": ["NGC 2359", "Gum 4", "RCW 5"],
+        "other": ["Duck Nebula"]
+      },
+      "coordinates": {
+        "ra": "07h 18m 30s",
+        "ra_decimal": 7.308,
+        "dec": "-13° 13′ 48″",
+        "dec_decimal": -13.230
+      },
+      "physical": {
+        "type": "Emission Nebula (Wolf-Rayet)",
+        "type_short": "EN",
+        "constellation": "Canis Major",
+        "magnitude_visual": 11.5,
+        "size_arcmin": "22 × 12",
+        "distance_ly": 15000
+      },
+      "visibility": {
+        "best_months": ["January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "challenging",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Canis Major, about 8° northeast of Sirius.",
+        "constellation_context": "In the northeastern part of Canis Major",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Sirius, the brightest star in the sky"},
+          {"step": 2, "instruction": "Look about 8° northeast — roughly a fist-width at arm's length"},
+          {"step": 3, "instruction": "The nebula is faint — use an OIII filter and low magnification. Located near the star HD 56925 (the Wolf-Rayet star)"}
+        ],
+        "nearby_bright_stars": ["Sirius (SW)", "Mirzam (W)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Extremely challenging — may be glimpsed as faint haze under exceptional conditions with OIII filter",
+        "small_telescope": "The bubble shape begins to emerge with an OIII filter. The central Wolf-Rayet star is visible.",
+        "large_telescope": "The 'helmet' shape becomes apparent — a bright bubble with wing-like extensions. OIII filter strongly recommended.",
+        "best_magnification": "Low to medium (40-100×) with OIII filter",
+        "special_equipment": "OIII filter essential for visual observation"
+      },
+      "science": {
+        "short_description": "A cosmic bubble blown by the fierce stellar wind of a dying Wolf-Rayet star — one of the most powerful types of stars known.",
+        "full_description": "Thor's Helmet is a wind-blown bubble surrounding WR 7 (HD 56925), a massive Wolf-Rayet star. Wolf-Rayet stars are evolved massive stars that have blown away their outer hydrogen layers and are now losing mass at tremendous rates through powerful stellar winds (millions of times stronger than the solar wind). This wind rams into the surrounding interstellar medium, creating the bubble structure. The 'wings' are where the bubble is breaking through into lower-density regions.",
+        "interesting_facts": [
+          "The central star WR 7 has a surface temperature of about 112,000 K — 20 times hotter than the Sun",
+          "Wolf-Rayet stars lose mass at 10^-5 solar masses per year through their winds",
+          "The nebula is expanding at about 30 km/s",
+          "WR 7 will likely explode as a supernova within the next few hundred thousand years"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate-advanced",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "600-1000",
+        "notes": "Narrowband imaging (OIII/H-alpha) reveals stunning detail. Bicolor or HOO palettes work well."
+      },
+      "stellarium": {
+        "skysource_id": "NGC2359",
+        "default_fov": 1.5,
+        "views": {
+          "context": {"description": "Canis Major region", "fov": 15, "center": "Canis Major"},
+          "medium": {"description": "Thor's Helmet area", "fov": 3, "center": "NGC2359"},
+          "detail": {"description": "Nebula detail", "fov": 1, "center": "NGC2359"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso1238a/",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["NGC 2360", "WR 7"]
+    },
+    {
+      "id": "M67",
+      "names": {
+        "primary": "M67",
+        "catalog": ["NGC 2682", "King Cobra Cluster"],
+        "other": ["Golden Eye Cluster"]
+      },
+      "coordinates": {
+        "ra": "08h 51m 18s",
+        "ra_decimal": 8.855,
+        "dec": "+11° 49′ 00″",
+        "dec_decimal": 11.817
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Cancer",
+        "magnitude_visual": 6.1,
+        "size_arcmin": "30",
+        "distance_ly": 2700
+      },
+      "visibility": {
+        "best_months": ["February", "March", "April"],
+        "peak_month": "March",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located about 1.8° south of the star Acubens (α Cancri), in the southern part of Cancer.",
+        "constellation_context": "In southern Cancer, south of the Beehive",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Beehive Cluster (M44) in the center of Cancer"},
+          {"step": 2, "instruction": "Move about 9° south to find Acubens (α Cnc)"},
+          {"step": 3, "instruction": "M67 lies 1.8° due south of Acubens — look for a fuzzy patch"}
+        ],
+        "nearby_bright_stars": ["Acubens (α Cnc, N)", "Asellus Australis (δ Cnc, N)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as a hazy patch of light, clearly non-stellar",
+        "small_telescope": "Beautiful cluster of about 100 stars with similar brightnesses — gives a 'salt-and-pepper' appearance. Many stars are yellowish, reflecting the cluster's old age.",
+        "large_telescope": "Over 200 stars resolved. The cluster's stars appear remarkably uniform in brightness compared to younger clusters.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "One of the oldest known open clusters — a rare survivor at nearly 4 billion years old, with a composition remarkably similar to our Sun.",
+        "full_description": "M67 is exceptional among open clusters: at 3.7-4.6 billion years old, it's nearly as old as our solar system. Most open clusters disperse within a billion years, but M67's position 1,500 light-years above the galactic plane has protected it from disruptive gravitational encounters. Its stars have solar-like metallicity and age, making M67 an important laboratory for studying stellar evolution in Sun-like stars.",
+        "interesting_facts": [
+          "One of the oldest open clusters known — about 4 billion years old",
+          "Contains stars nearly identical to our Sun in age and composition",
+          "Has been proposed (controversially) as the Sun's birth cluster, though recent studies dispute this",
+          "Contains over 500 stars, with about 200 visible in amateur telescopes"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-800",
+        "notes": "Rich star field with many solar-type stars. Long exposures reveal the slightly yellowish tint of the evolved stars."
+      },
+      "stellarium": {
+        "skysource_id": "M67",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Southern Cancer", "fov": 15, "center": "Cancer"},
+          "medium": {"description": "M67 cluster", "fov": 2, "center": "M67"},
+          "detail": {"description": "Cluster core", "fov": 0.75, "center": "M67"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso1402a/",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M44", "NGC 188"]
+    },
+    {
+      "id": "M37",
+      "names": {
+        "primary": "M37",
+        "catalog": ["NGC 2099"],
+        "other": ["January Salt-and-Pepper Cluster"]
+      },
+      "coordinates": {
+        "ra": "05h 52m 18s",
+        "ra_decimal": 5.872,
+        "dec": "+32° 33′ 02″",
+        "dec_decimal": 32.551
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Auriga",
+        "magnitude_visual": 5.6,
+        "size_arcmin": "24",
+        "distance_ly": 4500
+      },
+      "visibility": {
+        "best_months": ["December", "January", "February", "March"],
+        "peak_month": "February",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Located in Auriga, roughly midway between the bright stars Elnath (β Tau) and θ Aurigae. May be glimpsed as a hazy spot under excellent conditions.",
+        "constellation_context": "Eastern Auriga, forming a triangle with M36 and M38",
+        "star_hop": [
+          {"step": 1, "instruction": "Find bright Capella in Auriga — one of the brightest stars in the winter sky"},
+          {"step": 2, "instruction": "Auriga's three famous clusters form an arc in the eastern part of the constellation"},
+          {"step": 3, "instruction": "M37 is the southernmost and richest of the three — about 5° east-southeast of M36"}
+        ],
+        "nearby_bright_stars": ["Elnath (β Tau, S)", "θ Aurigae (W)", "Capella (NW)"]
+      },
+      "observation": {
+        "naked_eye": "May be glimpsed as a fuzzy star under excellent dark sky conditions",
+        "binoculars": "A rich, grainy glow — clearly a cluster, but individual stars barely resolved",
+        "small_telescope": "Stunning — hundreds of stars in a rich, compact field. A prominent orange giant star lies near the center, surrounded by fainter blue-white stars.",
+        "large_telescope": "Extremely rich, with over 500 stars visible. Complex patterns of star chains and lanes. One of the finest open clusters for telescopes.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "The richest and largest of Auriga's famous open cluster trio — over 500 stars in a spectacular stellar city.",
+        "full_description": "M37 is the most impressive of Auriga's three Messier clusters, containing over 500 stars in a volume about 25 light-years across. At 300-500 million years old, it has evolved at least 150 stars into red giants — more than any other known cluster. These orange giants scattered among the blue-white main sequence stars create beautiful color contrast, earning M37 comparisons to 'a field of diamonds scattered with rubies.'",
+        "interesting_facts": [
+          "Contains over 150 red giant stars — more than any other known open cluster",
+          "The richest of the three Auriga Messier clusters (M36, M37, M38)",
+          "The central orange star is about 11th magnitude and stands out beautifully",
+          "Contains at least 12 blue straggler stars — older stars that appear anomalously young"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-800",
+        "notes": "Colorful cluster with red giants among blue-white stars. One of the most photogenic open clusters."
+      },
+      "stellarium": {
+        "skysource_id": "M37",
+        "default_fov": 1.5,
+        "views": {
+          "context": {"description": "Auriga constellation", "fov": 20, "center": "Auriga"},
+          "medium": {"description": "M36-M37-M38 area", "fov": 6, "center": "M37"},
+          "detail": {"description": "M37 close-up", "fov": 1, "center": "M37"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=M37",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M36", "M38", "NGC 1893"]
+    },
+    {
+      "id": "LeoTriplet",
+      "names": {
+        "primary": "Leo Triplet",
+        "catalog": ["M65", "M66", "NGC 3628"],
+        "other": ["Leo Trio"]
+      },
+      "coordinates": {
+        "ra": "11h 18m 55.9s",
+        "ra_decimal": 11.315,
+        "dec": "+13° 05′ 32″",
+        "dec_decimal": 13.092
+      },
+      "physical": {
+        "type": "Galaxy Group",
+        "type_short": "GalGrp",
+        "constellation": "Leo",
+        "magnitude_visual": 9.0,
+        "size_arcmin": "50 (group)",
+        "distance_ly": 35000000
+      },
+      "visibility": {
+        "best_months": ["March", "April", "May"],
+        "peak_month": "April",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Leo, about 2.5° south-southeast of the star Chertan (θ Leonis), between the 'hindquarters' of the Lion.",
+        "constellation_context": "Below the 'hip' of Leo, south of the lion's body",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Leo by locating its distinctive 'sickle' asterism (head) and triangle (hindquarters)"},
+          {"step": 2, "instruction": "Locate Chertan (θ Leo) at the lion's hip"},
+          {"step": 3, "instruction": "The Leo Triplet lies about 2.5° south-southeast of Chertan. Look for three fuzzy patches in a triangular arrangement"}
+        ],
+        "nearby_bright_stars": ["Chertan (θ Leo, N)", "Denebola (β Leo, E)", "Regulus (W)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "M65 and M66 appear as faint smudges. NGC 3628 is challenging — more diffuse and edge-on.",
+        "small_telescope": "All three galaxies visible in the same low-power field. M65 and M66 show elongated shapes; NGC 3628 is a thin edge-on streak.",
+        "large_telescope": "Dust lanes visible in M66. NGC 3628's prominent dust lane creates a striking silhouette. Spiral structure may be glimpsed in M65.",
+        "best_magnification": "Low (40-60×) to see all three together; medium (75-100×) for individual detail"
+      },
+      "science": {
+        "short_description": "A photogenic trio of interacting galaxies about 35 million light-years away — gravitationally bound and slowly transforming each other.",
+        "full_description": "The Leo Triplet is a small group of interacting galaxies. M66, the most disturbed, shows asymmetric spiral arms pulled by gravity from its neighbors. NGC 3628 (the 'Hamburger Galaxy') has a spectacular tidal tail extending 300,000 light-years — evidence of past close encounters. Despite appearing close together (within 0.5° on the sky), the galaxies span about 500,000 light-years in space.",
+        "interesting_facts": [
+          "NGC 3628's tidal tail extends 300,000 light-years — visible in deep images",
+          "M66 has produced three supernovae since 1973",
+          "The three galaxies will eventually merge into a single larger galaxy",
+          "One of the most popular galaxy groups for amateur astrophotographers"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 400,
+        "ideal_focal_length_mm": "600-1000",
+        "notes": "Frame to include all three galaxies. Long exposures may reveal the tidal tail of NGC 3628."
+      },
+      "stellarium": {
+        "skysource_id": "M66",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Leo constellation", "fov": 30, "center": "Leo"},
+          "medium": {"description": "Leo Triplet", "fov": 2, "center": "M66"},
+          "detail": {"description": "M66 close-up", "fov": 0.5, "center": "M66"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso1126a/",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["NGC 3593", "NGC 3596"]
+    },
+    {
+      "id": "M48",
+      "names": {
+        "primary": "M48",
+        "catalog": ["NGC 2548"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "08h 13m 43s",
+        "ra_decimal": 8.229,
+        "dec": "-05° 45′ 02″",
+        "dec_decimal": -5.751
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Hydra",
+        "magnitude_visual": 5.8,
+        "size_arcmin": "54",
+        "distance_ly": 1500
+      },
+      "visibility": {
+        "best_months": ["February", "March", "April"],
+        "peak_month": "March",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "May be glimpsed as a faint fuzzy patch in dark skies. Located in Hydra, about 3° south-southeast of ζ Monocerotis, in the area between Monoceros and Hydra's head.",
+        "constellation_context": "In northern Hydra, on the border with Monoceros",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Procyon (bright star in Canis Minor)"},
+          {"step": 2, "instruction": "Look about 15° south into the Hydra/Monoceros border region"},
+          {"step": 3, "instruction": "M48 appears as a large, loose grouping of stars — use low magnification or binoculars"}
+        ],
+        "nearby_bright_stars": ["ζ Monocerotis (N)", "Procyon (NW)", "Alphard (SE)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a faint hazy patch under dark skies",
+        "binoculars": "Excellent view — a scattered group of about 50 stars, some forming chains and patterns",
+        "small_telescope": "Rich cluster of about 80 stars spread across a large area. Several distinct star chains visible. A few orange-tinted stars among the blue-white members.",
+        "large_telescope": "Too spread out for high magnification. Stick with low power to appreciate the structure.",
+        "best_magnification": "Low (25-50×) — cluster spans nearly a full degree"
+      },
+      "science": {
+        "short_description": "A large, bright open cluster — another 'lost' Messier object that was only positively identified in the 20th century.",
+        "full_description": "M48 contains about 80 stars in a volume roughly 23 light-years across. At 300 million years old, it's mature enough to have developed a few red giants. Like M47, Messier recorded its position incorrectly, and the cluster was 'lost' until Oswald Thomas identified it in 1934. The cluster lies about 1,500 light-years away, making it one of the nearer Messier clusters.",
+        "interesting_facts": [
+          "One of several 'lost' Messier objects — Messier made an error recording its position",
+          "Independently identified by Johann Koehler and Caroline Herschel",
+          "The cluster is moving away from us at about 8 km/s",
+          "Contains at least three giant stars with distinctly orange color"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 135,
+        "ideal_focal_length_mm": "200-300",
+        "notes": "Wide field target. Standard camera lenses work well. Rich star field in the Milky Way."
+      },
+      "stellarium": {
+        "skysource_id": "M48",
+        "default_fov": 2.5,
+        "views": {
+          "context": {"description": "Hydra/Monoceros border", "fov": 15, "center": "Hydra"},
+          "medium": {"description": "M48 cluster", "fov": 2.5, "center": "M48"},
+          "detail": {"description": "Cluster core", "fov": 1, "center": "M48"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=M48",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M50", "NGC 2506"]
+    },
+    {
+      "id": "NGC2903",
+      "names": {
+        "primary": "NGC 2903",
+        "catalog": ["NGC 2903"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "09h 32m 10.1s",
+        "ra_decimal": 9.536,
+        "dec": "+21° 30′ 03″",
+        "dec_decimal": 21.501
+      },
+      "physical": {
+        "type": "Barred Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Leo",
+        "magnitude_visual": 9.0,
+        "size_arcmin": "12.6 × 6.0",
+        "distance_ly": 30000000
+      },
+      "visibility": {
+        "best_months": ["February", "March", "April", "May"],
+        "peak_month": "March",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located 1.5° south of λ Leonis, in the 'head' region of Leo below the Sickle asterism.",
+        "constellation_context": "Below Leo's head, south of the Sickle",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Leo's Sickle — the backwards question mark forming the lion's head"},
+          {"step": 2, "instruction": "Locate λ Leonis, one of the stars in the Sickle"},
+          {"step": 3, "instruction": "NGC 2903 is about 1.5° due south of λ Leo — an obvious elongated glow in a telescope"}
+        ],
+        "nearby_bright_stars": ["λ Leonis (N)", "Regulus (S)", "Algieba (E)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Visible as a faint elongated smudge under dark skies",
+        "small_telescope": "Bright, elongated galaxy with a noticeably brighter core. The bar and spiral arms hint at structure at higher magnifications.",
+        "large_telescope": "Spiral structure becomes visible, particularly the bar and the arm emerging from its ends. Mottled appearance in the disk from star-forming regions.",
+        "best_magnification": "Medium to high (75-150×)"
+      },
+      "science": {
+        "short_description": "A bright barred spiral galaxy that Messier somehow missed — often called 'the best galaxy not in the Messier catalog.'",
+        "full_description": "NGC 2903 is one of the brightest galaxies NOT in the Messier catalog — an oversight that puzzles astronomers. It's a barred spiral galaxy similar to our Milky Way, with active star formation in its bar and spiral arms. 'Hot spots' of intense star formation are visible in the nucleus and along the bar. The galaxy lies about 30 million light-years away.",
+        "interesting_facts": [
+          "At magnitude 9.0, brighter than many Messier galaxies — Messier's omission is unexplained",
+          "Contains intense star-forming regions visible as knots in larger telescopes",
+          "Similar in size and structure to our own Milky Way galaxy",
+          "William Herschel discovered it on November 16, 1784"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "800-1500",
+        "notes": "Good detail possible with moderate focal lengths. H-alpha data reveals the star-forming regions."
+      },
+      "stellarium": {
+        "skysource_id": "NGC2903",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Leo's head region", "fov": 10, "center": "Leo"},
+          "medium": {"description": "NGC 2903 area", "fov": 2, "center": "NGC2903"},
+          "detail": {"description": "Galaxy detail", "fov": 0.5, "center": "NGC2903"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/?search=NGC2903",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["Leo Triplet", "M95", "M96"]
+    }
+  ]
+}
