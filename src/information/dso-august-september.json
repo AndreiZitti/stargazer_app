@@ -1,0 +1,894 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-08",
+    "coverage": ["August", "September"],
+    "total_objects": 12,
+    "notes": "Master DSO data for August-September stargazing guide - Cygnus and transition to autumn skies"
+  },
+  "objects": [
+    {
+      "id": "M27",
+      "names": {
+        "primary": "Dumbbell Nebula",
+        "catalog": ["NGC 6853"],
+        "other": ["Apple Core Nebula", "Diabolo Nebula"]
+      },
+      "coordinates": {
+        "ra": "19h 59m 36.3s",
+        "ra_decimal": 19.993,
+        "dec": "+22° 43′ 16″",
+        "dec_decimal": 22.721
+      },
+      "physical": {
+        "type": "Planetary Nebula",
+        "type_short": "PN",
+        "constellation": "Vulpecula",
+        "magnitude_visual": 7.5,
+        "size_arcmin": "8.0 × 5.7",
+        "distance_ly": 1360
+      },
+      "visibility": {
+        "best_months": ["July", "August", "September", "October"],
+        "peak_month": "August",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in the small constellation Vulpecula, about 3° north of the bright star γ Sagittae (the middle star of Sagitta, the Arrow).",
+        "constellation_context": "In Vulpecula, north of Sagitta the Arrow",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the small arrow-shaped constellation Sagitta, between Altair and Albireo"},
+          {"step": 2, "instruction": "Locate γ Sagittae, the middle star of the arrow's shaft"},
+          {"step": 3, "instruction": "Move about 3° north — M27 is obvious as a fuzzy patch, distinctly non-stellar even in binoculars"}
+        ],
+        "nearby_bright_stars": ["γ Sagittae (S)", "Albireo (N)", "Altair (SE)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Clearly visible as a distinctly non-stellar fuzzy patch. Larger than most planetary nebulae.",
+        "small_telescope": "The 'dumbbell' or 'apple core' shape becomes apparent — two bright lobes with a narrower waist. One of the brightest and easiest planetary nebulae. The central star (mag 13.5) is challenging.",
+        "large_telescope": "Beautiful detail visible — faint extensions beyond the main lobes, variations in brightness throughout. An OIII filter enhances structure but isn't necessary.",
+        "best_magnification": "Medium (50-100×)"
+      },
+      "science": {
+        "short_description": "The first planetary nebula ever discovered — a stellar death shroud 1,360 light-years away, expanding into space for the last 10,000 years.",
+        "full_description": "The Dumbbell Nebula was the first planetary nebula discovered (by Charles Messier in 1764), though the term 'planetary nebula' wasn't coined until later. The nebula represents the outer layers of a Sun-like star expelled roughly 10,000 years ago. The central star, now a white dwarf, is one of the largest known — about 0.56 solar masses but only Earth-sized. The 'dumbbell' shape results from our viewing angle — the nebula is actually more of a prolate spheroid.",
+        "interesting_facts": [
+          "The first planetary nebula ever discovered (Messier, 1764)",
+          "The name 'dumbbell' was coined by John Herschel in the 1820s",
+          "Expanding at about 31 km/s and will disperse in about 14,000 years",
+          "Contains about 0.135 solar masses of gas"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 400,
+        "ideal_focal_length_mm": "800-1500",
+        "notes": "One of the easiest planetary nebulae to photograph. Narrowband reveals subtle outer structures."
+      },
+      "stellarium": {
+        "skysource_id": "M27",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Vulpecula/Sagitta region", "fov": 15, "center": "Vulpecula"},
+          "medium": {"description": "Dumbbell Nebula", "fov": 1, "center": "M27"},
+          "detail": {"description": "Nebula detail", "fov": 0.3, "center": "M27"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2003/06/1288-Image.html",
+          "credit": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M57 (Ring)", "M76 (Little Dumbbell)", "NGC 7027"]
+    },
+    {
+      "id": "NGC7000",
+      "names": {
+        "primary": "North America Nebula",
+        "catalog": ["NGC 7000", "Caldwell 20"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "20h 58m 47s",
+        "ra_decimal": 20.980,
+        "dec": "+44° 19′ 48″",
+        "dec_decimal": 44.330
+      },
+      "physical": {
+        "type": "Emission Nebula",
+        "type_short": "EN",
+        "constellation": "Cygnus",
+        "magnitude_visual": 4.0,
+        "size_arcmin": "120 × 100",
+        "distance_ly": 2600
+      },
+      "visibility": {
+        "best_months": ["July", "August", "September", "October"],
+        "peak_month": "September",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "May be glimpsed as a brighter patch in the Milky Way under excellent dark skies. Located about 3° east of Deneb, directly 'behind' it in the Milky Way stream.",
+        "constellation_context": "In Cygnus, east of Deneb",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Deneb, the bright star at the tail of Cygnus (top of the Northern Cross)"},
+          {"step": 2, "instruction": "Look about 3° east (toward the edge of the Milky Way)"},
+          {"step": 3, "instruction": "Under dark skies with binoculars, the distinctive 'North America' shape emerges from the Milky Way glow"}
+        ],
+        "nearby_bright_stars": ["Deneb (W)", "ξ Cygni (S)"]
+      },
+      "observation": {
+        "naked_eye": "May be glimpsed as a brighter region in the Milky Way, but the shape is not apparent without optical aid",
+        "binoculars": "The distinctive shape begins to emerge — look for the 'Gulf of Mexico' dark region. Best appreciated with wide-field binoculars (7×50 or similar). An H-beta filter helps dramatically.",
+        "small_telescope": "Paradoxically harder to see — the nebula is so large it overflows most telescope fields. Use lowest magnification or stick to binoculars.",
+        "large_telescope": "Individual regions of the nebula can be examined in detail, but the overall shape is lost. The 'Mexico and Central America' region (the 'Cygnus Wall') shows intricate structure.",
+        "best_magnification": "Very low (binoculars preferred)",
+        "special_equipment": "H-beta or UHC filter enhances contrast"
+      },
+      "science": {
+        "short_description": "A massive star-forming region whose dark dust lanes create the striking shape of the North American continent.",
+        "full_description": "NGC 7000 is an immense emission nebula spanning about 50 light-years. Its distinctive shape is created by a foreground dust cloud (the 'Gulf of Mexico' region) silhouetted against the glowing hydrogen. The nebula is part of a much larger complex that includes the adjacent Pelican Nebula (IC 5070). The ionizing star is likely a hot, massive O-type star hidden behind the dark dust, whose radiation causes the hydrogen to glow.",
+        "interesting_facts": [
+          "William Herschel discovered it in 1786 but it was first photographed by Max Wolf in 1890",
+          "The 'Gulf of Mexico' is actually a dark nebula in the foreground (LDN 935)",
+          "The ionizing star has never been conclusively identified — it's hidden behind the dust",
+          "Spans about 50 light-years across — 4 times larger than the Orion Nebula"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 50,
+        "ideal_focal_length_mm": "135-200",
+        "notes": "Large target requiring wide field. H-alpha data is essential for revealing the full extent. Often imaged with IC 5070 (Pelican)."
+      },
+      "stellarium": {
+        "skysource_id": "NGC7000",
+        "default_fov": 6,
+        "views": {
+          "context": {"description": "Deneb region", "fov": 15, "center": "Deneb"},
+          "medium": {"description": "North America & Pelican", "fov": 6, "center": "NGC7000"},
+          "detail": {"description": "Cygnus Wall", "fov": 2, "center": "NGC7000"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/JPL-Caltech/UCLA",
+          "search_url": "https://www.nasa.gov/image-article/north-america-nebula/",
+          "credit": "NASA/JPL-Caltech/UCLA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["IC 5070 (Pelican)", "Deneb", "LDN 935"]
+    },
+    {
+      "id": "VeilNebula",
+      "names": {
+        "primary": "Veil Nebula",
+        "catalog": ["NGC 6992", "NGC 6960", "NGC 6995", "Caldwell 33/34"],
+        "other": ["Cygnus Loop", "Witch's Broom (western)", "Network Nebula"]
+      },
+      "coordinates": {
+        "ra": "20h 45m 38s",
+        "ra_decimal": 20.761,
+        "dec": "+30° 42′ 30″",
+        "dec_decimal": 30.708
+      },
+      "physical": {
+        "type": "Supernova Remnant",
+        "type_short": "SNR",
+        "constellation": "Cygnus",
+        "magnitude_visual": 7.0,
+        "size_arcmin": "180 (full loop)",
+        "distance_ly": 2400
+      },
+      "visibility": {
+        "best_months": ["July", "August", "September", "October"],
+        "peak_month": "September",
+        "difficulty": "challenging",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. The eastern arc (NGC 6992/6995) passes near the star 52 Cygni. The western arc (NGC 6960, the 'Witch's Broom') passes through the naked-eye star 52 Cygni.",
+        "constellation_context": "In Cygnus, south of ε Cygni (Gienah)",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Deneb and the Northern Cross of Cygnus"},
+          {"step": 2, "instruction": "Locate ε Cygni (Gienah), about 7° south of Deneb"},
+          {"step": 3, "instruction": "The Veil complex is about 3° south of Gienah. The western arc (NGC 6960) passes through the star 52 Cygni — a useful pointer"}
+        ],
+        "nearby_bright_stars": ["52 Cygni (in the nebula)", "Gienah (ε Cyg, N)", "Deneb (N)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Challenging — requires excellent dark skies and ideally an OIII filter. May glimpse the brighter arcs as faint wisps.",
+        "small_telescope": "An OIII filter transforms this from invisible to spectacular. The western arc (NGC 6960, 'Witch's Broom') appears as delicate filaments passing through 52 Cygni. The eastern arc (NGC 6992) is broader and more dramatic.",
+        "large_telescope": "With OIII filter, the intricate shock-wave structure is stunning — tangled filaments of gas glowing eerily blue-green. One of the most dramatic nebulae when filtered properly.",
+        "best_magnification": "Low to medium (30-75×) with OIII filter",
+        "special_equipment": "OIII filter is essential — transforms the observation completely"
+      },
+      "science": {
+        "short_description": "The expanding shock wave from a supernova that exploded 10,000-20,000 years ago — a stellar explosion still rippling through space.",
+        "full_description": "The Veil Nebula is the visible portion of the Cygnus Loop, the remnant of a supernova that exploded roughly 10,000-20,000 years ago. A massive star (perhaps 20 solar masses) detonated, and the expanding shock wave is still plowing through the surrounding interstellar medium at about 170 km/s. The beautiful filamentary structure results from the shock wave heating and compressing the gas it encounters. The remnant spans about 3° of sky — 6 times the diameter of the full Moon.",
+        "interesting_facts": [
+          "The supernova progenitor was likely visible as a bright 'new star' to prehistoric humans",
+          "The shock wave is still expanding at about 170 km/s",
+          "The entire Cygnus Loop is about 120 light-years in diameter",
+          "OIII filter isolates the doubly-ionized oxygen emission that dominates the visual spectrum"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 135,
+        "ideal_focal_length_mm": "300-500",
+        "notes": "Narrowband imaging is ideal (HOO or bicolor). The full loop requires a wide field. Individual arcs are excellent intermediate targets."
+      },
+      "stellarium": {
+        "skysource_id": "NGC6992",
+        "default_fov": 4,
+        "views": {
+          "context": {"description": "Cygnus Loop", "fov": 8, "center": "NGC6992"},
+          "medium": {"description": "Eastern Veil (NGC 6992)", "fov": 3, "center": "NGC6992"},
+          "detail": {"description": "Witch's Broom (NGC 6960)", "fov": 2, "center": "NGC6960"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2015/29/3623-Image.html",
+          "credit": "NASA, ESA, and the Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["Pickering's Triangle", "IC 1340", "M1 (Crab)"]
+    },
+    {
+      "id": "M31",
+      "names": {
+        "primary": "Andromeda Galaxy",
+        "catalog": ["NGC 224"],
+        "other": ["Great Andromeda Nebula"]
+      },
+      "coordinates": {
+        "ra": "00h 42m 44s",
+        "ra_decimal": 0.712,
+        "dec": "+41° 16′ 09″",
+        "dec_decimal": 41.269
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Andromeda",
+        "magnitude_visual": 3.4,
+        "size_arcmin": "190 × 60",
+        "distance_ly": 2537000
+      },
+      "visibility": {
+        "best_months": ["September", "October", "November", "December"],
+        "peak_month": "October",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "By late summer/early fall, Andromeda rises in the east during evening. Find the W-shape of Cassiopeia, then use the second 'V' of the W as an arrow pointing toward Andromeda. M31 appears as a faint elongated smudge on dark nights.",
+        "constellation_context": "In Andromeda, between Cassiopeia and Pegasus",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Cassiopeia's W shape rising in the northeast"},
+          {"step": 2, "instruction": "Use the deeper V of the W as an arrow pointing toward Andromeda"},
+          {"step": 3, "instruction": "Find the star Mirach (β And), then hop to μ And, then slightly further to M31"}
+        ],
+        "nearby_bright_stars": ["Mirach (β And)", "Alpheratz (α And)", "Schedar (α Cas)"]
+      },
+      "observation": {
+        "naked_eye": "The farthest object visible to the unaided eye — appears as a faint, elongated smudge about 3° long (six full moons!).",
+        "binoculars": "The bright central core is obvious, with the disk extending outward. Satellite galaxies M32 and M110 become visible.",
+        "small_telescope": "Core and inner regions show well. Look for the dark dust lane crossing in front of the core. Best at low power.",
+        "large_telescope": "Dark lanes become more prominent. Individual star clouds and associations may be glimpsed under excellent conditions.",
+        "best_magnification": "Lowest possible — M31 is huge (3°+)"
+      },
+      "science": {
+        "short_description": "Our nearest large galactic neighbor — a spiral galaxy containing roughly one trillion stars, on a collision course with the Milky Way.",
+        "full_description": "The Andromeda Galaxy is the closest large galaxy to our Milky Way and the most distant object visible to the naked eye. The light you see left 2.5 million years ago. Andromeda is approaching us at 110 km/s and will collide with our galaxy in about 4.5 billion years, eventually merging into a single giant elliptical galaxy. It contains about one trillion stars — more than double the Milky Way's count.",
+        "interesting_facts": [
+          "Light from M31 has traveled 2.5 million years to reach your eyes",
+          "First recognized as an external galaxy by Edwin Hubble in 1924",
+          "Contains about 1 trillion stars",
+          "The collision with our galaxy will begin in about 4.5 billion years"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 100,
+        "ideal_focal_length_mm": "200-500",
+        "notes": "Very large target. Include M32 and M110 satellites. H-alpha data reveals star-forming regions."
+      },
+      "stellarium": {
+        "skysource_id": "M31",
+        "default_fov": 6,
+        "views": {
+          "context": {"description": "Andromeda constellation", "fov": 50, "center": "Andromeda"},
+          "medium": {"description": "M31 with satellites", "fov": 6, "center": "M31"},
+          "detail": {"description": "M31 core", "fov": 2, "center": "M31"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/JPL-Caltech",
+          "search_url": "https://www.nasa.gov/mission_pages/galex/pia15416.html",
+          "credit": "NASA/JPL-Caltech",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M32", "M110", "NGC 206"]
+    },
+    {
+      "id": "M92",
+      "names": {
+        "primary": "M92",
+        "catalog": ["NGC 6341"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "17h 17m 07.4s",
+        "ra_decimal": 17.285,
+        "dec": "+43° 08′ 09″",
+        "dec_decimal": 43.136
+      },
+      "physical": {
+        "type": "Globular Cluster",
+        "type_short": "GC",
+        "constellation": "Hercules",
+        "magnitude_visual": 6.5,
+        "size_arcmin": "14",
+        "distance_ly": 26700
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August", "September"],
+        "peak_month": "August",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not easily visible to naked eye (though possible under excellent conditions). Located in northern Hercules, about 6° north of the Keystone asterism.",
+        "constellation_context": "In northern Hercules, above the Keystone",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Keystone of Hercules (containing M13)"},
+          {"step": 2, "instruction": "From π Herculis (the northern star of the Keystone), move about 6° north"},
+          {"step": 3, "instruction": "M92 appears as a fuzzy 'star' — slightly fainter than M13 but still prominent"}
+        ],
+        "nearby_bright_stars": ["π Herculis (S)", "η Herculis (SW)", "ι Herculis (N)"]
+      },
+      "observation": {
+        "naked_eye": "Challenging but possible under excellent dark skies as a faint fuzzy spot",
+        "binoculars": "Clearly visible as a bright, concentrated fuzzy 'star'",
+        "small_telescope": "Similar to M13 but slightly smaller and more concentrated. Outer stars begin to resolve at 75×+. A beautiful cluster that would be famous if not overshadowed by M13.",
+        "large_telescope": "Fully resolved to the core. The dense central concentration is striking. Chains of stars extend from the cluster edges.",
+        "best_magnification": "Medium to high (75-150×)"
+      },
+      "science": {
+        "short_description": "One of the oldest known objects in our galaxy — a globular cluster that formed just 2 billion years after the Big Bang.",
+        "full_description": "M92 is one of the oldest globular clusters known, with an age of about 14.2 billion years — almost as old as the universe itself. It formed when the Milky Way was still taking shape. The cluster would be far more famous if it weren't so close to the slightly brighter M13. M92 contains about 330,000 stars and is slightly more metal-poor than typical globular clusters, reflecting its extreme age.",
+        "interesting_facts": [
+          "One of the oldest known objects — about 14.2 billion years old",
+          "Often overlooked because M13 is nearby and slightly more impressive",
+          "Due to precession, M92 will become the 'North Star cluster' in about 14,000 years",
+          "Contains several RR Lyrae variable stars used to measure cosmic distances"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "Often photographed alongside M13 for comparison. Dense core resolves well with good seeing."
+      },
+      "stellarium": {
+        "skysource_id": "M92",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Northern Hercules", "fov": 15, "center": "Hercules"},
+          "medium": {"description": "M92 cluster", "fov": 1, "center": "M92"},
+          "detail": {"description": "Core detail", "fov": 0.3, "center": "M92"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/",
+          "credit": "ESA/Hubble & NASA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M13", "M5", "M15"]
+    },
+    {
+      "id": "NGC7331",
+      "names": {
+        "primary": "NGC 7331",
+        "catalog": ["Caldwell 30"],
+        "other": ["Deer Lick Galaxy"]
+      },
+      "coordinates": {
+        "ra": "22h 37m 04.1s",
+        "ra_decimal": 22.618,
+        "dec": "+34° 24′ 57″",
+        "dec_decimal": 34.416
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Pegasus",
+        "magnitude_visual": 9.5,
+        "size_arcmin": "10.5 × 3.7",
+        "distance_ly": 40000000
+      },
+      "visibility": {
+        "best_months": ["September", "October", "November"],
+        "peak_month": "October",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Pegasus, about 4° north-northwest of the star η Pegasi.",
+        "constellation_context": "In Pegasus, north of the Great Square",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Great Square of Pegasus"},
+          {"step": 2, "instruction": "Locate η Pegasi (Matar), about 6° north of the square's western side"},
+          {"step": 3, "instruction": "NGC 7331 is about 4° north-northwest of η Peg — look for an elongated fuzz"}
+        ],
+        "nearby_bright_stars": ["η Pegasi (Matar, S)", "π Pegasi (SE)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "May be glimpsed as a faint elongated smudge under dark skies",
+        "small_telescope": "An elegant edge-on spiral with a bright core. Often compared to a smaller version of M31. Look for the fainter companions ('Deer Lick Group') nearby.",
+        "large_telescope": "Dust lanes may be visible along the disk. Several small companion galaxies visible in the same field. A subtle but elegant target.",
+        "best_magnification": "Medium to high (75-150×)"
+      },
+      "science": {
+        "short_description": "A Milky Way look-alike 40 million light-years away — often considered a visual analog to our own galaxy seen from afar.",
+        "full_description": "NGC 7331 is often called a twin to our Milky Way, being a large, relatively isolated spiral galaxy of similar size and type. It's tilted about 77° to our line of sight, giving us a near-edge-on view. The galaxy is surrounded by several smaller companion galaxies (the 'Deer Lick Group' or 'NGC 7331 Group'). Interestingly, the galaxy's bulge rotates in the opposite direction from the disk — evidence of a past merger.",
+        "interesting_facts": [
+          "Often called a Milky Way 'twin' due to similar size and structure",
+          "The bulge counter-rotates relative to the disk — very unusual",
+          "The 'Deer Lick' name comes from a group of smaller galaxies that appear nearby (but are actually 10x more distant)",
+          "Discovered by William Herschel in 1784"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-1500",
+        "notes": "Include the visual companions for context. Stephan's Quintet is 0.5° away."
+      },
+      "stellarium": {
+        "skysource_id": "NGC7331",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Pegasus region", "fov": 10, "center": "Pegasus"},
+          "medium": {"description": "NGC 7331 and companions", "fov": 1, "center": "NGC7331"},
+          "detail": {"description": "Galaxy detail", "fov": 0.3, "center": "NGC7331"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Adam Block/Mount Lemmon SkyCenter",
+          "search_url": "https://apod.nasa.gov/apod/ap150820.html",
+          "credit": "Adam Block/Mount Lemmon SkyCenter",
+          "license": "Used with permission"
+        }
+      },
+      "related_objects": ["Stephan's Quintet", "NGC 7335", "NGC 7337"]
+    },
+    {
+      "id": "StephansQuintet",
+      "names": {
+        "primary": "Stephan's Quintet",
+        "catalog": ["HCG 92", "Arp 319"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "22h 35m 57.5s",
+        "ra_decimal": 22.599,
+        "dec": "+33° 57′ 36″",
+        "dec_decimal": 33.960
+      },
+      "physical": {
+        "type": "Galaxy Group",
+        "type_short": "GalGrp",
+        "constellation": "Pegasus",
+        "magnitude_visual": 13.0,
+        "size_arcmin": "3.5",
+        "distance_ly": 290000000
+      },
+      "visibility": {
+        "best_months": ["September", "October", "November"],
+        "peak_month": "October",
+        "difficulty": "challenging",
+        "equipment_minimum": "medium_telescope",
+        "equipment_recommended": "large_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible — requires telescope. Located only 0.5° south-southwest of NGC 7331.",
+        "constellation_context": "In Pegasus, very close to NGC 7331",
+        "star_hop": [
+          {"step": 1, "instruction": "Find NGC 7331 first (see above)"},
+          {"step": 2, "instruction": "Move about 0.5° south-southwest"},
+          {"step": 3, "instruction": "Look for a very faint, small fuzzy patch — the four true members appear as a single elongated glow in smaller instruments"}
+        ],
+        "nearby_bright_stars": ["NGC 7331 (N)", "η Pegasi (S)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Not visible",
+        "small_telescope": "Extremely challenging — may appear as a tiny, faint smudge under excellent conditions with 8\"+ aperture. NGC 7320 (the foreground galaxy) may be glimpsed separately.",
+        "large_telescope": "The group resolves into multiple components. With 12\"+ aperture, four of the five 'members' become distinct. The interacting pair (NGC 7318A/B) forms one concentrated glow.",
+        "best_magnification": "High (150-250×)"
+      },
+      "science": {
+        "short_description": "A famous compact galaxy group — four galaxies colliding 290 million light-years away, plus one foreground interloper.",
+        "full_description": "Stephan's Quintet is one of the most famous galaxy groups, featured prominently in JWST's first release images. Four of the five galaxies (NGC 7317, 7318A, 7318B, and 7319) are actually interacting at about 290 million light-years distance. The fifth 'member' (NGC 7320) is actually a foreground galaxy only 40 million light-years away, appearing in the group by chance. The true members are connected by tidal streams and a massive shock wave where NGC 7318B is colliding with intergalactic gas.",
+        "interesting_facts": [
+          "Featured in the James Webb Space Telescope's first image release (July 2022)",
+          "The first compact galaxy group ever discovered (by Édouard Stephan in 1877)",
+          "NGC 7320 is a foreground interloper — 7x closer than the other four",
+          "A massive shock wave spans 30,000 light-years where galaxies are colliding"
+        ]
+      },
+      "photography": {
+        "difficulty": "advanced",
+        "min_focal_length_mm": 1000,
+        "ideal_focal_length_mm": "2000+",
+        "notes": "Challenging target requiring long exposures and larger apertures. Include NGC 7331 for context."
+      },
+      "stellarium": {
+        "skysource_id": "NGC7317",
+        "default_fov": 0.5,
+        "views": {
+          "context": {"description": "NGC 7331 region", "fov": 2, "center": "NGC7331"},
+          "medium": {"description": "Stephan's Quintet", "fov": 0.5, "center": "NGC7317"},
+          "detail": {"description": "Group detail", "fov": 0.2, "center": "NGC7317"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/CSA JWST",
+          "search_url": "https://webbtelescope.org/contents/media/images/2022/034/01G7DA5ADA2WDSK1JJPQ0PTG4A",
+          "credit": "NASA, ESA, CSA, and STScI",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 7331", "NGC 7320c"]
+    },
+    {
+      "id": "M39",
+      "names": {
+        "primary": "M39",
+        "catalog": ["NGC 7092"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "21h 31m 42s",
+        "ra_decimal": 21.528,
+        "dec": "+48° 26′ 00″",
+        "dec_decimal": 48.433
+      },
+      "physical": {
+        "type": "Open Cluster",
+        "type_short": "OC",
+        "constellation": "Cygnus",
+        "magnitude_visual": 4.6,
+        "size_arcmin": "32",
+        "distance_ly": 825
+      },
+      "visibility": {
+        "best_months": ["August", "September", "October"],
+        "peak_month": "September",
+        "difficulty": "easy",
+        "equipment_minimum": "naked_eye",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "Visible to naked eye as a hazy patch about 9° northeast of Deneb. Look in the direction away from the main body of the Milky Way.",
+        "constellation_context": "In northeastern Cygnus, away from the Milky Way",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Deneb at the top of the Northern Cross"},
+          {"step": 2, "instruction": "Move about 9° northeast (toward Lacerta and Cassiopeia)"},
+          {"step": 3, "instruction": "M39 appears as a scattered triangular group of stars"}
+        ],
+        "nearby_bright_stars": ["Deneb (SW)", "ρ Cygni (W)"]
+      },
+      "observation": {
+        "naked_eye": "Visible as a hazy patch under decent conditions",
+        "binoculars": "A scattered, loose triangle of about 30 stars. Best appreciated with wide-field binoculars.",
+        "small_telescope": "Too spread out for most telescope views — use lowest power. About 30 stars visible in a distinctive triangular pattern.",
+        "large_telescope": "Actually less impressive due to the wide spread. Stick to binoculars or richest-field telescopes.",
+        "best_magnification": "Very low (10-25×)"
+      },
+      "science": {
+        "short_description": "A nearby, sparse open cluster forming a distinctive triangular pattern — one of the closest Messier clusters to Earth.",
+        "full_description": "M39 is one of the nearest open clusters, at only 825 light-years. Its sparse appearance (about 30 stars spread over 7 light-years) makes it best appreciated in binoculars rather than telescopes. The cluster is about 300 million years old, young enough that most stars are still on the main sequence. The triangular pattern of brighter stars makes it distinctive and easy to recognize.",
+        "interesting_facts": [
+          "One of the closest Messier clusters to Earth (825 ly)",
+          "May have been known to Aristotle, who mentioned a 'nebulous' patch in Cygnus around 325 BC",
+          "Contains about 30 stars in a distinctive triangular pattern",
+          "Moving toward us at about 28 km/s"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 85,
+        "ideal_focal_length_mm": "135-200",
+        "notes": "Wide field target. Include the rich Cygnus star fields for context."
+      },
+      "stellarium": {
+        "skysource_id": "M39",
+        "default_fov": 3,
+        "views": {
+          "context": {"description": "Northeastern Cygnus", "fov": 15, "center": "Cygnus"},
+          "medium": {"description": "M39 cluster", "fov": 3, "center": "M39"},
+          "detail": {"description": "Triangle pattern", "fov": 1.5, "center": "M39"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NOAO/AURA/NSF",
+          "search_url": "https://noirlab.edu/public/images/?search=M39",
+          "credit": "NOAO/AURA/NSF",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M29", "NGC 7082", "IC 4996"]
+    },
+    {
+      "id": "Epsilon_Lyrae",
+      "names": {
+        "primary": "The Double Double",
+        "catalog": ["ε Lyrae", "ε1 and ε2 Lyrae"],
+        "other": ["Epsilon Lyrae"]
+      },
+      "coordinates": {
+        "ra": "18h 44m 20.3s",
+        "ra_decimal": 18.739,
+        "dec": "+39° 40′ 12″",
+        "dec_decimal": 39.670
+      },
+      "physical": {
+        "type": "Quadruple Star System",
+        "type_short": "****",
+        "constellation": "Lyra",
+        "magnitude_visual": 4.6,
+        "size_arcmin": null,
+        "distance_ly": 160
+      },
+      "visibility": {
+        "best_months": ["June", "July", "August", "September"],
+        "peak_month": "August",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Epsilon Lyrae is visible to the naked eye as a single star, located about 1.5° northeast of brilliant Vega. Sharp-eyed observers may split it into two stars with the naked eye under excellent conditions.",
+        "constellation_context": "In Lyra, very close to Vega",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Vega — one of the brightest stars in the summer sky"},
+          {"step": 2, "instruction": "Look about 1.5° to the northeast (toward Deneb)"},
+          {"step": 3, "instruction": "Epsilon Lyrae appears as a single star to casual view — binoculars reveal two stars, and a telescope shows each is itself double"}
+        ],
+        "nearby_bright_stars": ["Vega (SW)", "ζ Lyrae (SE)", "Sulafat (γ Lyr, S)"]
+      },
+      "observation": {
+        "naked_eye": "Appears as a single star. Very sharp-eyed observers can split it into two components under excellent conditions (Dawes limit test).",
+        "binoculars": "Easily split into two stars (ε1 and ε2), separated by about 3.5 arcminutes. A wide, attractive pair.",
+        "small_telescope": "The magic happens — each of the two stars splits again! At 100×+, you see four stars in two close pairs. One of astronomy's finest optical tests and visual treats.",
+        "large_telescope": "The four stars are cleanly resolved. Note that the two pairs are oriented at different angles (roughly perpendicular).",
+        "best_magnification": "Medium to high (100-150×) for splitting the close pairs"
+      },
+      "science": {
+        "short_description": "A famous quadruple star system — four stars arranged as two binary pairs orbiting each other in a gravitational ballet.",
+        "full_description": "Epsilon Lyrae is a remarkable quadruple star system. What appears as a single star to the naked eye becomes two stars in binoculars (ε1 and ε2, separated by 208 arcseconds). Each of these is itself a close binary: ε1 consists of two stars separated by 2.6 arcseconds, and ε2's components are 2.3 arcseconds apart. The two pairs orbit a common center of mass with a period estimated at over 500,000 years.",
+        "interesting_facts": [
+          "A classic 'eyesight test' — can you split it naked-eye?",
+          "The orbital period of the overall system is estimated at 500,000+ years",
+          "The two close pairs have orbital periods of about 1,800 and 720 years",
+          "All four stars are A-type main sequence stars, similar to Vega"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 1000,
+        "ideal_focal_length_mm": "2000+",
+        "notes": "Challenging to show all four stars cleanly separated. Good seeing essential."
+      },
+      "stellarium": {
+        "skysource_id": "eps Lyr",
+        "default_fov": 0.5,
+        "views": {
+          "context": {"description": "Vega and Lyra", "fov": 5, "center": "Vega"},
+          "medium": {"description": "Epsilon Lyrae", "fov": 0.5, "center": "eps Lyr"},
+          "detail": {"description": "Double double", "fov": 0.1, "center": "eps Lyr"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Custom observation",
+          "search_url": null,
+          "credit": "Double double diagram/sketch",
+          "license": "To create"
+        }
+      },
+      "related_objects": ["Vega", "M57 (Ring Nebula)", "Albireo"]
+    },
+    {
+      "id": "M33",
+      "names": {
+        "primary": "Triangulum Galaxy",
+        "catalog": ["NGC 598"],
+        "other": ["Pinwheel Galaxy (sometimes)"]
+      },
+      "coordinates": {
+        "ra": "01h 33m 50.9s",
+        "ra_decimal": 1.564,
+        "dec": "+30° 39′ 37″",
+        "dec_decimal": 30.660
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Triangulum",
+        "magnitude_visual": 5.7,
+        "size_arcmin": "73 × 45",
+        "distance_ly": 2730000
+      },
+      "visibility": {
+        "best_months": ["September", "October", "November", "December"],
+        "peak_month": "October",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "binoculars"
+      },
+      "finding": {
+        "naked_eye_guide": "May be glimpsed as a very faint, diffuse patch under exceptional conditions. Despite its magnitude, the light is spread over such a large area that it has very low surface brightness. Located in Triangulum, about 4° west-northwest of Mirach (β Andromedae).",
+        "constellation_context": "In Triangulum, between Andromeda and Aries",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Great Square of Pegasus and locate Mirach (β And) to the northeast"},
+          {"step": 2, "instruction": "From Mirach, move about 4° west-northwest"},
+          {"step": 3, "instruction": "M33 is a very diffuse glow — easier in binoculars than in telescopes. Use averted vision."}
+        ],
+        "nearby_bright_stars": ["Mirach (β And, E)", "Mothallah (α Tri, S)"]
+      },
+      "observation": {
+        "naked_eye": "Visible under exceptional dark skies as the faintest object visible to the naked eye for most observers. Very diffuse and easy to overlook.",
+        "binoculars": "A large, diffuse, oval glow. Best appreciated with wide-field binoculars (7×50). The face-on spiral structure is not visible.",
+        "small_telescope": "Paradoxically harder to see than in binoculars — the low surface brightness and large size work against telescopic viewing. Use lowest magnification and look for the brighter core region.",
+        "large_telescope": "Star-forming regions (especially NGC 604, a giant HII region) become visible as bright knots in the spiral arms. The overall spiral structure requires excellent conditions.",
+        "best_magnification": "Lowest possible — large, very low surface brightness"
+      },
+      "science": {
+        "short_description": "The third-largest member of our Local Group — a beautiful face-on spiral 2.7 million light-years away, containing one of the largest known star-forming regions.",
+        "full_description": "M33 is the third-largest galaxy in our Local Group (after Andromeda and the Milky Way). Seen nearly face-on, it displays beautiful spiral structure in photographs. NGC 604, a giant HII region in one of its spiral arms, is one of the largest known star-forming regions — about 100 times the size of the Orion Nebula. M33 contains about 40 billion stars (10% of the Milky Way's count) and may be a satellite of the Andromeda Galaxy.",
+        "interesting_facts": [
+          "Third-largest galaxy in our Local Group (40 billion stars)",
+          "NGC 604 is one of the largest known HII regions — 1,500 light-years across",
+          "May be gravitationally bound to the Andromeda Galaxy as a satellite",
+          "The most distant permanent object visible to the naked eye (for most observers)"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "300-600",
+        "notes": "Face-on orientation shows spiral arms beautifully. H-alpha reveals the massive star-forming regions."
+      },
+      "stellarium": {
+        "skysource_id": "M33",
+        "default_fov": 3,
+        "views": {
+          "context": {"description": "Triangulum constellation", "fov": 15, "center": "Triangulum"},
+          "medium": {"description": "M33 galaxy", "fov": 3, "center": "M33"},
+          "detail": {"description": "NGC 604 region", "fov": 1, "center": "M33"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/eso0938a/",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M31", "NGC 604", "IC 133"]
+    },
+    {
+      "id": "IC5070",
+      "names": {
+        "primary": "Pelican Nebula",
+        "catalog": ["IC 5070", "IC 5067"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "20h 50m 48s",
+        "ra_decimal": 20.847,
+        "dec": "+44° 21′ 00″",
+        "dec_decimal": 44.350
+      },
+      "physical": {
+        "type": "Emission Nebula",
+        "type_short": "EN",
+        "constellation": "Cygnus",
+        "magnitude_visual": 8.0,
+        "size_arcmin": "60 × 50",
+        "distance_ly": 1800
+      },
+      "visibility": {
+        "best_months": ["July", "August", "September", "October"],
+        "peak_month": "September",
+        "difficulty": "challenging",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located immediately east of the North America Nebula (NGC 7000), separated by a dark nebula (LDN 935).",
+        "constellation_context": "In Cygnus, adjacent to North America Nebula",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Deneb and look about 3° east to the North America Nebula region"},
+          {"step": 2, "instruction": "The Pelican is immediately east/southeast of North America — the dark 'Atlantic Ocean' divides them"},
+          {"step": 3, "instruction": "The Pelican's 'beak' points toward the 'Florida' region of NGC 7000"}
+        ],
+        "nearby_bright_stars": ["Deneb (W)", "57 Cygni (between North America and Pelican)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Very challenging — look for a separate glow east of the brighter North America Nebula. H-beta filter helps.",
+        "small_telescope": "The 'pelican' shape with its distinctive beak becomes recognizable with an H-beta or OIII filter. Best with wide-field, low magnification.",
+        "large_telescope": "The complex ionization front (the 'Herbig-Haro jets' region) in the pelican's 'throat' becomes visible. Active star formation area.",
+        "best_magnification": "Very low (binoculars or RFT)",
+        "special_equipment": "H-beta or OIII filter recommended"
+      },
+      "science": {
+        "short_description": "A companion to the North America Nebula — part of the same vast star-forming complex, divided by a dark dust lane.",
+        "full_description": "The Pelican Nebula is physically connected to the North America Nebula — they're two parts of the same giant molecular cloud complex. The dark 'Atlantic Ocean' between them is a dense dust lane (LDN 935) in the foreground. The Pelican contains an active star-forming region with Herbig-Haro objects — jets of gas from newborn stars. The entire complex is ionized by an elusive O-type star hidden somewhere in the dust.",
+        "interesting_facts": [
+          "Physically connected to the North America Nebula — same cloud complex",
+          "Contains Herbig-Haro objects (jets from young stars) in the ionization front region",
+          "The 'beak' of the pelican is a projection of dense, glowing gas",
+          "Distance estimates have varied from 1,800 to 2,600 light-years"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 135,
+        "ideal_focal_length_mm": "200-400",
+        "notes": "Usually imaged together with North America Nebula. Narrowband reveals stunning ionization front detail."
+      },
+      "stellarium": {
+        "skysource_id": "IC5070",
+        "default_fov": 4,
+        "views": {
+          "context": {"description": "North America + Pelican", "fov": 8, "center": "NGC7000"},
+          "medium": {"description": "Pelican Nebula", "fov": 4, "center": "IC5070"},
+          "detail": {"description": "Ionization front", "fov": 1.5, "center": "IC5070"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/JPL-Caltech",
+          "search_url": "https://www.nasa.gov/image-article/pelican-nebula/",
+          "credit": "NASA/JPL-Caltech",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 7000 (North America)", "LDN 935", "IC 5068"]
+    }
+  ]
+}
