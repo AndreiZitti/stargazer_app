@@ -1,0 +1,972 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "created": "2026-01-08",
+    "coverage": ["April", "May"],
+    "total_objects": 12,
+    "notes": "Master DSO data for April-May stargazing guide - Galaxy season!"
+  },
+  "objects": [
+    {
+      "id": "M51",
+      "names": {
+        "primary": "Whirlpool Galaxy",
+        "catalog": ["NGC 5194", "NGC 5195"],
+        "other": ["Question Mark Galaxy", "Lord Rosse's Galaxy"]
+      },
+      "coordinates": {
+        "ra": "13h 29m 52.7s",
+        "ra_decimal": 13.498,
+        "dec": "+47° 11′ 43″",
+        "dec_decimal": 47.195
+      },
+      "physical": {
+        "type": "Spiral Galaxy (interacting)",
+        "type_short": "Gal",
+        "constellation": "Canes Venatici",
+        "magnitude_visual": 8.4,
+        "size_arcmin": "11.2 × 6.9",
+        "distance_ly": 23000000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Canes Venatici, about 3.5° southwest of Alkaid (η UMa), the star at the end of the Big Dipper's handle.",
+        "constellation_context": "In Canes Venatici, below the Big Dipper's handle",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Big Dipper and locate Alkaid, the last star in the handle"},
+          {"step": 2, "instruction": "Move about 3.5° southwest (toward Leo)"},
+          {"step": 3, "instruction": "M51 appears as a fuzzy patch; the companion galaxy NGC 5195 may be glimpsed as a second blob nearby"}
+        ],
+        "nearby_bright_stars": ["Alkaid (η UMa, NE)", "Cor Caroli (α CVn, S)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as a small, round fuzzy patch. The companion galaxy may be glimpsed as an extension on one side.",
+        "small_telescope": "Both galaxy cores clearly visible. The connecting 'bridge' of material between them may be glimpsed. Hint of spiral structure in larger apertures.",
+        "large_telescope": "Spectacular spiral arms become visible — the first galaxy in which spiral structure was ever observed (by Lord Rosse in 1845). Multiple star-forming regions visible as knots in the arms.",
+        "best_magnification": "Medium (75-150×) for best spiral detail"
+      },
+      "science": {
+        "short_description": "The iconic spiral galaxy — the first object in which spiral structure was recognized, locked in a gravitational dance with its smaller companion.",
+        "full_description": "M51 is the poster child for spiral galaxies. In 1845, Lord Rosse observed it through his 72-inch telescope (then the world's largest) and made the first drawing showing spiral structure in any nebula. The smaller galaxy NGC 5195 is actually passing behind M51 (not in front), and their interaction has triggered intense star formation in M51's spiral arms. Three supernovae have been observed in M51 since 1994.",
+        "interesting_facts": [
+          "First galaxy where spiral structure was observed (Lord Rosse, 1845)",
+          "The interaction with NGC 5195 has triggered intense star formation",
+          "Three supernovae observed: 1994I, 2005cs, and 2011dh",
+          "The connecting bridge is a tidal tail of stars and gas pulled from both galaxies"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "One of the most rewarding galaxy targets. H-alpha data reveals star-forming regions in the spiral arms."
+      },
+      "stellarium": {
+        "skysource_id": "M51",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Big Dipper region", "fov": 20, "center": "Ursa Major"},
+          "medium": {"description": "M51 and companion", "fov": 1, "center": "M51"},
+          "detail": {"description": "Galaxy detail", "fov": 0.3, "center": "M51"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2005/12/1691-Image.html",
+          "credit": "NASA, ESA, S. Beckwith (STScI), and The Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 5195", "M63", "M101"]
+    },
+    {
+      "id": "M104",
+      "names": {
+        "primary": "Sombrero Galaxy",
+        "catalog": ["NGC 4594"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "12h 39m 59.4s",
+        "ra_decimal": 12.667,
+        "dec": "-11° 37′ 23″",
+        "dec_decimal": -11.623
+      },
+      "physical": {
+        "type": "Spiral Galaxy (edge-on)",
+        "type_short": "Gal",
+        "constellation": "Virgo",
+        "magnitude_visual": 8.0,
+        "size_arcmin": "8.7 × 3.5",
+        "distance_ly": 29000000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located on the Virgo-Corvus border, about 11° north of Spica and 5.5° west of Porrima (γ Virginis).",
+        "constellation_context": "Southern Virgo, on the border with Corvus",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Spica (α Virginis), the brightest star in Virgo"},
+          {"step": 2, "instruction": "Move about 11° north (roughly one fist at arm's length)"},
+          {"step": 3, "instruction": "M104 is west of the line from Spica to Porrima — look for an elongated glow with a dark band"}
+        ],
+        "nearby_bright_stars": ["Spica (S)", "Porrima (γ Vir, NE)", "Algorab (δ Crv, W)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as an elongated smudge with a noticeably brighter center",
+        "small_telescope": "The distinctive 'sombrero' shape emerges — a bright bulge bisected by a dark dust lane. One of the most striking galaxy profiles in any telescope.",
+        "large_telescope": "The dust lane becomes sharply defined. The huge central bulge dominates, with faint outer disk visible. Globular cluster halo may be resolved.",
+        "best_magnification": "Medium to high (75-200×)"
+      },
+      "science": {
+        "short_description": "A majestic edge-on spiral with a massive central bulge and prominent dust lane — home to one of the most massive black holes known in any nearby galaxy.",
+        "full_description": "The Sombrero Galaxy's distinctive appearance comes from viewing a spiral galaxy nearly edge-on (only 6° from perfectly edge-on). Its enormous central bulge is unusually large, containing a supermassive black hole of 1 billion solar masses — one of the most massive known in any nearby galaxy. The galaxy is surrounded by an enormous halo containing an estimated 2,000 globular clusters (compared to the Milky Way's ~150).",
+        "interesting_facts": [
+          "The central black hole contains 1 billion solar masses",
+          "Contains about 2,000 globular clusters — 10 times more than the Milky Way",
+          "The dust lane contains about 1 billion solar masses of gas and dust",
+          "Recent studies suggest it may be two galaxies in one — a large elliptical that absorbed a spiral disk"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "The dust lane provides excellent contrast. One of the most photogenic galaxies visible from Earth."
+      },
+      "stellarium": {
+        "skysource_id": "M104",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Virgo-Corvus region", "fov": 20, "center": "Virgo"},
+          "medium": {"description": "M104 area", "fov": 2, "center": "M104"},
+          "detail": {"description": "Galaxy detail", "fov": 0.5, "center": "M104"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2003/28/1420-Image.html",
+          "credit": "NASA and The Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 4565 (Needle Galaxy)", "M84", "M86"]
+    },
+    {
+      "id": "M3",
+      "names": {
+        "primary": "M3",
+        "catalog": ["NGC 5272"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "13h 42m 11.6s",
+        "ra_decimal": 13.703,
+        "dec": "+28° 22′ 32″",
+        "dec_decimal": 28.376
+      },
+      "physical": {
+        "type": "Globular Cluster",
+        "type_short": "GC",
+        "constellation": "Canes Venatici",
+        "magnitude_visual": 6.2,
+        "size_arcmin": "18",
+        "distance_ly": 33900
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "May be glimpsed as a faint fuzzy 'star' under excellent dark sky conditions. Located roughly halfway between Arcturus (α Boötis) and Cor Caroli (α CVn).",
+        "constellation_context": "In Canes Venatici, between Boötes and the Big Dipper",
+        "star_hop": [
+          {"step": 1, "instruction": "Find bright Arcturus using the Big Dipper's handle ('arc to Arcturus')"},
+          {"step": 2, "instruction": "Locate Cor Caroli (α CVn), about 20° northwest of Arcturus"},
+          {"step": 3, "instruction": "M3 lies roughly halfway between these two stars, slightly south of the line connecting them"}
+        ],
+        "nearby_bright_stars": ["Arcturus (SE)", "Cor Caroli (NW)"]
+      },
+      "observation": {
+        "naked_eye": "May be glimpsed as a faint fuzzy 'star' under excellent conditions",
+        "binoculars": "A bright, noticeably fuzzy 'star' — clearly non-stellar but not resolved into stars",
+        "small_telescope": "A beautiful hazy ball with a bright, concentrated core. At 100×+, outer stars begin to resolve into a 'grainy' texture.",
+        "large_telescope": "Spectacular — resolved into countless stars, especially in the outer regions. The dense core remains granular. Chains of stars extend from the cluster's edges.",
+        "best_magnification": "Medium to high (75-200×) for resolution"
+      },
+      "science": {
+        "short_description": "One of the largest and brightest globular clusters visible from northern latitudes — a dense swarm of half a million ancient stars.",
+        "full_description": "M3 contains approximately 500,000 stars bound together by gravity into a sphere about 180 light-years across. At 11.4 billion years old, its stars are among the oldest in the Milky Way — formed when the universe was less than 3 billion years old. M3 contains 274 known variable stars, more than any other globular cluster in our galaxy, making it especially valuable for astronomical research.",
+        "interesting_facts": [
+          "Contains 274 known variable stars — a galactic record for globular clusters",
+          "About 11.4 billion years old — nearly as old as the universe itself",
+          "One of the most luminous globular clusters in the Milky Way",
+          "Charles Messier's first original discovery (1764) — objects before this had been discovered by others"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "Bright enough for shorter exposures. Resolves beautifully with good seeing."
+      },
+      "stellarium": {
+        "skysource_id": "M3",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Canes Venatici region", "fov": 25, "center": "Canes Venatici"},
+          "medium": {"description": "M3 area", "fov": 2, "center": "M3"},
+          "detail": {"description": "Cluster detail", "fov": 0.5, "center": "M3"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2019/34/4522-Image.html",
+          "credit": "ESA/Hubble & NASA, G. Piotto et al.",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M13", "M5", "M53"]
+    },
+    {
+      "id": "M64",
+      "names": {
+        "primary": "Black Eye Galaxy",
+        "catalog": ["NGC 4826"],
+        "other": ["Evil Eye Galaxy", "Sleeping Beauty Galaxy"]
+      },
+      "coordinates": {
+        "ra": "12h 56m 43.6s",
+        "ra_decimal": 12.945,
+        "dec": "+21° 40′ 59″",
+        "dec_decimal": 21.683
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Coma Berenices",
+        "magnitude_visual": 8.5,
+        "size_arcmin": "10.0 × 5.4",
+        "distance_ly": 17000000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Coma Berenices, about 1° north-northeast of 35 Comae Berenices.",
+        "constellation_context": "In Coma Berenices, between the star cluster and Virgo",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the star Denebola (β Leonis) at the tail of Leo"},
+          {"step": 2, "instruction": "Move about 17° east into Coma Berenices"},
+          {"step": 3, "instruction": "M64 lies about 5° east-northeast of α Comae — look for an oval glow with a dark patch on one side"}
+        ],
+        "nearby_bright_stars": ["α Comae (W)", "Denebola (W)", "Arcturus (E)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as a faint oval smudge with a bright center",
+        "small_telescope": "The distinctive dark band becomes visible — a striking dust lane sweeping across the bright nucleus. Unique appearance among galaxies.",
+        "large_telescope": "The dark band is dramatic and well-defined. Some observers see a complete ring structure. Spiral structure may be glimpsed in the outer regions.",
+        "best_magnification": "Medium to high (75-150×) to see the dust band"
+      },
+      "science": {
+        "short_description": "A spiral galaxy with a dramatic dark dust band near its nucleus — and a secret: its outer regions spin in the opposite direction from its inner disk.",
+        "full_description": "M64's distinctive 'black eye' is a dramatic band of absorbing dust silhouetted against the bright nucleus. But the galaxy holds a bigger mystery: detailed observations revealed that the gas in its outer regions rotates in the opposite direction from the gas and stars in its inner disk. This counter-rotation is evidence of a past merger — M64 likely absorbed a smaller galaxy more than a billion years ago, and the two disks still haven't settled into a single rotation direction.",
+        "interesting_facts": [
+          "The outer disk rotates opposite to the inner disk — evidence of a past galactic merger",
+          "The counter-rotating disks cause active star formation at the boundary",
+          "The dark band extends about 40,000 light-years",
+          "Independently discovered by Edward Pigott (1779) and Johann Elert Bode (1779)"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "The dust lane provides excellent contrast and makes for a distinctive image."
+      },
+      "stellarium": {
+        "skysource_id": "M64",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Coma Berenices region", "fov": 20, "center": "Coma Berenices"},
+          "medium": {"description": "M64 area", "fov": 2, "center": "M64"},
+          "detail": {"description": "Galaxy detail", "fov": 0.5, "center": "M64"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2004/04/1457-Image.html",
+          "credit": "NASA and The Hubble Heritage Team (AURA/STScI)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M85", "NGC 4565", "M94"]
+    },
+    {
+      "id": "M97",
+      "names": {
+        "primary": "Owl Nebula",
+        "catalog": ["NGC 3587"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "11h 14m 47.7s",
+        "ra_decimal": 11.246,
+        "dec": "+55° 01′ 09″",
+        "dec_decimal": 55.019
+      },
+      "physical": {
+        "type": "Planetary Nebula",
+        "type_short": "PN",
+        "constellation": "Ursa Major",
+        "magnitude_visual": 9.9,
+        "size_arcmin": "3.4 × 3.3",
+        "distance_ly": 2030
+      },
+      "visibility": {
+        "best_months": ["March", "April", "May"],
+        "peak_month": "April",
+        "difficulty": "moderate",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Ursa Major, about 2.5° southeast of Merak (β UMa), one of the pointer stars of the Big Dipper.",
+        "constellation_context": "In Ursa Major, near the bottom of the Big Dipper's bowl",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Big Dipper and locate Merak (β UMa) — the lower-right star in the bowl (one of the pointer stars to Polaris)"},
+          {"step": 2, "instruction": "Move about 2.5° southeast"},
+          {"step": 3, "instruction": "M97 appears as a faint, round glow near the galaxy M108 — both fit in the same low-power field"}
+        ],
+        "nearby_bright_stars": ["Merak (β UMa, NW)", "Phecda (γ UMa, NE)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Extremely challenging — may appear as a dim star that doesn't quite focus. Look for it near M108.",
+        "small_telescope": "A faint, round disk. The 'owl eyes' (two dark spots) require medium aperture and good conditions to see. OIII filter helps.",
+        "large_telescope": "The two dark hollows become more obvious, giving the nebula its owl face appearance. The central star (mag 16) is a challenge.",
+        "best_magnification": "Medium (75-100×) with OIII filter",
+        "special_equipment": "OIII or UHC filter strongly recommended"
+      },
+      "science": {
+        "short_description": "A planetary nebula with a face — two dark regions create an 'owl-like' appearance in the shell of gas expelled by a dying star.",
+        "full_description": "The Owl Nebula is one of the more complex planetary nebulae visible in amateur telescopes. The two 'eyes' are actually barrel-shaped cavities where the expanding gas shell is thinner (or absent), allowing us to see through to the darker background. The central star, now a white dwarf with a temperature of about 123,000 K, expelled its outer layers roughly 8,000 years ago. The nebula is still expanding at about 40 km/s.",
+        "interesting_facts": [
+          "The 'eyes' are cylindrical tunnels through the nebula's shell",
+          "The central white dwarf star is one of the hottest known (123,000 K)",
+          "William Parsons (Lord Rosse) named it the 'Owl' after observing it with his 72-inch telescope",
+          "Only 2,000 light-years away — relatively close for a planetary nebula"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 1000,
+        "ideal_focal_length_mm": "1500-2500",
+        "notes": "Benefits from narrowband imaging. Frame with M108 for an interesting dual-target image."
+      },
+      "stellarium": {
+        "skysource_id": "M97",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Big Dipper bowl", "fov": 15, "center": "Ursa Major"},
+          "medium": {"description": "M97 and M108", "fov": 2, "center": "M97"},
+          "detail": {"description": "M97 close-up", "fov": 0.3, "center": "M97"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/",
+          "credit": "NASA, ESA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M108", "M76", "NGC 2392"]
+    },
+    {
+      "id": "M108",
+      "names": {
+        "primary": "M108",
+        "catalog": ["NGC 3556"],
+        "other": ["Surfboard Galaxy"]
+      },
+      "coordinates": {
+        "ra": "11h 11m 31.0s",
+        "ra_decimal": 11.192,
+        "dec": "+55° 40′ 27″",
+        "dec_decimal": 55.674
+      },
+      "physical": {
+        "type": "Barred Spiral Galaxy (edge-on)",
+        "type_short": "Gal",
+        "constellation": "Ursa Major",
+        "magnitude_visual": 10.0,
+        "size_arcmin": "8.7 × 2.2",
+        "distance_ly": 45000000
+      },
+      "visibility": {
+        "best_months": ["March", "April", "May"],
+        "peak_month": "April",
+        "difficulty": "moderate",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "medium_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located very close to the Owl Nebula (M97), about 48 arcminutes to its northwest.",
+        "constellation_context": "In Ursa Major, near the bottom of the Big Dipper's bowl",
+        "star_hop": [
+          {"step": 1, "instruction": "Use the same star-hop as for M97 — find Merak (β UMa) and move southeast"},
+          {"step": 2, "instruction": "M108 is about 48' northwest of M97"},
+          {"step": 3, "instruction": "Both objects fit in the same low-power field — M108 is the elongated streak, M97 is the round glow"}
+        ],
+        "nearby_bright_stars": ["Merak (β UMa, NW)", "Phecda (γ UMa, NE)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Challenging — may appear as a dim elongated smudge under dark skies",
+        "small_telescope": "An edge-on streak with irregular brightness — mottled appearance from dust lanes and star-forming regions. No prominent central bulge.",
+        "large_telescope": "Intricate dust lanes visible crossing the disk. Individual bright knots (HII regions) may be seen.",
+        "best_magnification": "Medium (75-100×)"
+      },
+      "science": {
+        "short_description": "An edge-on spiral galaxy with no obvious central bulge — its dusty, mottled appearance reveals a chaotic star-forming disk.",
+        "full_description": "M108 is unusual among bright galaxies in having essentially no central bulge — it's a 'pure disk' galaxy seen edge-on. The mottled, irregular appearance comes from extensive dust lanes and active star-forming regions throughout the disk. Pierre Méchain discovered it in 1781, but it wasn't added to the Messier catalog until the 20th century (along with M109 and M110).",
+        "interesting_facts": [
+          "Has essentially no central bulge — very unusual for a spiral galaxy",
+          "Only added to the Messier catalog in 1953 (originally recorded by Méchain)",
+          "Contains numerous HII regions (star-forming areas) visible in larger telescopes",
+          "The pair of M97+M108 is a popular double target for astrophotographers"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-1500",
+        "notes": "Often imaged together with M97 (Owl Nebula) as a popular galaxy+nebula pairing."
+      },
+      "stellarium": {
+        "skysource_id": "M108",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "M97-M108 pair", "fov": 2, "center": "M108"},
+          "medium": {"description": "M108 galaxy", "fov": 1, "center": "M108"},
+          "detail": {"description": "Galaxy detail", "fov": 0.3, "center": "M108"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO/DSS",
+          "search_url": "https://www.eso.org/public/images/?search=M108",
+          "credit": "ESO/Digitized Sky Survey 2",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M97", "M82", "NGC 4631"]
+    },
+    {
+      "id": "M101",
+      "names": {
+        "primary": "Pinwheel Galaxy",
+        "catalog": ["NGC 5457"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "14h 03m 12.6s",
+        "ra_decimal": 14.053,
+        "dec": "+54° 20′ 57″",
+        "dec_decimal": 54.349
+      },
+      "physical": {
+        "type": "Face-on Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Ursa Major",
+        "magnitude_visual": 7.9,
+        "size_arcmin": "28.8 × 26.9",
+        "distance_ly": 21000000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye despite its magnitude because its light is spread over a huge area. Located above the Big Dipper's handle, forming a triangle with Mizar and Alkaid.",
+        "constellation_context": "Above the Big Dipper's handle in Ursa Major",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Mizar and Alkaid, the last two stars in the Big Dipper's handle"},
+          {"step": 2, "instruction": "M101 forms an equilateral triangle with these two stars, about 5.5° to the northeast"},
+          {"step": 3, "instruction": "Look for a large, faint, circular glow — it's big but has low surface brightness"}
+        ],
+        "nearby_bright_stars": ["Mizar (ζ UMa, SW)", "Alkaid (η UMa, S)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible (too diffuse despite bright integrated magnitude)",
+        "binoculars": "May be glimpsed as a very faint, large, round glow under excellent dark skies. Requires averted vision.",
+        "small_telescope": "A diffuse, face-on spiral. The low surface brightness makes it challenging. Dark skies essential. May notice asymmetric brightness.",
+        "large_telescope": "Spiral arms become visible — the galaxy reveals its 'pinwheel' structure. Numerous HII regions (NGC 5461, 5462, 5471) appear as bright knots in the arms.",
+        "best_magnification": "Low (30-50×) — large, low surface brightness object"
+      },
+      "science": {
+        "short_description": "A stunning face-on spiral twice the diameter of our Milky Way — so large on the sky it could contain the full moon, but so faint it's challenging to see.",
+        "full_description": "M101 is one of the largest and most beautiful spiral galaxies in the sky, spanning about 170,000 light-years (nearly twice the Milky Way's diameter). Seen face-on, it displays gorgeous spiral arms studded with bright star-forming regions. The galaxy is asymmetric, with its core offset from the geometric center, likely due to gravitational interactions with companion galaxies. The supernova SN 2023ixf, visible to amateur astronomers, exploded in M101 in May 2023.",
+        "interesting_facts": [
+          "Nearly twice the diameter of the Milky Way (170,000 light-years)",
+          "Contains over 1 trillion stars",
+          "SN 2023ixf was the closest supernova in over a decade — visible in amateur telescopes",
+          "The arms contain over 3,000 catalogued star-forming regions"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-1000",
+        "notes": "Large angular size means shorter focal lengths work. H-alpha data reveals spectacular star-forming regions in the arms."
+      },
+      "stellarium": {
+        "skysource_id": "M101",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Big Dipper handle", "fov": 20, "center": "Ursa Major"},
+          "medium": {"description": "M101 galaxy", "fov": 2, "center": "M101"},
+          "detail": {"description": "Spiral arms", "fov": 0.75, "center": "M101"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2006/10/1865-Image.html",
+          "credit": "NASA, ESA, K. Kuntz (JHU), F. Bresolin (UH), J. Trauger (JPL), J. Mould (NOAO), Y.-H. Chu (UIUC)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M51", "NGC 5474", "NGC 5477"]
+    },
+    {
+      "id": "M63",
+      "names": {
+        "primary": "Sunflower Galaxy",
+        "catalog": ["NGC 5055"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "13h 15m 49.3s",
+        "ra_decimal": 13.264,
+        "dec": "+42° 01′ 45″",
+        "dec_decimal": 42.029
+      },
+      "physical": {
+        "type": "Flocculent Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Canes Venatici",
+        "magnitude_visual": 8.6,
+        "size_arcmin": "12.6 × 7.2",
+        "distance_ly": 29000000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Canes Venatici, about 6° north-northeast of Cor Caroli (α CVn).",
+        "constellation_context": "In Canes Venatici, below the Big Dipper's handle",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Cor Caroli (α CVn), the brightest star in Canes Venatici, below the Big Dipper's handle"},
+          {"step": 2, "instruction": "Move about 6° north-northeast"},
+          {"step": 3, "instruction": "M63 appears as an elongated glow with a bright core"}
+        ],
+        "nearby_bright_stars": ["Cor Caroli (α CVn, S)", "Alkaid (η UMa, N)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as a small, elongated fuzzy patch with a bright center",
+        "small_telescope": "An oval glow with a prominent core. The 'sunflower' pattern (flocculent spiral arms) requires larger apertures and excellent conditions.",
+        "large_telescope": "Multiple patchy spiral arm segments become visible — the 'flocculent' nature is apparent, resembling sunflower petals rather than smooth spiral arms.",
+        "best_magnification": "Medium to high (75-150×)"
+      },
+      "science": {
+        "short_description": "A beautiful 'flocculent' spiral galaxy — its arms are patchy and fragmented like sunflower petals rather than the smooth sweeping arms of grand design spirals.",
+        "full_description": "M63 is the prototype of the 'flocculent' spiral galaxy class — galaxies where the spiral arms are fragmented into numerous short segments rather than extending smoothly from the core. This structure results from local self-organized star formation rather than global density waves. The galaxy hosts an extensive halo of tidal debris from a past merger, visible in deep images as faint arcs extending far beyond the visible disk.",
+        "interesting_facts": [
+          "One of the earliest spiral galaxies ever photographed (1896)",
+          "The first galaxy discovered by Pierre Méchain (1779)",
+          "Deep images reveal a vast halo of tidal debris extending 100,000+ light-years",
+          "'Flocculent' means 'having a fluffy or woolly appearance'"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-1500",
+        "notes": "Deep exposures can capture the extensive tidal streams around the galaxy."
+      },
+      "stellarium": {
+        "skysource_id": "M63",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Canes Venatici region", "fov": 15, "center": "Canes Venatici"},
+          "medium": {"description": "M63 area", "fov": 2, "center": "M63"},
+          "detail": {"description": "Galaxy detail", "fov": 0.5, "center": "M63"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/",
+          "credit": "NASA, ESA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M51", "M94", "M106"]
+    },
+    {
+      "id": "M106",
+      "names": {
+        "primary": "M106",
+        "catalog": ["NGC 4258"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "12h 18m 57.5s",
+        "ra_decimal": 12.316,
+        "dec": "+47° 18′ 14″",
+        "dec_decimal": 47.304
+      },
+      "physical": {
+        "type": "Seyfert II Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Canes Venatici",
+        "magnitude_visual": 8.4,
+        "size_arcmin": "18.6 × 7.2",
+        "distance_ly": 23500000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located midway between the Big Dipper's bowl and Cor Caroli, in the 'gap' between Ursa Major and Canes Venatici.",
+        "constellation_context": "In Canes Venatici, near the border with Ursa Major",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Phecda (γ UMa), the bottom-left star in the Big Dipper's bowl"},
+          {"step": 2, "instruction": "Draw a line toward Cor Caroli (α CVn)"},
+          {"step": 3, "instruction": "M106 lies about 5° south of Phecda, roughly one-third of the way to Cor Caroli"}
+        ],
+        "nearby_bright_stars": ["Phecda (γ UMa, N)", "Cor Caroli (α CVn, S)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as an elongated fuzzy patch, noticeably larger than a star",
+        "small_telescope": "A bright, elongated galaxy with a prominent core. Hints of spiral structure may be glimpsed. Several companion galaxies visible in the same field.",
+        "large_telescope": "Spiral arms become visible, along with the anomalous 'extra' arms of radio-emitting gas (though these require special imaging to see).",
+        "best_magnification": "Medium (75-100×)"
+      },
+      "science": {
+        "short_description": "An active galaxy with a supermassive black hole producing radio jets — and the most precisely measured distance of any galaxy beyond the Local Group.",
+        "full_description": "M106 is a Seyfert II galaxy, meaning its core hosts an active supermassive black hole that's accreting material and producing powerful jets. These jets create 'anomalous arms' — spiral-like structures visible in radio and X-ray but not in visible light. Most importantly, M106 is the distance ladder's 'gold standard': water masers orbiting its black hole have allowed astronomers to measure its distance with unprecedented precision (23.5 million light-years ± 2%), providing a crucial calibration point for cosmic distance measurements.",
+        "interesting_facts": [
+          "Its distance is known with unprecedented accuracy thanks to water maser measurements",
+          "The central black hole is 39 million solar masses",
+          "Has 'anomalous arms' visible in radio — jets from the active nucleus",
+          "One of the nearest Seyfert galaxies to Earth"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-1500",
+        "notes": "The surrounding field contains several interesting companion galaxies including NGC 4248."
+      },
+      "stellarium": {
+        "skysource_id": "M106",
+        "default_fov": 1.5,
+        "views": {
+          "context": {"description": "Canes Venatici region", "fov": 15, "center": "Canes Venatici"},
+          "medium": {"description": "M106 and companions", "fov": 2, "center": "M106"},
+          "detail": {"description": "Galaxy detail", "fov": 0.5, "center": "M106"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/Hubble Heritage Team",
+          "search_url": "https://hubblesite.org/contents/media/images/2013/06/3126-Image.html",
+          "credit": "NASA, ESA, the Hubble Heritage Team (STScI/AURA), and R. Gendler",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 4248", "NGC 4217", "M94"]
+    },
+    {
+      "id": "M53",
+      "names": {
+        "primary": "M53",
+        "catalog": ["NGC 5024"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "13h 12m 55.3s",
+        "ra_decimal": 13.215,
+        "dec": "+18° 10′ 08″",
+        "dec_decimal": 18.169
+      },
+      "physical": {
+        "type": "Globular Cluster",
+        "type_short": "GC",
+        "constellation": "Coma Berenices",
+        "magnitude_visual": 7.7,
+        "size_arcmin": "13",
+        "distance_ly": 58000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located in Coma Berenices, about 1° northeast of the star α Comae Berenices (Diadem).",
+        "constellation_context": "In Coma Berenices, near its brightest star",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the star Denebola (β Leonis) at Leo's tail"},
+          {"step": 2, "instruction": "Move about 15° east to find α Comae (Diadem), a 4th magnitude star"},
+          {"step": 3, "instruction": "M53 is just 1° northeast of α Comae — a fuzzy 'star' in binoculars"}
+        ],
+        "nearby_bright_stars": ["α Comae (Diadem, SW)", "Arcturus (E)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "A fuzzy 'star' that doesn't quite focus to a point",
+        "small_telescope": "A bright, concentrated globular with a very dense core. Outer stars begin to resolve at 100×+.",
+        "large_telescope": "Resolves into hundreds of stars, though the core remains dense and granular. Look for the nearby globular NGC 5053 — a very different, sparse cluster only 1° away.",
+        "best_magnification": "Medium to high (75-150×) for resolution"
+      },
+      "science": {
+        "short_description": "One of the most outlying globular clusters in the Milky Way — a dense ancient star city nearly 60,000 light-years from Earth.",
+        "full_description": "M53 is one of the most distant globular clusters that's still easily visible in amateur telescopes. At 58,000 light-years from Earth (and about 60,000 from the galactic center), it lies far in the outer halo of the Milky Way. Despite this, it's relatively bright because it's quite luminous intrinsically — one of the more massive globular clusters known. The nearby cluster NGC 5053 provides an interesting contrast: it's at a similar distance but is much sparser and fainter.",
+        "interesting_facts": [
+          "One of the most distant easily-visible globular clusters (58,000 ly)",
+          "Contains several hundred thousand stars",
+          "Forms an interesting visual pair with NGC 5053 — two very different clusters at similar distances",
+          "Discovered by Johann Elert Bode in 1775"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "Frame to include NGC 5053 for an interesting cluster comparison."
+      },
+      "stellarium": {
+        "skysource_id": "M53",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Coma Berenices region", "fov": 15, "center": "Coma Berenices"},
+          "medium": {"description": "M53 and NGC 5053", "fov": 3, "center": "M53"},
+          "detail": {"description": "M53 detail", "fov": 0.5, "center": "M53"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/",
+          "credit": "ESA/Hubble & NASA",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 5053", "M3", "M5"]
+    },
+    {
+      "id": "VirgoCluster",
+      "names": {
+        "primary": "Virgo Galaxy Cluster",
+        "catalog": ["Abell 1656 (part)", "Markarian's Chain"],
+        "other": ["Realm of the Galaxies"]
+      },
+      "coordinates": {
+        "ra": "12h 27m 00s",
+        "ra_decimal": 12.450,
+        "dec": "+12° 43′ 00″",
+        "dec_decimal": 12.717
+      },
+      "physical": {
+        "type": "Galaxy Cluster",
+        "type_short": "GalCl",
+        "constellation": "Virgo",
+        "magnitude_visual": 8.0,
+        "size_arcmin": "600 (8° core)",
+        "distance_ly": 54000000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Individual galaxies not visible to naked eye. The cluster spans a huge area centered roughly between Denebola (Leo) and Vindemiatrix (ε Virginis).",
+        "constellation_context": "Centered in Virgo, extending into Coma Berenices",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the area between Denebola (tail of Leo) and Vindemiatrix (ε Vir)"},
+          {"step": 2, "instruction": "The heart of the cluster is marked by the giant elliptical M87"},
+          {"step": 3, "instruction": "Sweep slowly with low power — dozens of galaxies will drift through the field"}
+        ],
+        "nearby_bright_stars": ["Denebola (W)", "Vindemiatrix (E)", "Porrima (S)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Several of the brightest members (M84, M86, M87, M49) are visible as faint fuzzy spots. Patience and dark skies required.",
+        "small_telescope": "A rich hunting ground — sweep slowly and you'll encounter galaxy after galaxy. Markarian's Chain (M84, M86, and several NGC galaxies) forms a curved arc visible in one field.",
+        "large_telescope": "Dozens of galaxies visible on a good night. Individual galaxies reveal shapes — ellipticals appear as fuzzy balls, spirals show elongation or (in the case of M104) distinctive features.",
+        "best_magnification": "Low (25-50×) for galaxy hunting; medium for individual targets"
+      },
+      "science": {
+        "short_description": "The nearest major galaxy cluster to Earth — over 2,000 galaxies bound together by gravity, including the supergiant elliptical M87.",
+        "full_description": "The Virgo Cluster is the dominant structure in our cosmic neighborhood, containing over 2,000 galaxies spread across 15 million light-years of space. At its heart lies M87, a giant elliptical galaxy hosting a supermassive black hole 6.5 billion times the mass of the Sun — the first black hole ever photographed (2019). Our own Local Group (Milky Way, Andromeda, etc.) is falling toward the Virgo Cluster and will eventually merge with it.",
+        "interesting_facts": [
+          "Contains the first black hole ever imaged (M87*, 2019)",
+          "Over 2,000 member galaxies in an area spanning 8° of sky",
+          "Markarian's Chain is a curved arrangement of 8+ galaxies visible in one telescopic field",
+          "Our Local Group is falling toward Virgo at 400 km/s"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 200,
+        "ideal_focal_length_mm": "400-800",
+        "notes": "Wide field captures multiple galaxies. Markarian's Chain is a popular target. Individual galaxies benefit from longer focal lengths."
+      },
+      "stellarium": {
+        "skysource_id": "M87",
+        "default_fov": 10,
+        "views": {
+          "context": {"description": "Virgo cluster region", "fov": 20, "center": "Virgo"},
+          "medium": {"description": "Central cluster", "fov": 8, "center": "M87"},
+          "detail": {"description": "Markarian's Chain", "fov": 3, "center": "M84"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Rogelio Bernal Andreo",
+          "search_url": "https://apod.nasa.gov/apod/ap100520.html",
+          "credit": "Rogelio Bernal Andreo (Deep Sky Colors)",
+          "license": "Used with permission"
+        }
+      },
+      "related_objects": ["M87", "M84", "M86", "M49", "M60", "M104"]
+    },
+    {
+      "id": "Cor_Caroli",
+      "names": {
+        "primary": "Cor Caroli",
+        "catalog": ["α Canum Venaticorum", "HIP 63125"],
+        "other": ["Charles's Heart"]
+      },
+      "coordinates": {
+        "ra": "12h 56m 01.7s",
+        "ra_decimal": 12.934,
+        "dec": "+38° 19′ 06″",
+        "dec_decimal": 38.318
+      },
+      "physical": {
+        "type": "Double Star",
+        "type_short": "**",
+        "constellation": "Canes Venatici",
+        "magnitude_visual": 2.9,
+        "size_arcmin": null,
+        "distance_ly": 110
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "easy",
+        "equipment_minimum": "small_telescope",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Cor Caroli is easily visible to the naked eye as a 3rd magnitude star, located below the Big Dipper's handle, roughly below Alioth and Mizar.",
+        "constellation_context": "The brightest star in Canes Venatici",
+        "star_hop": [
+          {"step": 1, "instruction": "Find the Big Dipper's handle — follow it to Mizar and Alkaid"},
+          {"step": 2, "instruction": "Drop straight down about 15° from the handle"},
+          {"step": 3, "instruction": "Cor Caroli is the brightest star in that area — forms a triangle with Denebola (Leo) and Arcturus (Boötes)"}
+        ],
+        "nearby_bright_stars": ["Mizar (N)", "Arcturus (E)", "Denebola (SW)"]
+      },
+      "observation": {
+        "naked_eye": "Easily visible as a moderately bright star below the Big Dipper",
+        "binoculars": "Appears as a single bright star — the companion is too close to split",
+        "small_telescope": "Beautiful double star! The primary is white-blue (mag 2.9), the secondary is pale yellow (mag 5.5), separated by 19 arcseconds. Easy split at any magnification.",
+        "large_telescope": "No additional features — low magnification gives the prettiest view",
+        "best_magnification": "Low to medium (40-75×)"
+      },
+      "science": {
+        "short_description": "A lovely double star commemorating King Charles II — and the prototype of a whole class of chemically peculiar stars.",
+        "full_description": "Cor Caroli is a visual binary star whose primary component (α² CVn) is the prototype of the Alpha² Canum Venaticorum variable stars — chemically peculiar stars with strong magnetic fields and unusual surface abundances of elements like silicon, chromium, and europium. These 'starspots' of enhanced elements cause the star to vary slightly as it rotates. The star was named by Edmond Halley to honor King Charles II of England.",
+        "interesting_facts": [
+          "Named by Edmond Halley for King Charles II (Cor Caroli = 'Charles's Heart')",
+          "The primary is the prototype of chemically peculiar Ap stars",
+          "The secondary star is a normal F-type star",
+          "The pair has been gravitationally bound for their entire existence"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000+",
+        "notes": "The color contrast between the two stars makes for a nice portrait. Wide separation allows easy imaging."
+      },
+      "stellarium": {
+        "skysource_id": "Cor Caroli",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Canes Venatici constellation", "fov": 25, "center": "Canes Venatici"},
+          "medium": {"description": "Cor Caroli", "fov": 2, "center": "Cor Caroli"},
+          "detail": {"description": "Double star detail", "fov": 0.2, "center": "Cor Caroli"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "Custom observation",
+          "search_url": null,
+          "credit": "Double star sketch/photo",
+          "license": "To create"
+        }
+      },
+      "related_objects": ["Castor", "Albireo", "M3"]
+    }
+  ]
+}
