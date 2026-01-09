@@ -1059,11 +1059,23 @@
   });
 
   // ========== COMPASS / AR MODE ==========
+  // Based on AstroHopper (github.com/artyom-beilis/skyhopper) and W3C DeviceOrientation spec
+  // Key insight: Phone's Y-axis (top of phone) points toward viewing direction
+
   var compassActive = false;
   var compassPaused = false;
   var compassToastTimeout = null;
-  var currentViewAz = 0;  // Track current view azimuth (radians)
-  var currentViewAlt = 0; // Track current view altitude (radians)
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  // Compass data storage (similar to AstroHopper's gdata)
+  var compassData = {
+    alpha: 0,           // Compass heading from absolute orientation
+    alphaGyro: 0,       // Alpha from gyro (relative)
+    beta: 0,            // Front-back tilt
+    gamma: 0,           // Left-right tilt
+    hasAbsolute: false, // Whether we have absolute orientation (true compass)
+    lastUpdate: 0
+  };
 
   function showCompassToast(message, duration) {
     duration = duration || 3000;
@@ -1107,94 +1119,180 @@
   var dbgZ = document.getElementById('dbg-z');
   var compassDebug = document.getElementById('compass-debug');
 
-  function updateViewFromOrientation(event) {
-    if (!compassActive || compassPaused || !stel) return;
+  // ===== ROTATION MATRIX HELPERS (from AstroHopper) =====
+  var DEG_TO_RAD = Math.PI / 180;
+  var RAD_TO_DEG = 180 / Math.PI;
 
-    var alpha = event.alpha;
-    var beta = event.beta;
-    var gamma = event.gamma;
+  /**
+   * Build ZXY rotation matrix from device orientation angles
+   * Per W3C DeviceOrientation spec: alpha (Z), beta (X), gamma (Y)
+   * Returns 3x3 matrix as flat array [m11, m12, m13, m21, m22, m23, m31, m32, m33]
+   */
+  function getRotationMatrix(alpha, beta, gamma) {
+    var _a = alpha * DEG_TO_RAD;
+    var _b = beta * DEG_TO_RAD;
+    var _g = gamma * DEG_TO_RAD;
 
-    if (alpha === null || beta === null) return;
-
-    // Update debug display - raw values from device
-    if (dbgAlpha) dbgAlpha.textContent = alpha.toFixed(1);
-    if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
-    if (dbgGamma) dbgGamma.textContent = (gamma || 0).toFixed(1);
-
-    // === Based on three.js DeviceOrientationControls ===
-    // The approach: build rotation from device orientation, then apply
-    // a -90° X rotation because we want to look "through the back of the screen"
-    // (like a camera), not through the top of the device.
-    //
-    // three.js uses: euler.set(beta, alpha, -gamma, 'YXZ'), then multiply by q1
-    // where q1 = Quaternion(-sqrt(0.5), 0, 0, sqrt(0.5)) = -90° around X
-    //
-    // We'll do this with rotation matrices instead.
-
-    var degToRad = Math.PI / 180;
-    var _alpha = alpha ? alpha * degToRad : 0;
-    var _beta = beta ? beta * degToRad : 0;
-    var _gamma = gamma ? gamma * degToRad : 0;
-
-    // Step 1: Build rotation matrix from device orientation (ZXY order per W3C)
-    var cA = Math.cos(_alpha), sA = Math.sin(_alpha);
-    var cB = Math.cos(_beta), sB = Math.sin(_beta);
-    var cG = Math.cos(_gamma), sG = Math.sin(_gamma);
+    var cA = Math.cos(_a), sA = Math.sin(_a);
+    var cB = Math.cos(_b), sB = Math.sin(_b);
+    var cG = Math.cos(_g), sG = Math.sin(_g);
 
     // ZXY rotation matrix (W3C spec)
-    var m11 = cA * cG - sA * sB * sG;
-    var m12 = -cB * sA;
-    var m13 = cA * sG + cG * sA * sB;
-    var m21 = cG * sA + cA * sB * sG;
-    var m22 = cA * cB;
-    var m23 = sA * sG - cA * cG * sB;
-    var m31 = -cB * sG;
-    var m32 = sB;
-    var m33 = cB * cG;
+    return [
+      cA * cG - sA * sB * sG,  // m11
+      -cB * sA,                 // m12
+      cA * sG + cG * sA * sB,  // m13
+      cG * sA + cA * sB * sG,  // m21
+      cA * cB,                  // m22
+      sA * sG - cA * cG * sB,  // m23
+      -cB * sG,                 // m31
+      sB,                       // m32
+      cB * cG                   // m33
+    ];
+  }
 
-    // Step 2: The direction we want is "out the back of the screen" = device -Z axis
-    // In device coordinates: [0, 0, -1]
-    // Transform by rotation matrix: [x, y, z] = M * [0, 0, -1] = [-m13, -m23, -m33]
-    var x = -m13;
-    var y = -m23;
-    var z = -m33;
+  /**
+   * Multiply 3x3 matrix by 3-vector
+   */
+  function matVec(m, v) {
+    return [
+      m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
+      m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
+      m[6] * v[0] + m[7] * v[1] + m[8] * v[2]
+    ];
+  }
 
-    // The W3C Earth frame is: X=East, Y=North, Z=Up
-    // So [x, y, z] is now in Earth coordinates: [East, North, Up]
+  /**
+   * Get the direction the phone is pointing toward
+   * Phone held up with top pointing at sky = transform device Y-axis [0, 1, 0]
+   * Returns [East, North, Up] in Earth frame
+   */
+  function getPointingDirection(alpha, beta, gamma) {
+    var M = getRotationMatrix(alpha, beta, gamma);
 
-    // Extract altitude and azimuth for debug display
-    var altitudeDeg = Math.asin(z) * 180 / Math.PI;
-    var azimuthDeg = Math.atan2(x, y) * 180 / Math.PI;
+    // Device Y-axis (top of phone) transformed to Earth frame
+    // AstroHopper uses: fwd = mvec(M, [0, 1, 0])
+    return matVec(M, [0, 1, 0]);
+  }
+
+  // ===== DEVICE ORIENTATION HANDLERS =====
+
+  /**
+   * Handle iOS device orientation (uses webkitCompassHeading for true north)
+   */
+  function handleOrientationIOS(event) {
+    if (!compassActive || compassPaused) return;
+
+    // iOS provides webkitCompassHeading as degrees from true north
+    if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
+      // webkitCompassHeading is clockwise from north (0-360)
+      // W3C alpha is counterclockwise from north
+      // So: alpha = 360 - webkitCompassHeading
+      compassData.alpha = 360 - event.webkitCompassHeading;
+      compassData.hasAbsolute = true;
+    }
+
+    compassData.beta = event.beta || 0;
+    compassData.gamma = event.gamma || 0;
+    compassData.lastUpdate = Date.now();
+
+    updateCompassView();
+  }
+
+  /**
+   * Handle absolute device orientation (Android with magnetometer)
+   * This event provides true compass heading when available
+   */
+  function handleOrientationAbsolute(event) {
+    if (!compassActive || compassPaused) return;
+
+    if (event.alpha !== null) {
+      compassData.alpha = event.alpha;
+      compassData.hasAbsolute = event.absolute === true;
+    }
+
+    compassData.beta = event.beta || 0;
+    compassData.gamma = event.gamma || 0;
+    compassData.lastUpdate = Date.now();
+
+    updateCompassView();
+  }
+
+  /**
+   * Handle relative device orientation (gyroscope only, no compass)
+   * Used as fallback when absolute orientation unavailable
+   */
+  function handleOrientationRelative(event) {
+    if (!compassActive || compassPaused) return;
+
+    // Only use relative alpha if we don't have absolute
+    if (!compassData.hasAbsolute && event.alpha !== null) {
+      compassData.alpha = event.alpha;
+    }
+
+    // Always update gyro values
+    compassData.alphaGyro = event.alpha || 0;
+    compassData.beta = event.beta || 0;
+    compassData.gamma = event.gamma || 0;
+    compassData.lastUpdate = Date.now();
+
+    updateCompassView();
+  }
+
+  /**
+   * Main compass update function - computes pointing direction and updates Stellarium view
+   */
+  function updateCompassView() {
+    if (!compassActive || compassPaused || !stel) return;
+
+    var alpha = compassData.alpha;
+    var beta = compassData.beta;
+    var gamma = compassData.gamma;
+
+    // Update debug display - raw values
+    if (dbgAlpha) dbgAlpha.textContent = alpha.toFixed(1);
+    if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
+    if (dbgGamma) dbgGamma.textContent = gamma.toFixed(1);
+
+    // Get pointing direction: phone Y-axis (top) in Earth frame [East, North, Up]
+    var dir = getPointingDirection(alpha, beta, gamma);
+    var x = dir[0];  // East component
+    var y = dir[1];  // North component
+    var z = dir[2];  // Up component
+
+    // Calculate azimuth and altitude for debug display
+    // Azimuth: angle from North, clockwise (0-360)
+    // Altitude: angle above horizon (-90 to 90)
+    var azimuthDeg = Math.atan2(x, y) * RAD_TO_DEG;
     if (azimuthDeg < 0) azimuthDeg += 360;
+    var altitudeDeg = Math.asin(Math.max(-1, Math.min(1, z))) * RAD_TO_DEG;
 
     // Update debug display - computed values
     if (dbgAz) dbgAz.textContent = azimuthDeg.toFixed(1);
     if (dbgAlt) dbgAlt.textContent = altitudeDeg.toFixed(1);
-
-    // Update debug display
     if (dbgX) dbgX.textContent = x.toFixed(3);
     if (dbgY) dbgY.textContent = y.toFixed(3);
     if (dbgZ) dbgZ.textContent = z.toFixed(3);
 
-    // For Stellarium: it uses az = atan2(x, y), alt = asin(z)
-    // which matches our [East, North, Up] = [x, y, z] convention
+    // Update Stellarium view
+    // lookat expects [East, North, Up] which matches our convention
     try {
       stel.core.lookat([x, y, z], 0);
-
-      // Update arrow guidance if we have a selected object
       updateArrowGuidance();
-    } catch (e) {}
+    } catch (e) {
+      console.warn('[Sky Lab] lookat error:', e);
+    }
   }
 
+  // ===== COMPASS START/STOP =====
+
   function startCompass() {
-    // Check for secure context (HTTPS)
     if (!isSecureContext()) {
       showCompassToast('Compass requires HTTPS. Please access via secure connection.', 4000);
       console.warn('[Sky Lab] Compass requires secure context (HTTPS)');
       return;
     }
 
-    // Check for device orientation support
     if (!hasOrientationSupport()) {
       showCompassToast('Device orientation not supported on this device.', 3000);
       console.warn('[Sky Lab] DeviceOrientationEvent not supported');
@@ -1203,54 +1301,82 @@
 
     requestOrientationPermission().then(function(permission) {
       if (permission === 'granted') {
-        compassActive = true;
-        compassPaused = false;
-        btnCompass.classList.add('active');
-        btnCompass.classList.remove('compass-paused');
-        if (compassDebug) compassDebug.classList.add('visible');
-        window.addEventListener('deviceorientation', updateViewFromOrientation);
-        showCompassToast('Compass mode active. Point your phone at the sky!', 2500);
-        console.log('[Sky Lab] Compass mode started');
+        activateCompass();
       } else {
         showCompassToast('Motion sensor permission denied. Enable in device settings.', 4000);
         console.warn('[Sky Lab] Permission denied:', permission);
       }
     }).catch(function(err) {
       console.log('[Sky Lab] Permission error, trying anyway:', err);
-      // On some Android devices, no permission is needed
-      compassActive = true;
-      compassPaused = false;
-      btnCompass.classList.add('active');
-      if (compassDebug) compassDebug.classList.add('visible');
-      window.addEventListener('deviceorientation', updateViewFromOrientation);
-
-      // Test if we actually get events
-      var testTimeout = setTimeout(function() {
-        if (compassActive) {
-          showCompassToast('Compass may not work on this device. Try moving your phone.', 3000);
-        }
-      }, 2000);
-
-      // Clear test timeout if we get an event
-      var testHandler = function(e) {
-        if (e.alpha !== null) {
-          clearTimeout(testTimeout);
-          showCompassToast('Compass mode active!', 2000);
-          window.removeEventListener('deviceorientation', testHandler);
-        }
-      };
-      window.addEventListener('deviceorientation', testHandler);
+      activateCompass();
     });
+  }
+
+  function activateCompass() {
+    compassActive = true;
+    compassPaused = false;
+    compassData.hasAbsolute = false;
+
+    btnCompass.classList.add('active');
+    btnCompass.classList.remove('compass-paused');
+    if (compassDebug) compassDebug.classList.add('visible');
+
+    // Register event listeners based on platform
+    if (isIOS) {
+      // iOS: Use deviceorientation with webkitCompassHeading
+      window.addEventListener('deviceorientation', handleOrientationIOS);
+      console.log('[Sky Lab] Using iOS orientation handler');
+    } else {
+      // Android/Other: Prefer deviceorientationabsolute for true compass
+      // Fall back to deviceorientation for gyro-only
+      if ('ondeviceorientationabsolute' in window) {
+        window.addEventListener('deviceorientationabsolute', handleOrientationAbsolute);
+        console.log('[Sky Lab] Using absolute orientation (true compass)');
+      }
+      window.addEventListener('deviceorientation', handleOrientationRelative);
+      console.log('[Sky Lab] Using relative orientation handler');
+    }
+
+    // Test if we actually get events
+    var testTimeout = setTimeout(function() {
+      if (compassActive && compassData.lastUpdate === 0) {
+        showCompassToast('Compass may not work on this device. Try moving your phone.', 3000);
+      }
+    }, 2000);
+
+    // Success detection
+    var checkSuccess = setInterval(function() {
+      if (compassData.lastUpdate > 0) {
+        clearTimeout(testTimeout);
+        clearInterval(checkSuccess);
+        var mode = compassData.hasAbsolute ? 'true compass' : 'gyroscope only';
+        showCompassToast('Compass active (' + mode + '). Point at the sky!', 2500);
+        console.log('[Sky Lab] Compass working, mode:', mode);
+      }
+    }, 100);
+
+    // Clear check after 3 seconds regardless
+    setTimeout(function() {
+      clearInterval(checkSuccess);
+    }, 3000);
+
+    console.log('[Sky Lab] Compass mode started');
   }
 
   function stopCompass() {
     compassActive = false;
     compassPaused = false;
+
     btnCompass.classList.remove('active');
     btnCompass.classList.remove('compass-paused');
     if (compassDebug) compassDebug.classList.remove('visible');
-    window.removeEventListener('deviceorientation', updateViewFromOrientation);
-    clearArrowTarget(); // Hide arrow guidance when compass stops
+
+    // Remove all orientation listeners
+    window.removeEventListener('deviceorientation', handleOrientationIOS);
+    window.removeEventListener('deviceorientation', handleOrientationRelative);
+    window.removeEventListener('deviceorientationabsolute', handleOrientationAbsolute);
+
+    clearArrowTarget();
     showCompassToast('Compass mode off', 1500);
     console.log('[Sky Lab] Compass mode stopped');
   }
