@@ -1296,9 +1296,23 @@
     if (dbgZ) dbgZ.textContent = z.toFixed(3);
 
     // Update Stellarium view
-    // Stellarium lookat expects [North, East, Up] - swap x,y from our [East, North, Up]
+    // Our coordinates: x=East, y=North, z=Up
+    // Stellarium c2s uses: theta=atan2(y,x), phi=atan2(z,sqrt(x²+y²))
+    // So Stellarium expects: [North, East, Up] for theta to be azimuth from North
+    // But we also need to handle the altitude correctly
+
+    // Try using azimuth/altitude directly to construct the vector
+    // Stellarium convention: x=North, y=East, z=Up
+    // azimuth measured from North (x-axis) toward East (y-axis)
+    var azRad = azimuthDeg * DEG_TO_RAD;
+    var altRad = altitudeDeg * DEG_TO_RAD;
+    var cosAlt = Math.cos(altRad);
+    var stelX = Math.cos(azRad) * cosAlt;  // North component
+    var stelY = Math.sin(azRad) * cosAlt;  // East component
+    var stelZ = Math.sin(altRad);          // Up component
+
     try {
-      stel.core.lookat([y, x, z], 0);
+      stel.core.lookat([stelX, stelY, stelZ], 0);
       updateArrowGuidance();
     } catch (e) {
       console.warn('[Sky Lab] lookat error:', e);
