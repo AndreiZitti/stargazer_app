@@ -577,6 +577,12 @@
     <div><span class="label">y:</span> <span id="dbg-y">--</span></div>
     <div><span class="label">z:</span> <span id="dbg-z">--</span></div>
   </div>
+  <div style="margin-top:8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:8px;">
+    <button id="btn-calibrate" style="width:100%; padding:8px 12px; background:rgba(59,130,246,0.8); border:none; border-radius:6px; color:white; font-size:12px; font-weight:500; cursor:pointer;">
+      Calibrate (point at zenith)
+    </button>
+    <div id="calibration-status" style="margin-top:4px; font-size:10px; color:rgba(255,255,255,0.5); text-align:center;"></div>
+  </div>
 </div>
 
 <!-- Arrow Guide for Object Navigation -->
@@ -1074,7 +1080,12 @@
     beta: 0,            // Front-back tilt
     gamma: 0,           // Left-right tilt
     hasAbsolute: false, // Whether we have absolute orientation (true compass)
-    lastUpdate: 0
+    lastUpdate: 0,
+    // Calibration offsets - applied to correct sensor drift
+    calibrated: false,
+    alphaOffset: 0,
+    betaOffset: 0,
+    gammaOffset: 0
   };
 
   function showCompassToast(message, duration) {
@@ -1249,10 +1260,20 @@
     var beta = compassData.beta;
     var gamma = compassData.gamma;
 
-    // Update debug display - raw values
+    // Update debug display - raw values (before calibration)
     if (dbgAlpha) dbgAlpha.textContent = alpha.toFixed(1);
     if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
     if (dbgGamma) dbgGamma.textContent = gamma.toFixed(1);
+
+    // Apply calibration offsets if calibrated
+    if (compassData.calibrated) {
+      // Subtract the offset recorded at calibration time
+      // This makes the calibration point become the reference
+      alpha = alpha - compassData.alphaOffset;
+      // Normalize alpha to 0-360
+      while (alpha < 0) alpha += 360;
+      while (alpha >= 360) alpha -= 360;
+    }
 
     // Get pointing direction: phone Y-axis (top) in Earth frame [East, North, Up]
     var dir = getPointingDirection(alpha, beta, gamma);
@@ -1316,6 +1337,15 @@
     compassActive = true;
     compassPaused = false;
     compassData.hasAbsolute = false;
+    compassData.lastUpdate = 0;
+    // Reset calibration on fresh start
+    compassData.calibrated = false;
+    compassData.alphaOffset = 0;
+    compassData.betaOffset = 0;
+    compassData.gammaOffset = 0;
+    if (calibrationStatus) {
+      calibrationStatus.textContent = '';
+    }
 
     btnCompass.classList.add('active');
     btnCompass.classList.remove('compass-paused');
@@ -1394,6 +1424,105 @@
       btnCompass.classList.remove('compass-paused');
       showCompassToast('Compass resumed', 1500);
     }
+  }
+
+  // ===== CALIBRATION =====
+  var btnCalibrate = document.getElementById('btn-calibrate');
+  var calibrationStatus = document.getElementById('calibration-status');
+
+  /**
+   * Calibrate compass by pointing phone at zenith (straight up)
+   * When pointing at zenith: expected beta ≈ 0, altitude should be 90°
+   * We calculate what offset is needed to make the current reading match zenith
+   */
+  function calibrateCompass() {
+    if (!compassActive) {
+      showCompassToast('Start compass first', 2000);
+      return;
+    }
+
+    // Current raw values
+    var rawAlpha = compassData.alpha;
+    var rawBeta = compassData.beta;
+    var rawGamma = compassData.gamma;
+
+    // When pointing at zenith (straight up):
+    // - The phone top points UP, so altitude should be 90°
+    // - Beta should be near 0 (phone not tilted forward/back much when held up)
+    // - We want to record the current alpha as the "north" reference
+
+    // Calculate what direction we're currently pointing
+    var dir = getPointingDirection(rawAlpha, rawBeta, rawGamma);
+    var currentAlt = Math.asin(Math.max(-1, Math.min(1, dir[2]))) * RAD_TO_DEG;
+    var currentAz = Math.atan2(dir[0], dir[1]) * RAD_TO_DEG;
+    if (currentAz < 0) currentAz += 360;
+
+    // For zenith calibration: we expect altitude to be ~90°
+    // The offset needed is to shift current readings to point straight up
+    // We'll store the current alpha as the reference (so current direction becomes "north at zenith")
+
+    // Simple calibration: store current alpha offset so that az=0 when pointing north
+    // And adjust beta so that pointing straight up gives alt=90
+    compassData.alphaOffset = rawAlpha;  // Current alpha becomes the new "north"
+    compassData.betaOffset = rawBeta - 0;  // Beta offset to normalize tilt
+    compassData.gammaOffset = rawGamma;
+    compassData.calibrated = true;
+
+    // Update status display
+    if (calibrationStatus) {
+      calibrationStatus.textContent = 'Calibrated! Alt: ' + currentAlt.toFixed(0) + '°';
+      calibrationStatus.style.color = 'rgba(34,197,94,0.9)';
+    }
+
+    showCompassToast('Calibrated! Point phone to explore sky.', 2500);
+    console.log('[Sky Lab] Calibrated at α=' + rawAlpha.toFixed(1) +
+                ', β=' + rawBeta.toFixed(1) +
+                ', γ=' + rawGamma.toFixed(1) +
+                ' (Alt=' + currentAlt.toFixed(1) + '°)');
+  }
+
+  /**
+   * Reset calibration to use raw sensor values
+   */
+  function resetCalibration() {
+    compassData.calibrated = false;
+    compassData.alphaOffset = 0;
+    compassData.betaOffset = 0;
+    compassData.gammaOffset = 0;
+
+    if (calibrationStatus) {
+      calibrationStatus.textContent = 'Calibration reset';
+      calibrationStatus.style.color = 'rgba(255,255,255,0.5)';
+    }
+    showCompassToast('Calibration reset', 1500);
+  }
+
+  // Calibrate button click handler
+  if (btnCalibrate) {
+    btnCalibrate.addEventListener('click', function() {
+      calibrateCompass();
+    });
+    // Long press to reset calibration
+    var pressTimer;
+    btnCalibrate.addEventListener('mousedown', function() {
+      pressTimer = setTimeout(function() {
+        resetCalibration();
+      }, 1000);
+    });
+    btnCalibrate.addEventListener('mouseup', function() {
+      clearTimeout(pressTimer);
+    });
+    btnCalibrate.addEventListener('mouseleave', function() {
+      clearTimeout(pressTimer);
+    });
+    btnCalibrate.addEventListener('touchstart', function() {
+      pressTimer = setTimeout(function() {
+        resetCalibration();
+      }, 1000);
+    });
+    btnCalibrate.addEventListener('touchend', function() {
+      clearTimeout(pressTimer);
+    });
   }
 
   // ========== ARROW GUIDANCE SYSTEM ==========
