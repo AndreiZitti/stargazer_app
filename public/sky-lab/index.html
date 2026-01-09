@@ -1275,9 +1275,9 @@
     if (dbgZ) dbgZ.textContent = z.toFixed(3);
 
     // Update Stellarium view
-    // lookat expects [East, North, Up] which matches our convention
+    // Stellarium lookat expects [North, East, Up] - swap x,y from our [East, North, Up]
     try {
-      stel.core.lookat([x, y, z], 0);
+      stel.core.lookat([y, x, z], 0);
       updateArrowGuidance();
     } catch (e) {
       console.warn('[Sky Lab] lookat error:', e);
