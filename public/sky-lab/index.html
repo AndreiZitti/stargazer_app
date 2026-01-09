@@ -579,9 +579,12 @@
   </div>
   <div style="margin-top:8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:8px;">
     <button id="btn-calibrate" style="width:100%; padding:8px 12px; background:rgba(59,130,246,0.8); border:none; border-radius:6px; color:white; font-size:12px; font-weight:500; cursor:pointer;">
-      Calibrate (point at zenith)
+      Calibrate (point North)
     </button>
     <div id="calibration-status" style="margin-top:4px; font-size:10px; color:rgba(255,255,255,0.5); text-align:center;"></div>
+    <div style="margin-top:4px; font-size:9px; color:rgba(255,255,255,0.35); text-align:center;">
+      Long press to reset
+    </div>
   </div>
 </div>
 
@@ -1081,11 +1084,9 @@
     gamma: 0,           // Left-right tilt
     hasAbsolute: false, // Whether we have absolute orientation (true compass)
     lastUpdate: 0,
-    // Calibration offsets - applied to correct sensor drift
+    // Calibration - azimuth offset to align with true North
     calibrated: false,
-    alphaOffset: 0,
-    betaOffset: 0,
-    gammaOffset: 0
+    azimuthOffset: 0    // Degrees to add to computed azimuth
   };
 
   function showCompassToast(message, duration) {
@@ -1265,28 +1266,24 @@
     if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
     if (dbgGamma) dbgGamma.textContent = gamma.toFixed(1);
 
-    // Apply calibration offsets if calibrated
-    if (compassData.calibrated) {
-      // Subtract the offset recorded at calibration time
-      // This makes the calibration point become the reference
-      alpha = alpha - compassData.alphaOffset;
-      // Normalize alpha to 0-360
-      while (alpha < 0) alpha += 360;
-      while (alpha >= 360) alpha -= 360;
-    }
-
     // Get pointing direction: phone Y-axis (top) in Earth frame [East, North, Up]
     var dir = getPointingDirection(alpha, beta, gamma);
     var x = dir[0];  // East component
     var y = dir[1];  // North component
     var z = dir[2];  // Up component
 
-    // Calculate azimuth and altitude for debug display
+    // Calculate azimuth and altitude
     // Azimuth: angle from North, clockwise (0-360)
     // Altitude: angle above horizon (-90 to 90)
-    var azimuthDeg = Math.atan2(x, y) * RAD_TO_DEG;
-    if (azimuthDeg < 0) azimuthDeg += 360;
+    var rawAzimuthDeg = Math.atan2(x, y) * RAD_TO_DEG;
+    if (rawAzimuthDeg < 0) rawAzimuthDeg += 360;
     var altitudeDeg = Math.asin(Math.max(-1, Math.min(1, z))) * RAD_TO_DEG;
+
+    // Apply calibration offset to azimuth
+    var azimuthDeg = rawAzimuthDeg + compassData.azimuthOffset;
+    // Normalize to 0-360
+    while (azimuthDeg < 0) azimuthDeg += 360;
+    while (azimuthDeg >= 360) azimuthDeg -= 360;
 
     // Update debug display - computed values
     if (dbgAz) dbgAz.textContent = azimuthDeg.toFixed(1);
@@ -1354,9 +1351,7 @@
     compassData.lastUpdate = 0;
     // Reset calibration on fresh start
     compassData.calibrated = false;
-    compassData.alphaOffset = 0;
-    compassData.betaOffset = 0;
-    compassData.gammaOffset = 0;
+    compassData.azimuthOffset = 0;
     if (calibrationStatus) {
       calibrationStatus.textContent = '';
     }
@@ -1445,9 +1440,10 @@
   var calibrationStatus = document.getElementById('calibration-status');
 
   /**
-   * Calibrate compass by pointing phone at zenith (straight up)
-   * When pointing at zenith: expected beta ≈ 0, altitude should be 90°
-   * We calculate what offset is needed to make the current reading match zenith
+   * Calibrate compass by pointing phone toward North
+   * When user points North and taps calibrate:
+   * - The current raw azimuth should become 0° (North)
+   * - We store the offset needed: offset = -rawAzimuth
    */
   function calibrateCompass() {
     if (!compassActive) {
@@ -1455,44 +1451,36 @@
       return;
     }
 
-    // Current raw values
+    // Get current raw sensor values
     var rawAlpha = compassData.alpha;
     var rawBeta = compassData.beta;
     var rawGamma = compassData.gamma;
 
-    // When pointing at zenith (straight up):
-    // - The phone top points UP, so altitude should be 90°
-    // - Beta should be near 0 (phone not tilted forward/back much when held up)
-    // - We want to record the current alpha as the "north" reference
-
-    // Calculate what direction we're currently pointing
+    // Calculate what direction we're currently pointing (without calibration)
     var dir = getPointingDirection(rawAlpha, rawBeta, rawGamma);
-    var currentAlt = Math.asin(Math.max(-1, Math.min(1, dir[2]))) * RAD_TO_DEG;
-    var currentAz = Math.atan2(dir[0], dir[1]) * RAD_TO_DEG;
-    if (currentAz < 0) currentAz += 360;
+    var x = dir[0];  // East component
+    var y = dir[1];  // North component
+    var z = dir[2];  // Up component
 
-    // For zenith calibration: we expect altitude to be ~90°
-    // The offset needed is to shift current readings to point straight up
-    // We'll store the current alpha as the reference (so current direction becomes "north at zenith")
+    var currentAlt = Math.asin(Math.max(-1, Math.min(1, z))) * RAD_TO_DEG;
+    var rawAzimuth = Math.atan2(x, y) * RAD_TO_DEG;
+    if (rawAzimuth < 0) rawAzimuth += 360;
 
-    // Simple calibration: store current alpha offset so that az=0 when pointing north
-    // And adjust beta so that pointing straight up gives alt=90
-    compassData.alphaOffset = rawAlpha;  // Current alpha becomes the new "north"
-    compassData.betaOffset = rawBeta - 0;  // Beta offset to normalize tilt
-    compassData.gammaOffset = rawGamma;
+    // When pointing North, azimuth should be 0°
+    // So the offset we need is: -rawAzimuth (to make current reading become 0)
+    compassData.azimuthOffset = -rawAzimuth;
     compassData.calibrated = true;
 
     // Update status display
     if (calibrationStatus) {
-      calibrationStatus.textContent = 'Calibrated! Alt: ' + currentAlt.toFixed(0) + '°';
+      calibrationStatus.textContent = 'Calibrated! (offset: ' + compassData.azimuthOffset.toFixed(0) + '°)';
       calibrationStatus.style.color = 'rgba(34,197,94,0.9)';
     }
 
-    showCompassToast('Calibrated! Point phone to explore sky.', 2500);
-    console.log('[Sky Lab] Calibrated at α=' + rawAlpha.toFixed(1) +
-                ', β=' + rawBeta.toFixed(1) +
-                ', γ=' + rawGamma.toFixed(1) +
-                ' (Alt=' + currentAlt.toFixed(1) + '°)');
+    showCompassToast('Calibrated! Now explore the sky.', 2500);
+    console.log('[Sky Lab] Calibrated: rawAz=' + rawAzimuth.toFixed(1) +
+                '°, offset=' + compassData.azimuthOffset.toFixed(1) +
+                '°, alt=' + currentAlt.toFixed(1) + '°');
   }
 
   /**
@@ -1500,9 +1488,7 @@
    */
   function resetCalibration() {
     compassData.calibrated = false;
-    compassData.alphaOffset = 0;
-    compassData.betaOffset = 0;
-    compassData.gammaOffset = 0;
+    compassData.azimuthOffset = 0;
 
     if (calibrationStatus) {
       calibrationStatus.textContent = 'Calibration reset';
