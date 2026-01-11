@@ -179,7 +179,7 @@ export default function CelestialCalendar({
         </h3>
       </div>
 
-      <div className="flex">
+      <div className="flex flex-col md:flex-row">
         {/* Calendar Grid */}
         <div className="flex-1 p-4">
           {/* Weekday headers */}
@@ -242,20 +242,20 @@ export default function CelestialCalendar({
           </div>
         </div>
 
-        {/* Meteor Shower Legend Sidebar */}
+        {/* Meteor Shower Legend - Below on mobile, sidebar on desktop */}
         {meteorShowers.length > 0 && (
-          <div className="w-48 border-l border-[#1a1a2e] p-4 bg-[#0d0d18]/50">
-            <h4 className="text-xs font-medium text-[#6a6a8a] uppercase tracking-wider mb-4">
+          <div className="w-full md:w-48 border-t md:border-t-0 md:border-l border-[#1a1a2e] p-4 bg-[#0d0d18]/50">
+            <h4 className="text-xs font-medium text-[#6a6a8a] uppercase tracking-wider mb-3">
               Meteor Showers
             </h4>
-            <div className="space-y-4">
+            <div className="flex flex-wrap gap-4 md:flex-col md:gap-0 md:space-y-4">
               {meteorShowers.map((shower) => {
                 const peakDay = extractPeakDay(shower.peakDate);
                 return (
-                  <div key={shower.id} className="space-y-1">
+                  <div key={shower.id} className="space-y-0.5 md:space-y-1">
                     <div className="flex items-center gap-2">
                       <div
-                        className="w-2 h-2 rounded-full"
+                        className="w-2 h-2 rounded-full flex-shrink-0"
                         style={{
                           backgroundColor: shower.color,
                           boxShadow: `0 0 4px ${shower.color}`
@@ -265,7 +265,7 @@ export default function CelestialCalendar({
                         {shower.name}
                       </span>
                     </div>
-                    <div className="text-xs text-[#6a6a8a] pl-4">
+                    <div className="text-xs text-[#6a6a8a] pl-4 hidden md:block">
                       {formatDateRange(shower.activeStart, shower.activeEnd, month)}
                     </div>
                     {peakDay && (
@@ -273,7 +273,7 @@ export default function CelestialCalendar({
                         Peak: {month.slice(0, 3)} {peakDay}
                       </div>
                     )}
-                    <div className="text-xs text-[#6a6a8a] pl-4">
+                    <div className="text-xs text-[#6a6a8a] pl-4 hidden md:block">
                       ~{shower.zhr}/hr
                     </div>
                   </div>

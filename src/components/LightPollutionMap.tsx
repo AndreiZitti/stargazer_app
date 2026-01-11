@@ -821,9 +821,10 @@ export default function LightPollutionMap({
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '12px',
+                    flexShrink: 0,
                   }}>{style.icon}</span>
-                  <div>
-                    <div style={{ fontWeight: 'bold' }}>{place.name}</div>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{place.name}</div>
                     <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.6)' }}>{place.country}</div>
                   </div>
                 </div>
@@ -978,10 +979,10 @@ export default function LightPollutionMap({
             <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
               {/* Header */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                <svg style={{ width: '20px', height: '20px', color: '#eab308' }} fill="currentColor" viewBox="0 0 24 24">
+                <svg style={{ width: '20px', height: '20px', color: '#eab308', flexShrink: 0 }} fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                 </svg>
-                <div style={{ fontWeight: 'bold' }}>{place.name}</div>
+                <div style={{ fontWeight: 'bold', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '180px' }}>{place.name}</div>
               </div>
 
               {/* Info */}
