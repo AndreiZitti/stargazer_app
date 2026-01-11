@@ -5,6 +5,7 @@ import L, { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType, SpotSearchResult } from "@/lib/types";
+import { LocationData } from "./LocationSheet";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
 import CloudForecastModal from "./CloudForecastModal";
@@ -49,6 +50,7 @@ interface LightPollutionMapProps {
   searchOrigin?: Coordinates | null;
   isSearching?: boolean;
   searchRadius?: number; // in km
+  onLocationSelect?: (location: LocationData) => void;
 }
 
 // Dark Sky Places icons by type
@@ -309,6 +311,7 @@ export default function LightPollutionMap({
   searchOrigin,
   isSearching = false,
   searchRadius = 40,
+  onLocationSelect,
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);

@@ -69,20 +69,41 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const getWeather = useCallback((lat: number, lng: number): WeatherCacheEntry | undefined => {
     const key = getCacheKey(lat, lng);
+    const now = Date.now();
+    
+    // Check in-memory cache first
     const cached = weatherCache.get(key);
-    if (cached && Date.now() - cached.fetchedAt < WEATHER_CACHE_TTL) {
+    if (cached && now - cached.fetchedAt < WEATHER_CACHE_TTL) {
       return cached;
     }
+    
+    // Fallback to saved place weather (persisted in localStorage/Supabase)
+    const savedPlace = findPlace(lat, lng);
+    if (savedPlace?.lastWeather) {
+      const fetchedAt = new Date(savedPlace.lastWeather.fetchedAt).getTime();
+      if (now - fetchedAt < WEATHER_CACHE_TTL) {
+        // Restore to in-memory cache for faster subsequent access
+        const entry = { forecast: savedPlace.lastWeather.forecast, fetchedAt };
+        setWeatherCache(prev => {
+          const next = new Map(prev);
+          next.set(key, entry);
+          return next;
+        });
+        return entry;
+      }
+    }
+    
     return undefined;
-  }, [weatherCache, getCacheKey]);
+  }, [weatherCache, getCacheKey, findPlace]);
 
   const fetchWeather = useCallback(async (lat: number, lng: number, forceRefresh = false): Promise<CloudForecast | null> => {
     const key = getCacheKey(lat, lng);
+    const now = Date.now();
 
     // Check cache first (unless force refresh)
     if (!forceRefresh) {
       const cached = weatherCache.get(key);
-      if (cached && Date.now() - cached.fetchedAt < WEATHER_CACHE_TTL) {
+      if (cached && now - cached.fetchedAt < WEATHER_CACHE_TTL) {
         return cached.forecast;
       }
     }
@@ -91,16 +112,31 @@ export function UserProvider({ children }: { children: ReactNode }) {
       const res = await fetch(`/api/cloud-forecast?lat=${lat}&lng=${lng}`);
       if (!res.ok) return null;
       const forecast: CloudForecast = await res.json();
+      const fetchedAt = now;
+      
+      // Update in-memory cache
       setWeatherCache(prev => {
         const next = new Map(prev);
-        next.set(key, { forecast, fetchedAt: Date.now() });
+        next.set(key, { forecast, fetchedAt });
         return next;
       });
+      
+      // Persist to saved place if this location is saved (syncs to localStorage + Supabase)
+      const savedPlace = findPlace(lat, lng);
+      if (savedPlace) {
+        updatePlace(savedPlace.id, { 
+          lastWeather: { 
+            forecast, 
+            fetchedAt: new Date(fetchedAt).toISOString() 
+          } 
+        });
+      }
+      
       return forecast;
     } catch {
       return null;
     }
-  }, [getCacheKey, weatherCache]);
+  }, [getCacheKey, weatherCache, findPlace, updatePlace]);
 
   // Load auth state and profile on mount
   useEffect(() => {

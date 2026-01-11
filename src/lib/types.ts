@@ -92,6 +92,10 @@ export interface SavedPlace {
   savedAt: string; // ISO date
   notes?: string;
   autoLoadWeather?: boolean;
+  lastWeather?: {
+    forecast: CloudForecast;
+    fetchedAt: string; // ISO date
+  };
 }
 
 export interface UserProfile {

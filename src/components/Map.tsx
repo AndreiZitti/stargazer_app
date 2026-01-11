@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { LatLngExpression } from "leaflet";
 import { ScoredSpot, Coordinates, AccessibilityFeature, SpotSearchResult } from "@/lib/types";
+import { LocationData } from "./LocationSheet";
 
 interface ContextMenuSpot {
   lat: number;
@@ -37,6 +38,7 @@ interface MapProps {
   searchOrigin?: Coordinates | null;
   isSearching?: boolean;
   searchRadius?: number;
+  onLocationSelect?: (location: LocationData) => void;
 }
 
 export default function Map({
@@ -58,6 +60,7 @@ export default function Map({
   searchOrigin,
   isSearching,
   searchRadius,
+  onLocationSelect,
 }: MapProps) {
   const LightPollutionMap = useMemo(
     () =>
@@ -94,6 +97,7 @@ export default function Map({
       searchOrigin={searchOrigin}
       isSearching={isSearching}
       searchRadius={searchRadius}
+      onLocationSelect={onLocationSelect}
     />
   );
 }

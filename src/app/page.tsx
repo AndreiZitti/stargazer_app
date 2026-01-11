@@ -11,6 +11,8 @@ import HelpButton from "@/components/HelpButton";
 import SpotSearchModal from "@/components/SpotSearchModal";
 import BottomTabBar from "@/components/BottomTabBar";
 import SavedPlacesWidget from "@/components/SavedPlacesWidget";
+import CloudForecastModal from "@/components/CloudForecastModal";
+import { LocationSheet, LocationData } from "@/components/LocationSheet";
 import { ScoredSpot, Coordinates, SavedPlace, SpotSearchResult } from "@/lib/types";
 
 // Tutorial steps configuration
@@ -99,7 +101,12 @@ export default function Home() {
   const [searchRadius, setSearchRadius] = useState<number>(40); // km
   const [hasSearched, setHasSearched] = useState(false); // Track if a search was performed
 
-  
+  // LocationSheet state
+  const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
+
+  // CloudForecastModal state
+  const [forecastLocation, setForecastLocation] = useState<{ lat: number; lng: number } | null>(null);
+
   // Check if user has completed onboarding
   useEffect(() => {
     const hasOnboarded = localStorage.getItem("stargazer_onboarded");
@@ -186,9 +193,35 @@ export default function Home() {
   };
 
   const handleSavedPlaceClick = (place: SavedPlace) => {
-    // Center map on the saved place
+    // Center map on the saved place and open LocationSheet
     setMapCenter([place.lat, place.lng]);
     setMapZoom(12);
+    setSelectedLocation({
+      lat: place.lat,
+      lng: place.lng,
+      name: place.name,
+      type: "saved",
+      savedPlaceId: place.id,
+      bortle: place.bortle,
+      label: place.label,
+      address: place.address,
+    });
+  };
+
+  // Handler for map marker clicks - opens LocationSheet
+  const handleMarkerClick = (location: LocationData) => {
+    setSelectedLocation(location);
+  };
+
+  // Handler for opening forecast from LocationSheet
+  const handleOpenForecast = (lat: number, lng: number) => {
+    setForecastLocation({ lat, lng });
+  };
+
+  // Handler for find spots from LocationSheet
+  const handleFindSpotsFromSheet = (lat: number, lng: number) => {
+    setSearchOrigin({ lat, lng });
+    setShowSearchModal(true);
   };
 
   const handleOnboardingComplete = (lat: number, lng: number, name?: string) => {
@@ -250,6 +283,7 @@ export default function Home() {
         searchOrigin={searchOrigin}
         isSearching={isSearching}
         searchRadius={searchRadius}
+        onLocationSelect={handleMarkerClick}
       />
 
 
@@ -551,6 +585,23 @@ export default function Home() {
       <div data-tutorial="bottom-tabs">
         <BottomTabBar />
       </div>
+
+      {/* Location Sheet */}
+      <LocationSheet
+        location={selectedLocation}
+        onClose={() => setSelectedLocation(null)}
+        onFindSpots={handleFindSpotsFromSheet}
+        onOpenForecast={handleOpenForecast}
+        userLocation={searchLocation}
+      />
+
+      {/* Cloud Forecast Modal */}
+      <CloudForecastModal
+        isOpen={forecastLocation !== null}
+        lat={forecastLocation?.lat ?? 0}
+        lng={forecastLocation?.lng ?? 0}
+        onClose={() => setForecastLocation(null)}
+      />
     </main>
   );
 }
