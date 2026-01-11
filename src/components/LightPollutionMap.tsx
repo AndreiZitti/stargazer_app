@@ -1,6 +1,7 @@
 "use client";
 
 import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl, Circle } from "react-leaflet";
+import MarkerClusterGroup from "react-leaflet-cluster";
 import L, { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
@@ -53,6 +54,16 @@ interface LightPollutionMapProps {
   onLocationSelect?: (location: LocationData) => void;
 }
 
+// Icon cache for memoization - prevents creating new DivIcon instances on every render
+const iconCache = new Map<string, DivIcon>();
+
+function getCachedIcon(key: string, createFn: () => DivIcon): DivIcon {
+  if (!iconCache.has(key)) {
+    iconCache.set(key, createFn());
+  }
+  return iconCache.get(key)!;
+}
+
 // Dark Sky Places icons by type
 const DARK_SKY_PLACE_STYLES: Record<DarkSkyPlaceType, { color: string; icon: string; label: string }> = {
   park: { color: '#22c55e', icon: '🌲', label: 'Dark Sky Park' },
@@ -64,26 +75,27 @@ const DARK_SKY_PLACE_STYLES: Record<DarkSkyPlaceType, { color: string; icon: str
 };
 
 function getDarkSkyPlaceIcon(type: DarkSkyPlaceType): DivIcon {
-  const style = DARK_SKY_PLACE_STYLES[type] || DARK_SKY_PLACE_STYLES.park;
-
-  return new DivIcon({
-    className: 'dark-sky-place-marker',
-    html: `
-      <div style="
-        width: 28px;
-        height: 28px;
-        background: ${style.color};
-        border: 2px solid white;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-      ">${style.icon}</div>
-    `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+  return getCachedIcon(`darksky-${type}`, () => {
+    const style = DARK_SKY_PLACE_STYLES[type] || DARK_SKY_PLACE_STYLES.park;
+    return new DivIcon({
+      className: 'dark-sky-place-marker',
+      html: `
+        <div style="
+          width: 28px;
+          height: 28px;
+          background: ${style.color};
+          border: 2px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 14px;
+        ">${style.icon}</div>
+      `,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    });
   });
 }
 
@@ -194,94 +206,101 @@ const contextSpotIcon = new DivIcon({
 
 // Custom icons for spots by radius
 function getSpotIcon(radius: number): DivIcon {
-  const colors: Record<number, string> = {
-    10: '#22c55e',  // green - closest
-    50: '#eab308',  // yellow - medium
-    150: '#f97316', // orange - furthest
-  };
-  const color = colors[radius] || '#6b7280';
+  return getCachedIcon(`spot-${radius}`, () => {
+    const colors: Record<number, string> = {
+      10: '#22c55e',  // green - closest
+      50: '#eab308',  // yellow - medium
+      150: '#f97316', // orange - furthest
+    };
+    const color = colors[radius] || '#6b7280';
 
-  return new DivIcon({
-    className: 'spot-marker',
-    html: `
-      <div style="
-        width: 32px;
-        height: 32px;
-        background: ${color};
-        border: 3px solid white;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 11px;
-      ">${radius}</div>
-    `,
-    iconSize: [32, 32],
-    iconAnchor: [16, 16],
+    return new DivIcon({
+      className: 'spot-marker',
+      html: `
+        <div style="
+          width: 32px;
+          height: 32px;
+          background: ${color};
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 11px;
+        ">${radius}</div>
+      `,
+      iconSize: [32, 32],
+      iconAnchor: [16, 16],
+    });
   });
 }
 
 // Custom icons for search result markers (numbered)
 function getSearchResultIcon(number: number): DivIcon {
-  return new DivIcon({
-    className: 'search-result-marker',
-    html: `
-      <div style="
-        width: 36px;
-        height: 36px;
-        background: #6366f1;
-        border: 3px solid white;
-        border-radius: 50%;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 16px;
-      ">${number}</div>
-    `,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
+  return getCachedIcon(`searchresult-${number}`, () => {
+    return new DivIcon({
+      className: 'search-result-marker',
+      html: `
+        <div style="
+          width: 36px;
+          height: 36px;
+          background: #6366f1;
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: bold;
+          font-size: 16px;
+        ">${number}</div>
+      `,
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
+    });
   });
 }
 
 // Custom icon for saved places
 function getSavedPlaceIcon(label?: string): DivIcon {
-  // Color based on sky quality
-  const colors: Record<string, string> = {
-    'Excellent': '#22c55e',
-    'Great': '#84cc16',
-    'Good': '#eab308',
-    'Moderate': '#f97316',
-    'Poor': '#ef4444',
-  };
-  const color = (label && colors[label]) || '#eab308';
+  const cacheKey = `saved-${label || 'default'}`;
+  return getCachedIcon(cacheKey, () => {
+    // Color based on sky quality
+    const colors: Record<string, string> = {
+      'Excellent': '#22c55e',
+      'Great': '#84cc16',
+      'Good': '#eab308',
+      'Moderate': '#f97316',
+      'Poor': '#ef4444',
+    };
+    const color = (label && colors[label]) || '#eab308';
 
-  return new DivIcon({
-    className: 'saved-place-marker',
-    html: `
-      <div style="
-        width: 28px;
-        height: 28px;
-        background: ${color};
-        border: 2px solid white;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      ">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-      </div>
-    `,
-    iconSize: [28, 28],
-    iconAnchor: [14, 14],
+    return new DivIcon({
+      className: 'saved-place-marker',
+      html: `
+        <div style="
+          width: 28px;
+          height: 28px;
+          background: ${color};
+          border: 2px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        ">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+        </div>
+      `,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    });
   });
 }
 
@@ -748,8 +767,38 @@ export default function LightPollutionMap({
           </Marker>
         ))}
 
-      {/* Dark Sky Places markers */}
-      {showDarkSkyPlaces && darkSkyPlacesData.places.map((place) => {
+      {/* Dark Sky Places markers - clustered for performance */}
+      {showDarkSkyPlaces && (
+        <MarkerClusterGroup
+          chunkedLoading
+          maxClusterRadius={60}
+          spiderfyOnMaxZoom
+          showCoverageOnHover={false}
+          iconCreateFunction={(cluster: L.MarkerCluster) => {
+            const count = cluster.getChildCount();
+            const size = count < 10 ? 'small' : count < 50 ? 'medium' : 'large';
+            const sizeMap = { small: 30, medium: 40, large: 50 };
+            return L.divIcon({
+              html: `<div style="
+                width: ${sizeMap[size]}px;
+                height: ${sizeMap[size]}px;
+                background: rgba(34, 197, 94, 0.9);
+                border: 2px solid rgba(255,255,255,0.3);
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-weight: bold;
+                font-size: ${size === 'small' ? 12 : size === 'medium' ? 14 : 16}px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+              ">${count}</div>`,
+              className: 'dark-sky-cluster',
+              iconSize: L.point(sizeMap[size], sizeMap[size]),
+            });
+          }}
+        >
+          {darkSkyPlacesData.places.map((place) => {
         const placeType = place.type as DarkSkyPlaceType;
         const style = DARK_SKY_PLACE_STYLES[placeType] || DARK_SKY_PLACE_STYLES.park;
 
@@ -846,6 +895,8 @@ export default function LightPollutionMap({
           </Marker>
         );
       })}
+        </MarkerClusterGroup>
+      )}
 
       {/* Search origin radar (shows only during active search) */}
       {searchOrigin && isSearching && (
