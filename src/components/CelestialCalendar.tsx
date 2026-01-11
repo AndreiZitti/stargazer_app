@@ -29,10 +29,11 @@ interface CelestialCalendarProps {
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-function getMoonPhase(day: number, newMoonDay: number, daysInMonth: number): number {
+function getMoonPhase(day: number, newMoonDay: number): number {
   const lunarCycle = 29.53;
-  const daysSinceNew = (day - newMoonDay + daysInMonth) % daysInMonth;
-  return (daysSinceNew / lunarCycle) % 1;
+  const daysSinceNew = day - newMoonDay;
+  // Normalize to 0-1 range (handles negative values for days before new moon)
+  return ((daysSinceNew / lunarCycle) % 1 + 1) % 1;
 }
 
 function getFirstDayOfMonth(month: string, year: number): number {
@@ -199,7 +200,7 @@ export default function CelestialCalendar({
                     return <div key={dayIdx} className="aspect-square" />;
                   }
 
-                  const phase = getMoonPhase(day, moonPhases.newMoon, daysInMonth);
+                  const phase = getMoonPhase(day, moonPhases.newMoon);
                   const isToday = day === currentDay;
                   const activeShowers = getActiveShowersForDay(day);
 
