@@ -25,6 +25,7 @@ interface LocationSheetProps {
   onClose: () => void;
   onFindSpots?: (lat: number, lng: number) => void;
   onOpenForecast?: (lat: number, lng: number) => void;
+  onGetDirections?: (lat: number, lng: number, name?: string) => void;
   userLocation?: { lat: number; lng: number } | null;
 }
 
@@ -96,6 +97,7 @@ export function LocationSheet({
   onClose,
   onFindSpots,
   onOpenForecast,
+  onGetDirections,
   userLocation,
 }: LocationSheetProps) {
   const {
@@ -401,6 +403,17 @@ export function LocationSheet({
                   className="flex-1 py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-colors"
                 >
                   Find Dark Spots
+                </button>
+              )}
+              {onGetDirections && (
+                <button
+                  onClick={() => onGetDirections(location.lat, location.lng, location.name)}
+                  className="flex-1 py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-colors flex items-center justify-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  Directions
                 </button>
               )}
             </div>

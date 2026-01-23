@@ -367,7 +367,7 @@ export default function UserSidebar({ onPlaceClick }: UserSidebarProps) {
           {/* Quick Links */}
           <div className="border-t border-card-border p-4 space-y-2">
             <Link
-              href="/stellarium"
+              href="/sky-lab"
               className="flex items-center gap-3 p-3 rounded-lg hover:bg-foreground/5 transition-colors"
             >
               <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -10,6 +10,7 @@ import { LocationData } from "./LocationSheet";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
 import CloudForecastModal from "./CloudForecastModal";
+import RoutePolyline from "./RoutePolyline";
 import darkSkyPlacesData from "@/data/dark-sky-places.json";
 
 interface ContextMenuSpot {
@@ -52,6 +53,7 @@ interface LightPollutionMapProps {
   isSearching?: boolean;
   searchRadius?: number; // in km
   onLocationSelect?: (location: LocationData) => void;
+  routeCoordinates?: [number, number][];
 }
 
 // Icon cache for memoization - prevents creating new DivIcon instances on every render
@@ -331,6 +333,7 @@ export default function LightPollutionMap({
   isSearching = false,
   searchRadius = 40,
   onLocationSelect,
+  routeCoordinates = [],
 }: LightPollutionMapProps) {
   const [contextSpot, setContextSpot] = useState<ContextMenuSpot | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
@@ -1165,6 +1168,11 @@ export default function LightPollutionMap({
           </Popup>
         </Marker>
       ))}
+
+      {/* Route Polyline */}
+      {routeCoordinates && routeCoordinates.length > 0 && (
+        <RoutePolyline coordinates={routeCoordinates} />
+      )}
     </MapContainer>
 
     {/* Cloud Forecast Modal */}

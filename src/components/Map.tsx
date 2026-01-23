@@ -39,6 +39,7 @@ interface MapProps {
   isSearching?: boolean;
   searchRadius?: number;
   onLocationSelect?: (location: LocationData) => void;
+  routeCoordinates?: [number, number][];
 }
 
 export default function Map({
@@ -61,6 +62,7 @@ export default function Map({
   isSearching,
   searchRadius,
   onLocationSelect,
+  routeCoordinates,
 }: MapProps) {
   const LightPollutionMap = useMemo(
     () =>
@@ -98,6 +100,7 @@ export default function Map({
       isSearching={isSearching}
       searchRadius={searchRadius}
       onLocationSelect={onLocationSelect}
+      routeCoordinates={routeCoordinates}
     />
   );
 }

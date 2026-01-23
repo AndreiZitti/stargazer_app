@@ -13,6 +13,7 @@ import BottomTabBar from "@/components/BottomTabBar";
 import SavedPlacesWidget from "@/components/SavedPlacesWidget";
 import CloudForecastModal from "@/components/CloudForecastModal";
 import { LocationSheet, LocationData } from "@/components/LocationSheet";
+import DirectionsPanel from "@/components/DirectionsPanel";
 import { ScoredSpot, Coordinates, SavedPlace, SpotSearchResult } from "@/lib/types";
 
 // Tutorial steps configuration
@@ -107,6 +108,11 @@ export default function Home() {
   // CloudForecastModal state
   const [forecastLocation, setForecastLocation] = useState<{ lat: number; lng: number } | null>(null);
 
+  // Directions state
+  const [showDirections, setShowDirections] = useState(false);
+  const [directionsDestination, setDirectionsDestination] = useState<{ lat: number; lng: number; name?: string } | null>(null);
+  const [routeCoordinates, setRouteCoordinates] = useState<[number, number][]>([]);
+
   // Check if user has completed onboarding
   useEffect(() => {
     const hasOnboarded = localStorage.getItem("stargazer_onboarded");
@@ -128,6 +134,27 @@ export default function Home() {
       }
     }
   }, [showOnboarding]);
+
+  // Keyboard shortcuts for search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd/Ctrl + K to focus search
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
+        searchInput?.focus();
+      }
+      // "/" to focus search (when not already in an input)
+      if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '')) {
+        e.preventDefault();
+        const searchInput = document.querySelector('[data-search-input]') as HTMLInputElement;
+        searchInput?.focus();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleStartTutorial = () => {
     setShowTutorialPrompt(false);
@@ -224,6 +251,23 @@ export default function Home() {
     setShowSearchModal(true);
   };
 
+  // Handler for get directions from LocationSheet
+  const handleGetDirections = (lat: number, lng: number, name?: string) => {
+    setDirectionsDestination({ lat, lng, name });
+    setShowDirections(true);
+  };
+
+  // Handler for route calculated
+  const handleRouteCalculated = (route: { coordinates: [number, number][]; distance: number; duration: number }) => {
+    setRouteCoordinates(route.coordinates);
+  };
+
+  // Handler to close directions
+  const handleCloseDirections = () => {
+    setShowDirections(false);
+    setRouteCoordinates([]);
+  };
+
   const handleOnboardingComplete = (lat: number, lng: number, name?: string) => {
     localStorage.setItem("stargazer_onboarded", "true");
     setShowOnboarding(false);
@@ -284,6 +328,7 @@ export default function Home() {
         isSearching={isSearching}
         searchRadius={searchRadius}
         onLocationSelect={handleMarkerClick}
+        routeCoordinates={routeCoordinates}
       />
 
 
@@ -592,8 +637,19 @@ export default function Home() {
         onClose={() => setSelectedLocation(null)}
         onFindSpots={handleFindSpotsFromSheet}
         onOpenForecast={handleOpenForecast}
+        onGetDirections={handleGetDirections}
         userLocation={searchLocation}
       />
+
+      {/* Directions Panel */}
+      {showDirections && directionsDestination && (
+        <DirectionsPanel
+          destination={directionsDestination}
+          origin={searchLocation}
+          onClose={handleCloseDirections}
+          onRouteCalculated={handleRouteCalculated}
+        />
+      )}
 
       {/* Cloud Forecast Modal */}
       <CloudForecastModal

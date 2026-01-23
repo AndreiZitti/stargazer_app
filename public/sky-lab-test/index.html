@@ -1,0 +1,1901 @@
+<!DOCTYPE html><html lang=en><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,user-scalable=no"><title>Sky Lab - Stargazer</title><meta name=description content="Interactive sky viewer for stargazing."><link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons" rel=stylesheet type=text/css><link rel=icon type=image/x-icon href=/sky-lab/static/favicon.ico><link href=/sky-lab/static/css/app.2cc6d43db3447e7c38ea7dfe7006ca91.css rel=stylesheet>
+<style>
+/* ========== HIDE ORIGINAL UI ========== */
+.bottom-button, .tbtcontainer, .tmenubt { display: none !important; }
+.v-navigation-drawer--right { display: none !important; }
+#stel-canvas { height: 100vh !important; }
+.v-toolbar, .tsearch { display: none !important; }
+.v-toolbar__content, .skysource-search, header.v-toolbar { display: none !important; }
+.v-btn--floating, .v-speed-dial { display: none !important; }
+.stel-panel, .v-menu__content { display: none !important; }
+/* Hide Vue app search but not our custom elements */
+.v-text-field, .v-input { display: none !important; }
+#app .toolbar, #app [class*="search"] { display: none !important; }
+/* Hide ALL original info panels, cards, dialogs */
+.v-card, .v-dialog, .v-sheet:not(.stel) { display: none !important; }
+.v-overlay, .v-bottom-sheet { display: none !important; }
+.selection-info, .object-info, .info-panel { display: none !important; }
+
+/* ========== MINIMAL TOOLBAR ========== */
+#skylab-toolbar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 20px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  z-index: 9999;
+}
+
+.toolbar-btn {
+  width: 52px;
+  height: 52px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.toolbar-btn:hover, .toolbar-btn:active {
+  background: rgba(255,255,255,0.22);
+  transform: scale(1.08);
+}
+
+.toolbar-btn.active {
+  background: rgba(100,149,237,0.5);
+  border-color: rgba(100,149,237,0.6);
+  box-shadow: 0 0 16px rgba(100,149,237,0.4);
+}
+
+.toolbar-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ========== SETTINGS PANEL ========== */
+#skylab-settings {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 55vh;
+  background: rgba(15,15,25,0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 20px 20px 0 0;
+  z-index: 10000;
+  transform: translateY(0);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+#skylab-settings.panel-hidden {
+  transform: translateY(100%);
+  pointer-events: none;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 17px;
+  font-weight: 500;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  background: rgba(15,15,25,0.98);
+}
+
+.close-btn {
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover { background: rgba(255,255,255,0.2); }
+
+.panel-content {
+  padding: 16px 24px;
+  padding-bottom: max(24px, env(safe-area-inset-bottom));
+}
+
+.setting-group {
+  margin-bottom: 24px;
+}
+
+.group-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 1.2px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  color: #fff;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.toggle-row input[type="checkbox"] {
+  width: 48px;
+  height: 28px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: rgba(255,255,255,0.15);
+  border-radius: 14px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+.toggle-row input[type="checkbox"]:checked {
+  background: rgba(100,149,237,0.7);
+}
+
+.toggle-row input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  background: #fff;
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.toggle-row input[type="checkbox"]:checked::after {
+  transform: translateX(20px);
+}
+
+.info-row {
+  padding: 12px 0;
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.info-row input {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 10px 14px;
+  color: #fff;
+  font-size: 15px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.info-row input:focus {
+  outline: none;
+  border-color: rgba(100,149,237,0.5);
+}
+
+/* ========== COMPACT INFO CARD ========== */
+#skylab-info-card {
+  position: fixed;
+  top: max(20px, env(safe-area-inset-top));
+  left: 16px;
+  background: rgba(15,15,25,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: 14px;
+  padding: 14px 18px;
+  z-index: 9998;
+  max-width: 220px;
+  transition: opacity 0.25s, transform 0.25s;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+#skylab-info-card.card-hidden {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+}
+
+.card-name {
+  font-size: 17px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.card-type {
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  margin-bottom: 10px;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.75);
+  font-family: 'SF Mono', 'Roboto Mono', monospace;
+}
+
+/* ========== COMPASS INDICATOR ========== */
+.compass-paused {
+  opacity: 0.5 !important;
+}
+
+/* ========== SEARCH OVERLAY ========== */
+#skylab-search {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: max(16px, env(safe-area-inset-top)) 16px 16px;
+  background: linear-gradient(rgba(0,0,0,0.9), transparent);
+  z-index: 9999;
+  transform: translateY(0);
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+#skylab-search.search-hidden {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+#skylab-search input {
+  width: 100%;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 12px;
+  padding: 14px 18px;
+  color: #fff;
+  font-size: 16px;
+}
+
+#skylab-search input::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+#skylab-search input:focus {
+  outline: none;
+  border-color: rgba(100,149,237,0.6);
+  background: rgba(255,255,255,0.18);
+}
+
+/* Search suggestions */
+#search-suggestions {
+  margin-top: 8px;
+  max-height: 50vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  background: rgba(15,15,25,0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.search-suggestion {
+  padding: 14px 18px;
+  cursor: pointer;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  transition: background 0.15s;
+}
+
+.search-suggestion:last-child {
+  border-bottom: none;
+}
+
+.search-suggestion:hover, .search-suggestion:active {
+  background: rgba(255,255,255,0.1);
+}
+
+.suggestion-name {
+  font-size: 15px;
+  color: #fff;
+  font-weight: 500;
+}
+
+.suggestion-type {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  margin-top: 2px;
+}
+
+#search-loading {
+  padding: 14px 18px;
+  color: rgba(255,255,255,0.5);
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Compass toast */
+#compass-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15,15,25,0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: #fff;
+  font-size: 14px;
+  text-align: center;
+  z-index: 10001;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+  max-width: 80%;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+#compass-toast.visible {
+  opacity: 1;
+}
+
+/* ========== COMPASS DEBUG DISPLAY ========== */
+#compass-debug {
+  position: fixed;
+  top: max(60px, env(safe-area-inset-top));
+  right: 16px;
+  background: rgba(15,15,25,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 10px;
+  padding: 10px 14px;
+  z-index: 9998;
+  font-family: 'SF Mono', 'Roboto Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.85);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: none;
+}
+
+#compass-debug.visible {
+  display: block;
+}
+
+#compass-debug div {
+  margin: 2px 0;
+}
+
+#compass-debug .label {
+  color: rgba(255,255,255,0.5);
+  display: inline-block;
+  width: 50px;
+}
+
+/* ========== DIRECTIONAL ARROW GUIDE ========== */
+#arrow-guide {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9997;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#arrow-guide.visible {
+  opacity: 1;
+}
+
+.arrow-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.arrow-pointer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform-origin: center center;
+  transition: transform 0.1s ease-out;
+}
+
+.arrow-pointer svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.arrow-pointer path {
+  fill: rgba(100, 149, 237, 0.9);
+}
+
+.arrow-label {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(15,15,25,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 8px 14px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.arrow-distance {
+  font-size: 11px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 2px;
+}
+
+/* Arrow edge indicators (when target is off-screen) */
+.edge-arrow {
+  position: fixed;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  z-index: 9996;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.edge-arrow.visible {
+  opacity: 1;
+}
+
+.edge-arrow svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+}
+
+.edge-arrow path {
+  fill: rgba(100, 149, 237, 0.85);
+}
+</style>
+</head><body><div id=app></div>
+
+<!-- Minimal Toolbar -->
+<div id="skylab-toolbar">
+  <button id="btn-search" class="toolbar-btn" title="Search">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+  </button>
+  <button id="btn-constellations" class="toolbar-btn" title="Constellations">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z"/></svg>
+  </button>
+  <button id="btn-compass" class="toolbar-btn" title="Compass Mode" style="display: none;">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5.5-2.5l7.51-3.49L17.5 6.5 9.99 9.99 6.5 17.5zm5.5-6.6c.61 0 1.1.49 1.1 1.1s-.49 1.1-1.1 1.1-1.1-.49-1.1-1.1.49-1.1 1.1-1.1z"/></svg>
+  </button>
+  <button id="btn-settings" class="toolbar-btn" title="Settings">
+    <svg viewBox="0 0 24 24"><path fill="currentColor" d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+  </button>
+</div>
+
+<!-- Settings Panel -->
+<div id="skylab-settings" class="panel-hidden">
+  <div class="panel-header">
+    <span>Settings</span>
+    <button id="btn-close-settings" class="close-btn">&times;</button>
+  </div>
+  <div class="panel-content">
+    <div class="setting-group">
+      <div class="group-title">View</div>
+      <label class="toggle-row">
+        <span>Atmosphere</span>
+        <input type="checkbox" id="toggle-atmosphere" checked>
+      </label>
+      <label class="toggle-row">
+        <span>Landscape</span>
+        <input type="checkbox" id="toggle-landscape" checked>
+      </label>
+      <label class="toggle-row">
+        <span>Deep Sky Objects</span>
+        <input type="checkbox" id="toggle-dsos">
+      </label>
+    </div>
+    <div class="setting-group">
+      <div class="group-title">Grids</div>
+      <label class="toggle-row">
+        <span>Azimuthal</span>
+        <input type="checkbox" id="toggle-azimuthal">
+      </label>
+      <label class="toggle-row">
+        <span>Equatorial</span>
+        <input type="checkbox" id="toggle-equatorial">
+      </label>
+    </div>
+    <div class="setting-group">
+      <div class="group-title">Time &amp; Location</div>
+      <div class="info-row" id="location-display">Detecting location...</div>
+      <div class="info-row">
+        <input type="date" id="input-date">
+        <input type="time" id="input-time">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Compact Object Info Card -->
+<div id="skylab-info-card" class="card-hidden">
+  <div class="card-name" id="card-name">Object Name</div>
+  <div class="card-type" id="card-type">Type</div>
+  <div class="card-details">
+    <span id="card-mag">Mag: --</span>
+    <span id="card-pos">Alt: --° Az: --°</span>
+  </div>
+</div>
+
+<!-- Search Overlay -->
+<div id="skylab-search" class="search-hidden">
+  <input type="text" id="search-input" placeholder="Search stars, planets, nebulae..." autocomplete="off">
+  <div id="search-suggestions"></div>
+</div>
+
+<!-- Compass Toast -->
+<div id="compass-toast"></div>
+
+<!-- Compass Debug Display -->
+<div id="compass-debug">
+  <div><span class="label">α:</span> <span id="dbg-alpha">--</span>°</div>
+  <div><span class="label">β:</span> <span id="dbg-beta">--</span>°</div>
+  <div><span class="label">γ:</span> <span id="dbg-gamma">--</span>°</div>
+  <div style="margin-top:6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:6px;">
+    <div><span class="label">Az:</span> <span id="dbg-az">--</span>°</div>
+    <div><span class="label">Alt:</span> <span id="dbg-alt">--</span>°</div>
+  </div>
+  <div style="margin-top:6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:6px;">
+    <div><span class="label">x:</span> <span id="dbg-x">--</span></div>
+    <div><span class="label">y:</span> <span id="dbg-y">--</span></div>
+    <div><span class="label">z:</span> <span id="dbg-z">--</span></div>
+  </div>
+  <div style="margin-top:8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top:8px;">
+    <button id="btn-calibrate" style="width:100%; padding:8px 12px; background:rgba(59,130,246,0.8); border:none; border-radius:6px; color:white; font-size:12px; font-weight:500; cursor:pointer;">
+      Calibrate (point North)
+    </button>
+    <div id="calibration-status" style="margin-top:4px; font-size:10px; color:rgba(255,255,255,0.5); text-align:center;"></div>
+    <div style="margin-top:4px; font-size:9px; color:rgba(255,255,255,0.35); text-align:center;">
+      Long press to reset
+    </div>
+  </div>
+</div>
+
+<!-- Arrow Guide for Object Navigation -->
+<div id="arrow-guide">
+  <div class="arrow-container">
+    <div class="arrow-pointer" id="arrow-pointer">
+      <svg viewBox="0 0 24 24">
+        <path d="M12 2L4 14h5v8h6v-8h5L12 2z"/>
+      </svg>
+    </div>
+    <div class="arrow-label">
+      <div id="arrow-target-name">Target</div>
+      <div class="arrow-distance" id="arrow-distance">--</div>
+    </div>
+  </div>
+</div>
+<script>
+// Error handling to prevent flickering from ephemeris loading errors
+(function() {
+  var errorShown = false;
+  var suppressPatterns = ['Unknown chunk type', 'eph_load', 'abort(', 'eph-file.c'];
+  // Block .eph file requests that cause parsing errors
+  var blockUrlPatterns = ['.eph', 'gaia_dr2'];
+
+  function shouldSuppress(msg) {
+    if (typeof msg !== 'string') msg = String(msg);
+    for (var i = 0; i < suppressPatterns.length; i++) {
+      if (msg.indexOf(suppressPatterns[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function shouldBlockUrl(url) {
+    if (typeof url !== 'string') return false;
+    for (var i = 0; i < blockUrlPatterns.length; i++) {
+      if (url.indexOf(blockUrlPatterns[i]) !== -1) return true;
+    }
+    return false;
+  }
+
+  function showWarningOnce() {
+    if (!errorShown) {
+      errorShown = true;
+      console.info('[Sky Lab] Extended star catalog disabled - using core rendering');
+    }
+  }
+
+  // Intercept XHR to block problematic .eph file requests
+  var OrigXHR = window.XMLHttpRequest;
+  window.XMLHttpRequest = function() {
+    var xhr = new OrigXHR();
+    var origOpen = xhr.open;
+    var origSend = xhr.send;
+    xhr._blocked = false;
+
+    xhr.open = function(method, url) {
+      if (shouldBlockUrl(url)) {
+        showWarningOnce();
+        this._blocked = true;
+        // Don't call origOpen for blocked URLs - prevent request entirely
+        return;
+      }
+      return origOpen.apply(this, arguments);
+    };
+
+    xhr.send = function() {
+      if (this._blocked) {
+        var self = this;
+        // Simulate a failed request without actually making one
+        setTimeout(function() {
+          Object.defineProperty(self, 'status', { value: 0 });
+          Object.defineProperty(self, 'readyState', { value: 4 });
+          Object.defineProperty(self, 'response', { value: null });
+          Object.defineProperty(self, 'responseText', { value: '' });
+          if (self.onreadystatechange) self.onreadystatechange();
+          if (self.onerror) self.onerror(new Error('Blocked'));
+          if (self.onloadend) self.onloadend();
+        }, 0);
+        return;
+      }
+      return origSend.apply(this, arguments);
+    };
+    return xhr;
+  };
+
+  // Intercept fetch() to block problematic .eph file requests
+  var origFetch = window.fetch;
+  window.fetch = function(url, options) {
+    var urlStr = typeof url === 'string' ? url : (url && url.url ? url.url : String(url));
+    if (shouldBlockUrl(urlStr)) {
+      showWarningOnce();
+      // Return a rejected promise or empty response
+      return Promise.resolve(new Response(null, { status: 404, statusText: 'Blocked' }));
+    }
+    return origFetch.apply(this, arguments);
+  };
+
+  // Store original console methods
+  var origLog = console.log;
+  var origWarn = console.warn;
+  var origError = console.error;
+
+  // Override console methods to suppress ephemeris errors
+  console.log = function() {
+    var msg = Array.prototype.join.call(arguments, ' ');
+    if (shouldSuppress(msg)) { showWarningOnce(); return; }
+    origLog.apply(console, arguments);
+  };
+  console.warn = function() {
+    var msg = Array.prototype.join.call(arguments, ' ');
+    if (shouldSuppress(msg)) { showWarningOnce(); return; }
+    origWarn.apply(console, arguments);
+  };
+  console.error = function() {
+    var msg = Array.prototype.join.call(arguments, ' ');
+    if (shouldSuppress(msg)) { showWarningOnce(); return; }
+    origError.apply(console, arguments);
+  };
+
+  // Global error handler
+  window.addEventListener('error', function(e) {
+    if (e.message && shouldSuppress(e.message)) {
+      e.preventDefault();
+      showWarningOnce();
+      return true;
+    }
+  });
+
+  window.addEventListener('unhandledrejection', function(e) {
+    if (e.reason && shouldSuppress(String(e.reason))) {
+      e.preventDefault();
+      showWarningOnce();
+      return true;
+    }
+  });
+
+  // Pre-configure StelWebEngine module
+  window.StelWebEngine = {
+    wasmFile: '/sky-lab/static/js/stellarium-web-engine.wasm',
+    print: function(text) {
+      if (shouldSuppress(text)) { showWarningOnce(); return; }
+      origLog.call(console, text);
+    },
+    printErr: function(text) {
+      if (shouldSuppress(text)) { showWarningOnce(); return; }
+      origWarn.call(console, text);
+    },
+    onAbort: function(what) {
+      showWarningOnce();
+      // Don't throw - swallow the abort
+    }
+  };
+})();
+</script>
+<script type=text/javascript src=/sky-lab/static/js/manifest.c7a1f17f07cae11d7ca9.js></script><script type=text/javascript src=/sky-lab/static/js/vendor.a46a2ffdde3ffbf8a523.js></script><script type=text/javascript src=/sky-lab/static/js/app.14b094410fbcd537a6ca.js></script>
+<script>
+// ========== SKY LAB MINIMAL UI ==========
+(function() {
+  'use strict';
+
+  console.log('[Sky Lab] Minimal UI script loaded');
+
+  // ========== DOM ELEMENTS ==========
+  var btnSearch = document.getElementById('btn-search');
+  var btnConstellations = document.getElementById('btn-constellations');
+  var btnCompass = document.getElementById('btn-compass');
+  var btnSettings = document.getElementById('btn-settings');
+  var settingsPanel = document.getElementById('skylab-settings');
+  var btnCloseSettings = document.getElementById('btn-close-settings');
+  var searchOverlay = document.getElementById('skylab-search');
+  var searchInput = document.getElementById('search-input');
+  var searchSuggestions = document.getElementById('search-suggestions');
+  var compassToast = document.getElementById('compass-toast');
+
+  // Toggles
+  var toggleAtmosphere = document.getElementById('toggle-atmosphere');
+  var toggleLandscape = document.getElementById('toggle-landscape');
+  var toggleDsos = document.getElementById('toggle-dsos');
+  var toggleAzimuthal = document.getElementById('toggle-azimuthal');
+  var toggleEquatorial = document.getElementById('toggle-equatorial');
+
+  // Date/Time/Location
+  var inputDate = document.getElementById('input-date');
+  var inputTime = document.getElementById('input-time');
+  var locationDisplay = document.getElementById('location-display');
+
+  // Info card
+  var infoCard = document.getElementById('skylab-info-card');
+  var cardName = document.getElementById('card-name');
+  var cardType = document.getElementById('card-type');
+  var cardMag = document.getElementById('card-mag');
+  var cardPos = document.getElementById('card-pos');
+
+  // ========== FEATURE DETECTION ==========
+  // Show compass button only if DeviceOrientation is available
+  function hasDeviceOrientationSupport() {
+    if (typeof DeviceOrientationEvent === 'undefined') return false;
+    // iOS 13+ has requestPermission function
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') return true;
+    // Android/other - check if event listener exists
+    return 'ondeviceorientation' in window;
+  }
+
+  if (hasDeviceOrientationSupport()) {
+    btnCompass.style.display = '';
+    console.log('[Sky Lab] Compass mode available');
+  } else {
+    console.log('[Sky Lab] Compass mode unavailable (no DeviceOrientation)');
+  }
+
+  // Stellarium reference (will be set when available)
+  var stel = null;
+
+  // ========== SETTINGS PANEL (works immediately) ==========
+  btnSettings.addEventListener('click', function() {
+    console.log('[Sky Lab] Settings clicked');
+    var isHidden = settingsPanel.classList.contains('panel-hidden');
+    if (isHidden) {
+      settingsPanel.classList.remove('panel-hidden');
+      if (stel) {
+        syncToggles();
+        syncDateTime();
+        updateLocationDisplay();
+      }
+    } else {
+      settingsPanel.classList.add('panel-hidden');
+    }
+  });
+
+  btnCloseSettings.addEventListener('click', function() {
+    settingsPanel.classList.add('panel-hidden');
+  });
+
+  // ========== SEARCH WITH SUGGESTIONS ==========
+  var searchDebounce = null;
+  var currentSearchResults = [];
+
+  btnSearch.addEventListener('click', function() {
+    console.log('[Sky Lab] Search clicked');
+    var isHidden = searchOverlay.classList.contains('search-hidden');
+    if (isHidden) {
+      searchOverlay.classList.remove('search-hidden');
+      searchInput.focus();
+      searchInput.value = '';
+      searchSuggestions.innerHTML = '';
+    } else {
+      searchOverlay.classList.add('search-hidden');
+      searchInput.blur();
+    }
+  });
+
+  function searchSkySources(query) {
+    if (!query || query.length < 2) {
+      searchSuggestions.innerHTML = '';
+      return;
+    }
+
+    searchSuggestions.innerHTML = '<div id="search-loading">Searching...</div>';
+
+    fetch('/api/skysources?q=' + encodeURIComponent(query))
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        currentSearchResults = data || [];
+        renderSuggestions();
+      })
+      .catch(function(err) {
+        console.warn('[Sky Lab] Search error:', err);
+        searchSuggestions.innerHTML = '<div id="search-loading">Search unavailable</div>';
+      });
+  }
+
+  function renderSuggestions() {
+    if (!currentSearchResults.length) {
+      searchSuggestions.innerHTML = '<div id="search-loading">No results found</div>';
+      return;
+    }
+
+    var html = currentSearchResults.slice(0, 10).map(function(item, i) {
+      var name = item.match || item.short_name || item.names_i18n?.[0] || 'Unknown';
+      var type = item.types?.[0] || '';
+      return '<div class="search-suggestion" data-index="' + i + '">' +
+        '<div class="suggestion-name">' + escapeHtml(name) + '</div>' +
+        (type ? '<div class="suggestion-type">' + escapeHtml(type) + '</div>' : '') +
+        '</div>';
+    }).join('');
+
+    searchSuggestions.innerHTML = html;
+
+    // Add click handlers
+    searchSuggestions.querySelectorAll('.search-suggestion').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var index = parseInt(this.getAttribute('data-index'));
+        selectSearchResult(currentSearchResults[index]);
+      });
+    });
+  }
+
+  function escapeHtml(text) {
+    var div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function selectSearchResult(item) {
+    if (!stel || !item) return;
+
+    console.log('[Sky Lab] Selected:', item);
+
+    try {
+      var obj = null;
+
+      // Build list of names to try (in order of priority)
+      var namesToTry = [];
+
+      // Add match name and variations
+      if (item.match) {
+        namesToTry.push(item.match);
+        // Try without extra spaces (M  42 -> M42)
+        namesToTry.push(item.match.replace(/\s+/g, ''));
+        // Try with single space (M  42 -> M 42)
+        namesToTry.push(item.match.replace(/\s+/g, ' '));
+      }
+
+      // Add all aliases from API
+      if (item.names_i18n) {
+        item.names_i18n.forEach(function(name) {
+          namesToTry.push(name);
+          // Also try compact version
+          namesToTry.push(name.replace(/\s+/g, ''));
+        });
+      }
+
+      // Add common catalog prefixes
+      if (item.match) {
+        var match = item.match.replace(/\s+/g, '');
+        // Try with NAME prefix
+        namesToTry.push('NAME ' + item.match);
+        // For Messier objects
+        if (/^M\d+$/i.test(match)) {
+          namesToTry.push(match.toUpperCase());
+          namesToTry.push('M ' + match.slice(1));
+        }
+        // For NGC objects
+        if (/^NGC\d+$/i.test(match)) {
+          namesToTry.push(match.toUpperCase());
+          namesToTry.push('NGC ' + match.slice(3));
+        }
+      }
+
+      // Try each name until we find a match
+      for (var i = 0; i < namesToTry.length && !obj; i++) {
+        var name = namesToTry[i];
+        if (!name) continue;
+        try {
+          obj = stel.getObj(name);
+          if (obj) {
+            console.log('[Sky Lab] Found via:', name);
+          }
+        } catch (e) {}
+      }
+
+      // If still not found and we have coordinates, create a temporary object
+      if (!obj && item.ra && item.dec && item.ra !== 0) {
+        console.log('[Sky Lab] Object not in catalog, creating temporary object at:', item.ra, item.dec);
+        try {
+          // Create selection layer if not exists (like original app)
+          if (!window.skylabSelectionLayer) {
+            window.skylabSelectionLayer = stel.createLayer({id: 'skylab-selection', z: 50, visible: true});
+            console.log('[Sky Lab] Created selection layer');
+          }
+
+          // Format data like original app expects
+          var tempData = {
+            model: 'dso',
+            id: 'skylab_' + Date.now(),
+            names: [item.match],
+            types: item.types || ['Neb'],
+            model_data: {
+              ra: item.ra,
+              de: item.dec,
+              Vmag: 5.0,
+              dimx: 30, // Default size in arcmin
+              dimy: 30
+            }
+          };
+
+          console.log('[Sky Lab] Creating object with data:', tempData);
+          obj = stel.createObj('dso', tempData);
+
+          if (obj) {
+            console.log('[Sky Lab] Created object:', obj);
+            obj.update();
+            window.skylabSelectionLayer.add(obj);
+          }
+        } catch (e) {
+          console.warn('[Sky Lab] Could not create temp object:', e);
+        }
+      }
+
+      // Handle navigation based on compass mode
+      if (obj) {
+        stel.core.selection = obj;
+        obj.update();
+
+        if (compassActive) {
+          // In compass mode: DON'T navigate - show arrow guidance instead
+          setArrowTarget(obj, item.match);
+          showCompassToast('Follow the arrow to find ' + item.match, 3000);
+          console.log('[Sky Lab] Compass mode - arrow guidance enabled for:', item.match);
+        } else {
+          // Normal mode: navigate to object
+          stel.core.lock = obj;
+          stel.core.lookat(obj.azalt, 1);
+          console.log('[Sky Lab] Navigated to object');
+        }
+      } else if (item.ra && item.dec && item.ra !== 0) {
+        // Fallback: navigate to coordinates (only if not in compass mode)
+        if (!compassActive) {
+          var ra = item.ra * Math.PI / 180;
+          var dec = item.dec * Math.PI / 180;
+          var x = Math.cos(dec) * Math.cos(ra);
+          var y = Math.cos(dec) * Math.sin(ra);
+          var z = Math.sin(dec);
+          stel.core.lookat([x, y, z], 1);
+        } else {
+          showCompassToast('Point your phone to find ' + item.match, 3000);
+        }
+      } else {
+        console.warn('[Sky Lab] Could not find object in Stellarium catalog');
+      }
+    } catch (e) {
+      console.warn('[Sky Lab] Selection error:', e);
+    }
+
+    searchOverlay.classList.add('search-hidden');
+    searchInput.blur();
+  }
+
+  searchInput.addEventListener('input', function() {
+    clearTimeout(searchDebounce);
+    var query = this.value.trim();
+    searchDebounce = setTimeout(function() {
+      searchSkySources(query);
+    }, 250);
+  });
+
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentSearchResults.length > 0) {
+        selectSearchResult(currentSearchResults[0]);
+      }
+    } else if (e.key === 'Escape') {
+      searchOverlay.classList.add('search-hidden');
+    }
+  });
+
+  // Close search when clicking outside
+  document.addEventListener('click', function(e) {
+    if (!searchOverlay.contains(e.target) && e.target !== btnSearch && !btnSearch.contains(e.target)) {
+      searchOverlay.classList.add('search-hidden');
+    }
+  });
+
+  // ========== CONSTELLATIONS TOGGLE ==========
+  var constellationsVisible = false;
+
+  function toggleConstellations() {
+    if (!stel || !stel.core) {
+      console.warn('[Sky Lab] Stellarium not ready for constellations toggle');
+      btnConstellations.classList.toggle('active');
+      return;
+    }
+
+    constellationsVisible = !constellationsVisible;
+    console.log('[Sky Lab] Setting constellations to:', constellationsVisible);
+
+    // The correct API path from the original app is: stel.core.constellations.lines.visible
+    try {
+      stel.core.constellations.lines.visible = constellationsVisible;
+      console.log('[Sky Lab] Constellations set successfully');
+    } catch (e) {
+      console.error('[Sky Lab] Constellation toggle failed:', e);
+      // Debug what's available
+      console.log('[Sky Lab] stel.core.constellations:', stel.core.constellations);
+      if (stel.core.constellations) {
+        console.log('[Sky Lab] constellations.lines:', stel.core.constellations.lines);
+      }
+    }
+
+    btnConstellations.classList.toggle('active', constellationsVisible);
+  }
+
+  btnConstellations.addEventListener('click', function() {
+    console.log('[Sky Lab] Constellations clicked');
+    toggleConstellations();
+  });
+
+  // ========== COMPASS / AR MODE ==========
+  // Based on AstroHopper (github.com/artyom-beilis/skyhopper) and W3C DeviceOrientation spec
+  // Key insight: Phone's Y-axis (top of phone) points toward viewing direction
+
+  var compassActive = false;
+  var compassPaused = false;
+  var compassToastTimeout = null;
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  // Compass data storage (similar to AstroHopper's gdata)
+  var compassData = {
+    alpha: 0,           // Compass heading from absolute orientation
+    alphaGyro: 0,       // Alpha from gyro (relative)
+    beta: 0,            // Front-back tilt
+    gamma: 0,           // Left-right tilt
+    hasAbsolute: false, // Whether we have absolute orientation (true compass)
+    lastUpdate: 0,
+    // Calibration - azimuth offset to align with true North
+    calibrated: false,
+    azimuthOffset: 0    // Degrees to add to computed azimuth
+  };
+
+  function showCompassToast(message, duration) {
+    duration = duration || 3000;
+    compassToast.textContent = message;
+    compassToast.classList.add('visible');
+    clearTimeout(compassToastTimeout);
+    compassToastTimeout = setTimeout(function() {
+      compassToast.classList.remove('visible');
+    }, duration);
+  }
+
+  function isSecureContext() {
+    return window.isSecureContext ||
+           window.location.protocol === 'https:' ||
+           window.location.hostname === 'localhost' ||
+           window.location.hostname === '127.0.0.1';
+  }
+
+  function hasOrientationSupport() {
+    return typeof DeviceOrientationEvent !== 'undefined';
+  }
+
+  function requestOrientationPermission() {
+    // iOS 13+ requires explicit permission
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+      return DeviceOrientationEvent.requestPermission();
+    }
+    // Other browsers grant by default
+    return Promise.resolve('granted');
+  }
+
+  // Debug display elements
+  var dbgAlpha = document.getElementById('dbg-alpha');
+  var dbgBeta = document.getElementById('dbg-beta');
+  var dbgGamma = document.getElementById('dbg-gamma');
+  var dbgAz = document.getElementById('dbg-az');
+  var dbgAlt = document.getElementById('dbg-alt');
+  var dbgX = document.getElementById('dbg-x');
+  var dbgY = document.getElementById('dbg-y');
+  var dbgZ = document.getElementById('dbg-z');
+  var compassDebug = document.getElementById('compass-debug');
+
+  // ===== ROTATION MATRIX HELPERS (from AstroHopper) =====
+  var DEG_TO_RAD = Math.PI / 180;
+  var RAD_TO_DEG = 180 / Math.PI;
+
+  /**
+   * Build ZXY rotation matrix from device orientation angles
+   * Per W3C DeviceOrientation spec: alpha (Z), beta (X), gamma (Y)
+   * Returns 3x3 matrix as flat array [m11, m12, m13, m21, m22, m23, m31, m32, m33]
+   */
+  function getRotationMatrix(alpha, beta, gamma) {
+    var _a = alpha * DEG_TO_RAD;
+    var _b = beta * DEG_TO_RAD;
+    var _g = gamma * DEG_TO_RAD;
+
+    var cA = Math.cos(_a), sA = Math.sin(_a);
+    var cB = Math.cos(_b), sB = Math.sin(_b);
+    var cG = Math.cos(_g), sG = Math.sin(_g);
+
+    // ZXY rotation matrix (W3C spec)
+    return [
+      cA * cG - sA * sB * sG,  // m11
+      -cB * sA,                 // m12
+      cA * sG + cG * sA * sB,  // m13
+      cG * sA + cA * sB * sG,  // m21
+      cA * cB,                  // m22
+      sA * sG - cA * cG * sB,  // m23
+      -cB * sG,                 // m31
+      sB,                       // m32
+      cB * cG                   // m33
+    ];
+  }
+
+  /**
+   * Multiply 3x3 matrix by 3-vector
+   */
+  function matVec(m, v) {
+    return [
+      m[0] * v[0] + m[1] * v[1] + m[2] * v[2],
+      m[3] * v[0] + m[4] * v[1] + m[5] * v[2],
+      m[6] * v[0] + m[7] * v[1] + m[8] * v[2]
+    ];
+  }
+
+  /**
+   * Get the direction the phone is pointing toward
+   * Phone held up with top pointing at sky = transform device Y-axis [0, 1, 0]
+   * Returns [East, North, Up] in Earth frame
+   */
+  function getPointingDirection(alpha, beta, gamma) {
+    var M = getRotationMatrix(alpha, beta, gamma);
+
+    // Device Y-axis (top of phone) transformed to Earth frame
+    // AstroHopper uses: fwd = mvec(M, [0, 1, 0])
+    return matVec(M, [0, 1, 0]);
+  }
+
+  // ===== DEVICE ORIENTATION HANDLERS =====
+
+  /**
+   * Handle iOS device orientation (uses webkitCompassHeading for true north)
+   */
+  function handleOrientationIOS(event) {
+    if (!compassActive || compassPaused) return;
+
+    // iOS provides webkitCompassHeading as degrees from true north
+    if (event.webkitCompassHeading !== undefined && event.webkitCompassHeading !== null) {
+      // webkitCompassHeading is clockwise from north (0-360)
+      // W3C alpha is counterclockwise from north
+      // So: alpha = 360 - webkitCompassHeading
+      compassData.alpha = 360 - event.webkitCompassHeading;
+      compassData.hasAbsolute = true;
+    }
+
+    compassData.beta = event.beta || 0;
+    compassData.gamma = event.gamma || 0;
+    compassData.lastUpdate = Date.now();
+
+    updateCompassView();
+  }
+
+  /**
+   * Handle absolute device orientation (Android with magnetometer)
+   * This event provides true compass heading when available
+   */
+  function handleOrientationAbsolute(event) {
+    if (!compassActive || compassPaused) return;
+
+    if (event.alpha !== null) {
+      compassData.alpha = event.alpha;
+      compassData.hasAbsolute = event.absolute === true;
+    }
+
+    compassData.beta = event.beta || 0;
+    compassData.gamma = event.gamma || 0;
+    compassData.lastUpdate = Date.now();
+
+    updateCompassView();
+  }
+
+  /**
+   * Handle relative device orientation (gyroscope only, no compass)
+   * Used as fallback when absolute orientation unavailable
+   */
+  function handleOrientationRelative(event) {
+    if (!compassActive || compassPaused) return;
+
+    // Only use relative alpha if we don't have absolute
+    if (!compassData.hasAbsolute && event.alpha !== null) {
+      compassData.alpha = event.alpha;
+    }
+
+    // Always update gyro values
+    compassData.alphaGyro = event.alpha || 0;
+    compassData.beta = event.beta || 0;
+    compassData.gamma = event.gamma || 0;
+    compassData.lastUpdate = Date.now();
+
+    updateCompassView();
+  }
+
+  /**
+   * Main compass update function - computes pointing direction and updates Stellarium view
+   */
+  function updateCompassView() {
+    if (!compassActive || compassPaused || !stel) return;
+
+    var alpha = compassData.alpha;
+    var beta = compassData.beta;
+    var gamma = compassData.gamma;
+
+    // Update debug display - raw values (before calibration)
+    if (dbgAlpha) dbgAlpha.textContent = alpha.toFixed(1);
+    if (dbgBeta) dbgBeta.textContent = beta.toFixed(1);
+    if (dbgGamma) dbgGamma.textContent = gamma.toFixed(1);
+
+    // Get pointing direction: phone Y-axis (top) in Earth frame [East, North, Up]
+    var dir = getPointingDirection(alpha, beta, gamma);
+    var x = dir[0];  // East component
+    var y = dir[1];  // North component
+    var z = dir[2];  // Up component
+
+    // Calculate azimuth and altitude
+    // Azimuth: angle from North, clockwise (0-360)
+    // Altitude: angle above horizon (-90 to 90)
+    var rawAzimuthDeg = Math.atan2(x, y) * RAD_TO_DEG;
+    if (rawAzimuthDeg < 0) rawAzimuthDeg += 360;
+    var altitudeDeg = Math.asin(Math.max(-1, Math.min(1, z))) * RAD_TO_DEG;
+
+    // Apply calibration offset to azimuth
+    var azimuthDeg = rawAzimuthDeg + compassData.azimuthOffset;
+    // Normalize to 0-360
+    while (azimuthDeg < 0) azimuthDeg += 360;
+    while (azimuthDeg >= 360) azimuthDeg -= 360;
+
+    // Update debug display - computed values
+    if (dbgAz) dbgAz.textContent = azimuthDeg.toFixed(1);
+    if (dbgAlt) dbgAlt.textContent = altitudeDeg.toFixed(1);
+    if (dbgX) dbgX.textContent = x.toFixed(3);
+    if (dbgY) dbgY.textContent = y.toFixed(3);
+    if (dbgZ) dbgZ.textContent = z.toFixed(3);
+
+    // Update Stellarium view
+    // Our coordinates: x=East, y=North, z=Up
+    // Stellarium c2s uses: theta=atan2(y,x), phi=atan2(z,sqrt(x²+y²))
+    // So Stellarium expects: [North, East, Up] for theta to be azimuth from North
+    // But we also need to handle the altitude correctly
+
+    // Try using azimuth/altitude directly to construct the vector
+    // Stellarium convention: x=North, y=East, z=Up
+    // azimuth measured from North (x-axis) toward East (y-axis)
+    var azRad = azimuthDeg * DEG_TO_RAD;
+    var altRad = altitudeDeg * DEG_TO_RAD;
+    var cosAlt = Math.cos(altRad);
+    var stelX = Math.cos(azRad) * cosAlt;  // North component
+    var stelY = Math.sin(azRad) * cosAlt;  // East component
+    var stelZ = Math.sin(altRad);          // Up component
+
+    try {
+      stel.core.lookat([stelX, stelY, stelZ], 0);
+      updateArrowGuidance();
+    } catch (e) {
+      console.warn('[Sky Lab] lookat error:', e);
+    }
+  }
+
+  // ===== COMPASS START/STOP =====
+
+  function startCompass() {
+    if (!isSecureContext()) {
+      showCompassToast('Compass requires HTTPS. Please access via secure connection.', 4000);
+      console.warn('[Sky Lab] Compass requires secure context (HTTPS)');
+      return;
+    }
+
+    if (!hasOrientationSupport()) {
+      showCompassToast('Device orientation not supported on this device.', 3000);
+      console.warn('[Sky Lab] DeviceOrientationEvent not supported');
+      return;
+    }
+
+    requestOrientationPermission().then(function(permission) {
+      if (permission === 'granted') {
+        activateCompass();
+      } else {
+        showCompassToast('Motion sensor permission denied. Enable in device settings.', 4000);
+        console.warn('[Sky Lab] Permission denied:', permission);
+      }
+    }).catch(function(err) {
+      console.log('[Sky Lab] Permission error, trying anyway:', err);
+      activateCompass();
+    });
+  }
+
+  function activateCompass() {
+    compassActive = true;
+    compassPaused = false;
+    compassData.hasAbsolute = false;
+    compassData.lastUpdate = 0;
+    // Reset calibration on fresh start
+    compassData.calibrated = false;
+    compassData.azimuthOffset = 0;
+    if (calibrationStatus) {
+      calibrationStatus.textContent = '';
+    }
+
+    btnCompass.classList.add('active');
+    btnCompass.classList.remove('compass-paused');
+    if (compassDebug) compassDebug.classList.add('visible');
+
+    // Register event listeners based on platform
+    if (isIOS) {
+      // iOS: Use deviceorientation with webkitCompassHeading
+      window.addEventListener('deviceorientation', handleOrientationIOS);
+      console.log('[Sky Lab] Using iOS orientation handler');
+    } else {
+      // Android/Other: Prefer deviceorientationabsolute for true compass
+      // Fall back to deviceorientation for gyro-only
+      if ('ondeviceorientationabsolute' in window) {
+        window.addEventListener('deviceorientationabsolute', handleOrientationAbsolute);
+        console.log('[Sky Lab] Using absolute orientation (true compass)');
+      }
+      window.addEventListener('deviceorientation', handleOrientationRelative);
+      console.log('[Sky Lab] Using relative orientation handler');
+    }
+
+    // Test if we actually get events
+    var testTimeout = setTimeout(function() {
+      if (compassActive && compassData.lastUpdate === 0) {
+        showCompassToast('Compass may not work on this device. Try moving your phone.', 3000);
+      }
+    }, 2000);
+
+    // Success detection
+    var checkSuccess = setInterval(function() {
+      if (compassData.lastUpdate > 0) {
+        clearTimeout(testTimeout);
+        clearInterval(checkSuccess);
+        var mode = compassData.hasAbsolute ? 'true compass' : 'gyroscope only';
+        showCompassToast('Compass active (' + mode + '). Point at the sky!', 2500);
+        console.log('[Sky Lab] Compass working, mode:', mode);
+      }
+    }, 100);
+
+    // Clear check after 3 seconds regardless
+    setTimeout(function() {
+      clearInterval(checkSuccess);
+    }, 3000);
+
+    console.log('[Sky Lab] Compass mode started');
+  }
+
+  function stopCompass() {
+    compassActive = false;
+    compassPaused = false;
+
+    btnCompass.classList.remove('active');
+    btnCompass.classList.remove('compass-paused');
+    if (compassDebug) compassDebug.classList.remove('visible');
+
+    // Remove all orientation listeners
+    window.removeEventListener('deviceorientation', handleOrientationIOS);
+    window.removeEventListener('deviceorientation', handleOrientationRelative);
+    window.removeEventListener('deviceorientationabsolute', handleOrientationAbsolute);
+
+    clearArrowTarget();
+    showCompassToast('Compass mode off', 1500);
+    console.log('[Sky Lab] Compass mode stopped');
+  }
+
+  function pauseCompass() {
+    if (compassActive && !compassPaused) {
+      compassPaused = true;
+      btnCompass.classList.add('compass-paused');
+    }
+  }
+
+  function resumeCompass() {
+    if (compassActive && compassPaused) {
+      compassPaused = false;
+      btnCompass.classList.remove('compass-paused');
+      showCompassToast('Compass resumed', 1500);
+    }
+  }
+
+  // ===== CALIBRATION =====
+  var btnCalibrate = document.getElementById('btn-calibrate');
+  var calibrationStatus = document.getElementById('calibration-status');
+
+  /**
+   * Calibrate compass by pointing phone toward North
+   * When user points North and taps calibrate:
+   * - The current raw azimuth should become 0° (North)
+   * - We store the offset needed: offset = -rawAzimuth
+   */
+  function calibrateCompass() {
+    if (!compassActive) {
+      showCompassToast('Start compass first', 2000);
+      return;
+    }
+
+    // Get current raw sensor values
+    var rawAlpha = compassData.alpha;
+    var rawBeta = compassData.beta;
+    var rawGamma = compassData.gamma;
+
+    // Calculate what direction we're currently pointing (without calibration)
+    var dir = getPointingDirection(rawAlpha, rawBeta, rawGamma);
+    var x = dir[0];  // East component
+    var y = dir[1];  // North component
+    var z = dir[2];  // Up component
+
+    var currentAlt = Math.asin(Math.max(-1, Math.min(1, z))) * RAD_TO_DEG;
+    var rawAzimuth = Math.atan2(x, y) * RAD_TO_DEG;
+    if (rawAzimuth < 0) rawAzimuth += 360;
+
+    // When pointing North, azimuth should be 0°
+    // So the offset we need is: -rawAzimuth (to make current reading become 0)
+    compassData.azimuthOffset = -rawAzimuth;
+    compassData.calibrated = true;
+
+    // Update status display
+    if (calibrationStatus) {
+      calibrationStatus.textContent = 'Calibrated! (offset: ' + compassData.azimuthOffset.toFixed(0) + '°)';
+      calibrationStatus.style.color = 'rgba(34,197,94,0.9)';
+    }
+
+    showCompassToast('Calibrated! Now explore the sky.', 2500);
+    console.log('[Sky Lab] Calibrated: rawAz=' + rawAzimuth.toFixed(1) +
+                '°, offset=' + compassData.azimuthOffset.toFixed(1) +
+                '°, alt=' + currentAlt.toFixed(1) + '°');
+  }
+
+  /**
+   * Reset calibration to use raw sensor values
+   */
+  function resetCalibration() {
+    compassData.calibrated = false;
+    compassData.azimuthOffset = 0;
+
+    if (calibrationStatus) {
+      calibrationStatus.textContent = 'Calibration reset';
+      calibrationStatus.style.color = 'rgba(255,255,255,0.5)';
+    }
+    showCompassToast('Calibration reset', 1500);
+  }
+
+  // Calibrate button click handler
+  if (btnCalibrate) {
+    btnCalibrate.addEventListener('click', function() {
+      calibrateCompass();
+    });
+    // Long press to reset calibration
+    var pressTimer;
+    btnCalibrate.addEventListener('mousedown', function() {
+      pressTimer = setTimeout(function() {
+        resetCalibration();
+      }, 1000);
+    });
+    btnCalibrate.addEventListener('mouseup', function() {
+      clearTimeout(pressTimer);
+    });
+    btnCalibrate.addEventListener('mouseleave', function() {
+      clearTimeout(pressTimer);
+    });
+    btnCalibrate.addEventListener('touchstart', function() {
+      pressTimer = setTimeout(function() {
+        resetCalibration();
+      }, 1000);
+    });
+    btnCalibrate.addEventListener('touchend', function() {
+      clearTimeout(pressTimer);
+    });
+  }
+
+  // ========== ARROW GUIDANCE SYSTEM ==========
+  var arrowGuide = document.getElementById('arrow-guide');
+  var arrowPointer = document.getElementById('arrow-pointer');
+  var arrowTargetName = document.getElementById('arrow-target-name');
+  var arrowDistance = document.getElementById('arrow-distance');
+  var currentTargetObject = null;
+  var currentTargetAzAlt = null;
+
+  function setArrowTarget(obj, name) {
+    currentTargetObject = obj;
+    if (arrowTargetName && name) {
+      arrowTargetName.textContent = name;
+    }
+  }
+
+  function clearArrowTarget() {
+    currentTargetObject = null;
+    currentTargetAzAlt = null;
+    if (arrowGuide) {
+      arrowGuide.classList.remove('visible');
+    }
+  }
+
+  function updateArrowGuidance() {
+    if (!compassActive || !stel || !arrowGuide) return;
+
+    // Get the current selection as target
+    var target = currentTargetObject || (stel.core && stel.core.selection);
+    if (!target) {
+      arrowGuide.classList.remove('visible');
+      return;
+    }
+
+    try {
+      // Update target position
+      target.update();
+      var targetAzAlt = target.azalt;
+
+      if (!targetAzAlt || targetAzAlt.length < 2) {
+        arrowGuide.classList.remove('visible');
+        return;
+      }
+
+      // Get current view direction from Stellarium
+      var viewDir = stel.core.observer ? stel.core.observer.azalt : null;
+
+      // Calculate target azimuth and altitude
+      var targetAz = Math.atan2(targetAzAlt[0], targetAzAlt[1]);
+      var targetAlt = Math.asin(Math.max(-1, Math.min(1, targetAzAlt[2])));
+
+      // Get current view azimuth from lookat (approximate from observer state)
+      var currentAz = 0;
+      var currentAlt = 0;
+
+      if (stel.core.lookat_azalt) {
+        var lookAt = stel.core.lookat_azalt;
+        currentAz = Math.atan2(lookAt[0], lookAt[1]);
+        currentAlt = Math.asin(Math.max(-1, Math.min(1, lookAt[2])));
+      }
+
+      // Calculate angular difference
+      var deltaAz = targetAz - currentAz;
+      var deltaAlt = targetAlt - currentAlt;
+
+      // Normalize azimuth difference to -PI to PI
+      while (deltaAz > Math.PI) deltaAz -= 2 * Math.PI;
+      while (deltaAz < -Math.PI) deltaAz += 2 * Math.PI;
+
+      // Calculate total angular distance
+      var angularDistance = Math.sqrt(deltaAz * deltaAz + deltaAlt * deltaAlt);
+      var distanceDeg = angularDistance * 180 / Math.PI;
+
+      // If target is very close to center of view, hide arrow
+      if (distanceDeg < 15) {
+        arrowGuide.classList.remove('visible');
+        return;
+      }
+
+      // Calculate arrow direction (0 = up, increases clockwise)
+      // deltaAz > 0 means target is to the right
+      // deltaAlt > 0 means target is above
+      var arrowAngle = Math.atan2(deltaAz, deltaAlt);
+      var arrowAngleDeg = arrowAngle * 180 / Math.PI;
+
+      // Update arrow rotation (arrow SVG points up at 0 degrees)
+      if (arrowPointer) {
+        arrowPointer.style.transform = 'translate(-50%, -50%) rotate(' + arrowAngleDeg + 'deg)';
+      }
+
+      // Update distance display
+      if (arrowDistance) {
+        if (distanceDeg < 1) {
+          arrowDistance.textContent = 'Almost there!';
+        } else if (distanceDeg < 10) {
+          arrowDistance.textContent = Math.round(distanceDeg) + '° away';
+        } else {
+          arrowDistance.textContent = Math.round(distanceDeg) + '° away';
+        }
+      }
+
+      // Update target name
+      if (arrowTargetName && target.designations && target.designations.length > 0) {
+        arrowTargetName.textContent = target.designations[0];
+      } else if (arrowTargetName && target.names && target.names.length > 0) {
+        arrowTargetName.textContent = target.names[0];
+      }
+
+      arrowGuide.classList.add('visible');
+
+    } catch (e) {
+      console.warn('[Sky Lab] Arrow guidance error:', e);
+      arrowGuide.classList.remove('visible');
+    }
+  }
+
+  // Clear arrow when compass stops
+  function onCompassStop() {
+    clearArrowTarget();
+  }
+
+  btnCompass.addEventListener('click', function() {
+    console.log('[Sky Lab] Compass clicked');
+    if (!compassActive) {
+      startCompass();
+    } else if (compassPaused) {
+      resumeCompass();
+    } else {
+      stopCompass();
+    }
+  });
+
+  // ========== SYNC FUNCTIONS (need stel) ==========
+  function syncToggles() {
+    if (!stel || !stel.core) return;
+    try {
+      if (stel.core.atmosphere) toggleAtmosphere.checked = stel.core.atmosphere.visible;
+      if (stel.core.landscape) toggleLandscape.checked = stel.core.landscape.visible;
+      if (stel.core.dsos) toggleDsos.checked = stel.core.dsos.visible;
+      if (stel.core.lines && stel.core.lines.azimuthal) toggleAzimuthal.checked = stel.core.lines.azimuthal.visible;
+      if (stel.core.lines && stel.core.lines.equatorial) toggleEquatorial.checked = stel.core.lines.equatorial.visible;
+
+      // Sync constellation state - same path as original app
+      try {
+        constellationsVisible = stel.core.constellations.lines.visible;
+        btnConstellations.classList.toggle('active', constellationsVisible);
+      } catch (e) {
+        console.log('[Sky Lab] Could not sync constellation state:', e.message);
+      }
+    } catch (e) { console.warn('[Sky Lab] syncToggles error:', e); }
+  }
+
+  function syncDateTime() {
+    if (!stel || !stel.core) return;
+    try {
+      var d = new Date();
+      if (stel.core.observer && typeof stel.core.observer.utc !== 'undefined') {
+        d.setMJD(stel.core.observer.utc);
+      }
+      inputDate.value = d.toISOString().split('T')[0];
+      inputTime.value = d.toTimeString().slice(0, 5);
+    } catch (e) { console.warn('[Sky Lab] syncDateTime error:', e); }
+  }
+
+  function updateLocationDisplay() {
+    if (!stel || !stel.core) return;
+    try {
+      var obs = stel.core.observer;
+      if (obs && typeof obs.latitude !== 'undefined') {
+        var lat = (obs.latitude * 180 / Math.PI).toFixed(2);
+        var lon = (obs.longitude * 180 / Math.PI).toFixed(2);
+        locationDisplay.textContent = lat + ', ' + lon;
+      }
+    } catch (e) {
+      locationDisplay.textContent = 'Location unavailable';
+    }
+  }
+
+  // ========== SETTINGS TOGGLES ==========
+  toggleAtmosphere.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.atmosphere) stel.core.atmosphere.visible = this.checked;
+  });
+  toggleLandscape.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.landscape) stel.core.landscape.visible = this.checked;
+  });
+  toggleDsos.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.dsos) stel.core.dsos.visible = this.checked;
+  });
+  toggleAzimuthal.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.lines && stel.core.lines.azimuthal) stel.core.lines.azimuthal.visible = this.checked;
+  });
+  toggleEquatorial.addEventListener('change', function() {
+    if (stel && stel.core && stel.core.lines && stel.core.lines.equatorial) stel.core.lines.equatorial.visible = this.checked;
+  });
+
+  // ========== DATE/TIME ==========
+  inputDate.addEventListener('change', function() {
+    if (!stel || !stel.core) return;
+    try {
+      var d = new Date(this.value + 'T' + inputTime.value);
+      if (!isNaN(d.getTime()) && typeof d.getMJD === 'function') {
+        stel.core.observer.utc = d.getMJD();
+      }
+    } catch (e) { console.warn('[Sky Lab] Date change error:', e); }
+  });
+
+  inputTime.addEventListener('change', function() {
+    if (!stel || !stel.core) return;
+    try {
+      var d = new Date(inputDate.value + 'T' + this.value);
+      if (!isNaN(d.getTime()) && typeof d.getMJD === 'function') {
+        stel.core.observer.utc = d.getMJD();
+      }
+    } catch (e) { console.warn('[Sky Lab] Time change error:', e); }
+  });
+
+  // ========== INFO CARD ==========
+  function updateInfoCard() {
+    if (!stel || !stel.core) return;
+    try {
+      var selection = stel.core.selection;
+      if (!selection || !selection.nsid) {
+        infoCard.classList.add('card-hidden');
+        return;
+      }
+
+      selection.update();
+
+      var name = 'Unknown';
+      if (selection.designations && selection.designations.length > 0) {
+        name = selection.designations[0];
+      } else if (selection.names && selection.names.length > 0) {
+        name = selection.names[0];
+      }
+      cardName.textContent = name;
+
+      var type = selection.type_name || (selection.types && selection.types[0]) || 'Object';
+      cardType.textContent = type;
+
+      var mag = selection.vmag;
+      cardMag.textContent = (mag && !isNaN(mag)) ? 'Mag: ' + mag.toFixed(2) : 'Mag: --';
+
+      var azalt = selection.azalt;
+      if (azalt && azalt.length >= 2) {
+        var az = ((azalt[0] * 180 / Math.PI) + 360) % 360;
+        var alt = azalt[1] * 180 / Math.PI;
+        cardPos.textContent = 'Alt: ' + alt.toFixed(0) + ' Az: ' + az.toFixed(0);
+      } else {
+        cardPos.textContent = 'Alt: -- Az: --';
+      }
+
+      infoCard.classList.remove('card-hidden');
+    } catch (e) {
+      infoCard.classList.add('card-hidden');
+    }
+  }
+
+  infoCard.addEventListener('click', function() {
+    if (stel && stel.core) {
+      try { stel.core.selection = null; } catch (e) {}
+    }
+    infoCard.classList.add('card-hidden');
+  });
+
+  // ========== WAIT FOR STELLARIUM ==========
+  function initStellariumBindings() {
+    var attempts = 0;
+    var checkInterval = setInterval(function() {
+      attempts++;
+      // Check multiple ways to access Stellarium engine
+      var engine = null;
+
+      // Method 1: Direct window.$stel
+      if (window.$stel && window.$stel.core) {
+        engine = window.$stel;
+        console.log('[Sky Lab] Found via window.$stel');
+      }
+      // Method 2: StelWebEngine module
+      else if (window.StelWebEngine && window.StelWebEngine.core) {
+        engine = window.StelWebEngine;
+        console.log('[Sky Lab] Found via StelWebEngine');
+      }
+      // Method 3: Vue app instance
+      else if (window.__vueApp__ && window.__vueApp__.$stel) {
+        engine = window.__vueApp__.$stel;
+        console.log('[Sky Lab] Found via Vue app');
+      }
+      // Method 4: Get from Vue component on #app
+      else {
+        var appEl = document.getElementById('app');
+        if (appEl && appEl.__vue__ && appEl.__vue__.$stel) {
+          engine = appEl.__vue__.$stel;
+          console.log('[Sky Lab] Found via #app.__vue__');
+        }
+      }
+
+      // Debug logging every 5 attempts
+      if (attempts % 25 === 0) {
+        console.log('[Sky Lab] Still searching... attempts:', attempts);
+        console.log('[Sky Lab] window.$stel:', !!window.$stel);
+        console.log('[Sky Lab] StelWebEngine:', !!window.StelWebEngine, window.StelWebEngine ? !!window.StelWebEngine.core : 'N/A');
+        var appEl = document.getElementById('app');
+        console.log('[Sky Lab] #app.__vue__:', appEl && !!appEl.__vue__);
+      }
+
+      if (engine && engine.core) {
+        clearInterval(checkInterval);
+        stel = engine;
+        console.log('[Sky Lab] Stellarium found, binding complete');
+
+        // Initial sync
+        syncToggles();
+        syncDateTime();
+        updateLocationDisplay();
+
+        // Setup canvas interaction for compass pause
+        var canvas = document.getElementById('stel-canvas') || document.querySelector('canvas');
+        if (canvas) {
+          canvas.addEventListener('mousedown', pauseCompass);
+          canvas.addEventListener('touchstart', pauseCompass);
+        }
+
+        // Poll for selection changes
+        var lastSelectionId = null;
+        setInterval(function() {
+          try {
+            var sel = stel.core.selection;
+            var selId = sel ? sel.nsid : null;
+            if (selId !== lastSelectionId) {
+              lastSelectionId = selId;
+              updateInfoCard();
+            } else if (selId) {
+              updateInfoCard();
+            }
+          } catch (e) {}
+        }, 500);
+
+        // Update location periodically
+        setInterval(updateLocationDisplay, 5000);
+      }
+    }, 200);
+
+    // Give up after 30 seconds
+    setTimeout(function() {
+      clearInterval(checkInterval);
+      if (!stel) {
+        console.warn('[Sky Lab] Stellarium not found after 30s');
+      }
+    }, 30000);
+  }
+
+  // Start looking for Stellarium
+  initStellariumBindings();
+
+  console.log('[Sky Lab] UI handlers attached');
+})();
+</script>
+</body></html>

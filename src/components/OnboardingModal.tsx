@@ -82,6 +82,17 @@ export default function OnboardingModal({ onLocationSelect, onClose }: Onboardin
 
       {/* Modal */}
       <div className="relative bg-card border border-card-border rounded-2xl shadow-2xl max-w-md w-full p-8">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 p-1 text-foreground/40 hover:text-foreground/70 transition-colors z-10"
+          aria-label="Close onboarding"
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
         {/* Star decoration */}
         <div className="absolute -top-6 left-1/2 -translate-x-1/2">
           <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center shadow-lg">
