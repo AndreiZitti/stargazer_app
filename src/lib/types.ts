@@ -104,6 +104,31 @@ export interface UserProfile {
   lastVisit: string;
 }
 
+// Trip planning types
+export interface TripLocation {
+  name: string;
+  lat: number;
+  lng: number;
+  savedPlaceId?: string; // If linked to a saved place
+}
+
+export interface TripTarget {
+  id: string;
+  name: string;
+  stellariumId?: string;
+  collectionTime?: number; // Minutes
+  notes?: string;
+}
+
+export interface Trip {
+  id: string;
+  location: TripLocation;
+  date: string; // ISO date "2026-02-15"
+  notes?: string;
+  targets: TripTarget[];
+  createdAt: string;
+}
+
 // Deep Sky Object types
 export interface DSONames {
   primary: string;

@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@/contexts/UserContext";
-import { SavedPlace } from "@/lib/types";
+import { useTrips } from "@/hooks/useTrips";
+import { SavedPlace, Trip, TripTarget } from "@/lib/types";
 import BottomTabBar from "@/components/BottomTabBar";
 
 // Calculate distance between two points in km
@@ -29,6 +30,12 @@ function getWeatherIcon(cloudCover: number) {
   return { icon: "☁️", label: "Cloudy" };
 }
 
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+}
+
+// ============ Place Card ============
 interface PlaceCardProps {
   place: SavedPlace;
   userLocation: { lat: number; lng: number } | null;
@@ -51,7 +58,6 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
 
   return (
     <div className="bg-card border border-card-border rounded-lg overflow-hidden">
-      {/* Header */}
       <button
         onClick={() => setShowDetails(!showDetails)}
         className="w-full p-4 text-left hover:bg-foreground/5 transition-colors"
@@ -74,13 +80,9 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
                   Bortle {place.bortle}
                 </span>
               )}
-              {distance !== null && (
-                <span>{distance} km away</span>
-              )}
+              {distance !== null && <span>{distance} km away</span>}
             </div>
           </div>
-
-          {/* Weather preview */}
           {weather && (
             <div className="text-right flex-shrink-0">
               <div className="text-2xl">{getWeatherIcon(weather.hours[0]?.cloudTotal ?? 100).icon}</div>
@@ -93,22 +95,17 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
               </div>
             </div>
           )}
-
           <svg
             className={`w-5 h-5 text-foreground/40 transition-transform ${showDetails ? "rotate-180" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
         </div>
       </button>
 
-      {/* Expanded details */}
       {showDetails && (
         <div className="border-t border-card-border">
-          {/* Weather section */}
           <div className="p-4 border-b border-card-border/50">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium text-foreground/70">Weather Forecast</h4>
@@ -120,20 +117,14 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
                 {isLoadingWeather ? "Loading..." : "Refresh"}
               </button>
             </div>
-
             {weather ? (
               <div className="flex gap-2 overflow-x-auto pb-2">
                 {weather.hours.slice(0, 12).map((hour, i) => {
                   const hourDate = new Date(hour.time);
                   const { icon } = getWeatherIcon(hour.cloudTotal);
                   return (
-                    <div
-                      key={i}
-                      className="flex-shrink-0 text-center px-2 py-1 rounded bg-foreground/5"
-                    >
-                      <div className="text-xs text-foreground/50">
-                        {hourDate.getHours()}:00
-                      </div>
+                    <div key={i} className="flex-shrink-0 text-center px-2 py-1 rounded bg-foreground/5">
+                      <div className="text-xs text-foreground/50">{hourDate.getHours()}:00</div>
                       <div className="text-lg my-1">{icon}</div>
                       <div className="text-xs text-foreground/70">{hour.cloudTotal}%</div>
                     </div>
@@ -150,16 +141,12 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
               </button>
             )}
           </div>
-
-          {/* Notes */}
           {place.notes && (
             <div className="p-4 border-b border-card-border/50">
               <h4 className="text-sm font-medium text-foreground/70 mb-2">Notes</h4>
               <p className="text-sm text-foreground/60">{place.notes}</p>
             </div>
           )}
-
-          {/* Actions */}
           <div className="p-3 flex items-center gap-2">
             <button
               onClick={onNavigate}
@@ -171,10 +158,7 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
               </svg>
               View on Map
             </button>
-            <button
-              onClick={onDelete}
-              className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
-            >
+            <button onClick={onDelete} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
@@ -186,23 +170,343 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
   );
 }
 
+// ============ Trip Card ============
+interface TripCardProps {
+  trip: Trip;
+  savedPlaces: SavedPlace[];
+  onDelete: () => void;
+  onAddTarget: (target: Omit<TripTarget, "id">) => void;
+  onRemoveTarget: (targetId: string) => void;
+  onUpdateTarget: (targetId: string, updates: Partial<TripTarget>) => void;
+}
+
+function TripCard({ trip, savedPlaces, onDelete, onAddTarget, onRemoveTarget, onUpdateTarget }: TripCardProps) {
+  const [expanded, setExpanded] = useState(false);
+  const [showAddTarget, setShowAddTarget] = useState(false);
+  const [newTarget, setNewTarget] = useState({ name: "", collectionTime: "", notes: "" });
+
+  const isPast = new Date(trip.date) < new Date(new Date().toDateString());
+  const totalTime = trip.targets.reduce((sum, t) => sum + (t.collectionTime || 0), 0);
+
+  const handleAddTarget = () => {
+    if (!newTarget.name.trim()) return;
+    onAddTarget({
+      name: newTarget.name.trim(),
+      collectionTime: newTarget.collectionTime ? parseInt(newTarget.collectionTime) : undefined,
+      notes: newTarget.notes.trim() || undefined,
+    });
+    setNewTarget({ name: "", collectionTime: "", notes: "" });
+    setShowAddTarget(false);
+  };
+
+  return (
+    <div className={`bg-card border border-card-border rounded-lg overflow-hidden ${isPast ? "opacity-60" : ""}`}>
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full p-4 text-left hover:bg-foreground/5 transition-colors"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">🗓️</span>
+              <h3 className="font-medium truncate">{trip.location.name}</h3>
+            </div>
+            <p className="text-sm text-foreground/60 mt-1">{formatDate(trip.date)}</p>
+            <div className="flex items-center gap-3 mt-2 text-xs text-foreground/50">
+              <span>{trip.targets.length} target{trip.targets.length !== 1 ? "s" : ""}</span>
+              {totalTime > 0 && <span>{totalTime} min total</span>}
+            </div>
+          </div>
+          <svg
+            className={`w-5 h-5 text-foreground/40 transition-transform ${expanded ? "rotate-180" : ""}`}
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </div>
+      </button>
+
+      {expanded && (
+        <div className="border-t border-card-border">
+          {trip.notes && (
+            <div className="p-4 border-b border-card-border/50">
+              <p className="text-sm text-foreground/60">{trip.notes}</p>
+            </div>
+          )}
+
+          {/* Targets */}
+          <div className="p-4 border-b border-card-border/50">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-medium text-foreground/70">Targets</h4>
+              <button
+                onClick={() => setShowAddTarget(!showAddTarget)}
+                className="text-xs text-accent hover:text-accent/80"
+              >
+                {showAddTarget ? "Cancel" : "+ Add"}
+              </button>
+            </div>
+
+            {showAddTarget && (
+              <div className="mb-3 p-3 bg-foreground/5 rounded-lg space-y-2">
+                <input
+                  type="text"
+                  placeholder="Target name (e.g., M42, Orion Nebula)"
+                  value={newTarget.name}
+                  onChange={(e) => setNewTarget({ ...newTarget, name: e.target.value })}
+                  className="w-full px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+                />
+                <div className="flex gap-2">
+                  <input
+                    type="number"
+                    placeholder="Minutes"
+                    value={newTarget.collectionTime}
+                    onChange={(e) => setNewTarget({ ...newTarget, collectionTime: e.target.value })}
+                    className="w-24 px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+                  />
+                  <input
+                    type="text"
+                    placeholder="Notes (optional)"
+                    value={newTarget.notes}
+                    onChange={(e) => setNewTarget({ ...newTarget, notes: e.target.value })}
+                    className="flex-1 px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+                  />
+                </div>
+                <button
+                  onClick={handleAddTarget}
+                  disabled={!newTarget.name.trim()}
+                  className="w-full py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 disabled:opacity-50"
+                >
+                  Add Target
+                </button>
+              </div>
+            )}
+
+            {trip.targets.length === 0 ? (
+              <p className="text-sm text-foreground/40 text-center py-4">No targets yet</p>
+            ) : (
+              <div className="space-y-2">
+                {trip.targets.map((target) => (
+                  <div key={target.id} className="flex items-center gap-3 p-2 bg-foreground/5 rounded-lg">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">{target.name}</p>
+                      <div className="flex items-center gap-2 text-xs text-foreground/50">
+                        {target.collectionTime && <span>{target.collectionTime} min</span>}
+                        {target.notes && <span className="truncate">• {target.notes}</span>}
+                      </div>
+                    </div>
+                    {target.stellariumId && (
+                      <a
+                        href={`https://stellarium-web.org/skysource/${target.stellariumId}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 text-accent hover:bg-accent/10 rounded"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
+                          <path strokeWidth={1.5} d="M2 12h20" />
+                        </svg>
+                      </a>
+                    )}
+                    <button
+                      onClick={() => onRemoveTarget(target.id)}
+                      className="p-1.5 text-red-400 hover:bg-red-500/10 rounded"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="p-3 flex items-center gap-2">
+            <a
+              href={`https://www.google.com/maps/dir/?api=1&destination=${trip.location.lat},${trip.location.lng}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-foreground/10 text-foreground rounded-lg hover:bg-foreground/20 transition-colors text-sm"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+              </svg>
+              Directions
+            </a>
+            <button onClick={onDelete} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ============ Add Trip Form ============
+interface AddTripFormProps {
+  savedPlaces: SavedPlace[];
+  onAdd: (trip: { location: { name: string; lat: number; lng: number; savedPlaceId?: string }; date: string; notes?: string }) => void;
+  onCancel: () => void;
+}
+
+function AddTripForm({ savedPlaces, onAdd, onCancel }: AddTripFormProps) {
+  const [locationType, setLocationType] = useState<"saved" | "custom">("saved");
+  const [selectedPlaceId, setSelectedPlaceId] = useState("");
+  const [customLocation, setCustomLocation] = useState({ name: "", lat: "", lng: "" });
+  const [date, setDate] = useState("");
+  const [notes, setNotes] = useState("");
+
+  const handleSubmit = () => {
+    let location;
+    if (locationType === "saved" && selectedPlaceId) {
+      const place = savedPlaces.find((p) => p.id === selectedPlaceId);
+      if (!place) return;
+      location = { name: place.name, lat: place.lat, lng: place.lng, savedPlaceId: place.id };
+    } else if (locationType === "custom" && customLocation.name && customLocation.lat && customLocation.lng) {
+      location = {
+        name: customLocation.name,
+        lat: parseFloat(customLocation.lat),
+        lng: parseFloat(customLocation.lng),
+      };
+    } else {
+      return;
+    }
+
+    if (!date) return;
+    onAdd({ location, date, notes: notes.trim() || undefined });
+  };
+
+  const isValid =
+    date &&
+    ((locationType === "saved" && selectedPlaceId) ||
+      (locationType === "custom" && customLocation.name && customLocation.lat && customLocation.lng));
+
+  return (
+    <div className="bg-card border border-card-border rounded-lg p-4 space-y-4">
+      <h3 className="font-medium">New Trip</h3>
+
+      {/* Location Type */}
+      <div className="flex gap-2">
+        <button
+          onClick={() => setLocationType("saved")}
+          className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
+            locationType === "saved" ? "bg-accent text-white" : "bg-foreground/10 text-foreground/70"
+          }`}
+        >
+          Saved Place
+        </button>
+        <button
+          onClick={() => setLocationType("custom")}
+          className={`flex-1 py-2 text-sm rounded-lg transition-colors ${
+            locationType === "custom" ? "bg-accent text-white" : "bg-foreground/10 text-foreground/70"
+          }`}
+        >
+          Custom
+        </button>
+      </div>
+
+      {/* Location Input */}
+      {locationType === "saved" ? (
+        <select
+          value={selectedPlaceId}
+          onChange={(e) => setSelectedPlaceId(e.target.value)}
+          className="w-full px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+        >
+          <option value="">Select a saved place...</option>
+          {savedPlaces.map((place) => (
+            <option key={place.id} value={place.id}>
+              {place.name}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <div className="space-y-2">
+          <input
+            type="text"
+            placeholder="Location name"
+            value={customLocation.name}
+            onChange={(e) => setCustomLocation({ ...customLocation, name: e.target.value })}
+            className="w-full px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+          />
+          <div className="flex gap-2">
+            <input
+              type="number"
+              step="any"
+              placeholder="Latitude"
+              value={customLocation.lat}
+              onChange={(e) => setCustomLocation({ ...customLocation, lat: e.target.value })}
+              className="flex-1 px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+            />
+            <input
+              type="number"
+              step="any"
+              placeholder="Longitude"
+              value={customLocation.lng}
+              onChange={(e) => setCustomLocation({ ...customLocation, lng: e.target.value })}
+              className="flex-1 px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* Date */}
+      <input
+        type="date"
+        value={date}
+        onChange={(e) => setDate(e.target.value)}
+        className="w-full px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+      />
+
+      {/* Notes */}
+      <textarea
+        placeholder="Notes (optional)"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+        rows={2}
+        className="w-full px-3 py-2 text-sm bg-background border border-card-border rounded-lg resize-none"
+      />
+
+      {/* Actions */}
+      <div className="flex gap-2">
+        <button onClick={onCancel} className="flex-1 py-2 text-sm bg-foreground/10 rounded-lg hover:bg-foreground/20">
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit}
+          disabled={!isValid}
+          className="flex-1 py-2 text-sm bg-accent text-white rounded-lg hover:bg-accent/90 disabled:opacity-50"
+        >
+          Create Trip
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// ============ Main Page ============
 export default function SavedPage() {
   const router = useRouter();
-  const { savedPlaces, isLoading, removeSavedPlace, fetchWeather } = useUser();
+  const { savedPlaces, isLoading: placesLoading, removeSavedPlace, fetchWeather, user } = useUser();
+  const { trips, upcomingTrips, pastTrips, isLoading: tripsLoading, addTrip, removeTrip, addTarget, removeTarget, updateTarget } = useTrips(user);
+
+  const [activeTab, setActiveTab] = useState<"places" | "trips">("places");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [loadingWeather, setLoadingWeather] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<"recent" | "distance" | "name">("recent");
+  const [showAddTrip, setShowAddTrip] = useState(false);
+
+  const isLoading = placesLoading || tripsLoading;
 
   // Get user location
   useEffect(() => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-        },
-        () => {
-          // Ignore errors
-        }
+        (pos) => setUserLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        () => {}
       );
     }
   }, []);
@@ -210,13 +514,10 @@ export default function SavedPage() {
   // Sort places
   const sortedPlaces = [...savedPlaces].sort((a, b) => {
     if (sortBy === "distance" && userLocation) {
-      const distA = getDistance(userLocation.lat, userLocation.lng, a.lat, a.lng);
-      const distB = getDistance(userLocation.lat, userLocation.lng, b.lat, b.lng);
-      return distA - distB;
+      return getDistance(userLocation.lat, userLocation.lng, a.lat, a.lng) -
+             getDistance(userLocation.lat, userLocation.lng, b.lat, b.lng);
     }
-    if (sortBy === "name") {
-      return a.name.localeCompare(b.name);
-    }
+    if (sortBy === "name") return a.name.localeCompare(b.name);
     return new Date(b.savedAt).getTime() - new Date(a.savedAt).getTime();
   });
 
@@ -230,28 +531,65 @@ export default function SavedPage() {
     });
   };
 
-  const handleNavigate = (place: SavedPlace) => {
-    // Navigate to map with the place centered
-    router.push(`/?lat=${place.lat}&lng=${place.lng}&zoom=12`);
+  const handleAddTrip = (tripData: { location: { name: string; lat: number; lng: number; savedPlaceId?: string }; date: string; notes?: string }) => {
+    addTrip(tripData);
+    setShowAddTrip(false);
   };
 
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-card-border px-4 py-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-semibold">Saved Places</h1>
-          <div className="flex items-center gap-2">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-              className="text-sm bg-card border border-card-border rounded-lg px-3 py-1.5 text-foreground"
-            >
-              <option value="recent">Recent</option>
-              <option value="distance" disabled={!userLocation}>Distance</option>
-              <option value="name">Name</option>
-            </select>
-          </div>
+      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-card-border">
+        {/* Tabs */}
+        <div className="flex border-b border-card-border">
+          <button
+            onClick={() => setActiveTab("places")}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              activeTab === "places"
+                ? "text-accent border-b-2 border-accent"
+                : "text-foreground/50 hover:text-foreground/70"
+            }`}
+          >
+            Places
+          </button>
+          <button
+            onClick={() => setActiveTab("trips")}
+            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+              activeTab === "trips"
+                ? "text-accent border-b-2 border-accent"
+                : "text-foreground/50 hover:text-foreground/70"
+            }`}
+          >
+            Trips
+          </button>
+        </div>
+
+        {/* Actions Bar */}
+        <div className="flex items-center justify-between px-4 py-2">
+          {activeTab === "places" ? (
+            <>
+              <span className="text-sm text-foreground/50">{savedPlaces.length} places</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                className="text-sm bg-card border border-card-border rounded-lg px-3 py-1.5 text-foreground"
+              >
+                <option value="recent">Recent</option>
+                <option value="distance" disabled={!userLocation}>Distance</option>
+                <option value="name">Name</option>
+              </select>
+            </>
+          ) : (
+            <>
+              <span className="text-sm text-foreground/50">{trips.length} trips</span>
+              <button
+                onClick={() => setShowAddTrip(true)}
+                className="text-sm text-accent hover:text-accent/80 font-medium"
+              >
+                + New Trip
+              </button>
+            </>
+          )}
         </div>
       </header>
 
@@ -261,35 +599,105 @@ export default function SavedPage() {
           <div className="flex items-center justify-center py-12">
             <div className="text-foreground/50">Loading...</div>
           </div>
-        ) : savedPlaces.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <svg className="w-16 h-16 text-foreground/20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-            </svg>
-            <h2 className="text-lg font-medium text-foreground/70 mb-2">No saved places yet</h2>
-            <p className="text-sm text-foreground/50 max-w-xs">
-              Right-click or long-press on the map to save your favorite stargazing spots.
-            </p>
-            <button
-              onClick={() => router.push("/")}
-              className="mt-4 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm"
-            >
-              Go to Map
-            </button>
-          </div>
+        ) : activeTab === "places" ? (
+          // Places Tab
+          savedPlaces.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <svg className="w-16 h-16 text-foreground/20 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+              <h2 className="text-lg font-medium text-foreground/70 mb-2">No saved places yet</h2>
+              <p className="text-sm text-foreground/50 max-w-xs">
+                Right-click or long-press on the map to save your favorite stargazing spots.
+              </p>
+              <button
+                onClick={() => router.push("/")}
+                className="mt-4 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm"
+              >
+                Go to Map
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {sortedPlaces.map((place) => (
+                <PlaceCard
+                  key={place.id}
+                  place={place}
+                  userLocation={userLocation}
+                  onNavigate={() => router.push(`/?lat=${place.lat}&lng=${place.lng}&zoom=12`)}
+                  onDelete={() => removeSavedPlace(place.id)}
+                  onFetchWeather={() => handleFetchWeather(place)}
+                  isLoadingWeather={loadingWeather.has(place.id)}
+                />
+              ))}
+            </div>
+          )
         ) : (
-          <div className="space-y-3">
-            {sortedPlaces.map((place) => (
-              <PlaceCard
-                key={place.id}
-                place={place}
-                userLocation={userLocation}
-                onNavigate={() => handleNavigate(place)}
-                onDelete={() => removeSavedPlace(place.id)}
-                onFetchWeather={() => handleFetchWeather(place)}
-                isLoadingWeather={loadingWeather.has(place.id)}
+          // Trips Tab
+          <div className="space-y-4">
+            {showAddTrip && (
+              <AddTripForm
+                savedPlaces={savedPlaces}
+                onAdd={handleAddTrip}
+                onCancel={() => setShowAddTrip(false)}
               />
-            ))}
+            )}
+
+            {trips.length === 0 && !showAddTrip ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <span className="text-5xl mb-4">🗓️</span>
+                <h2 className="text-lg font-medium text-foreground/70 mb-2">No trips planned</h2>
+                <p className="text-sm text-foreground/50 max-w-xs">
+                  Plan your stargazing sessions with locations, dates, and targets.
+                </p>
+                <button
+                  onClick={() => setShowAddTrip(true)}
+                  className="mt-4 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm"
+                >
+                  Plan a Trip
+                </button>
+              </div>
+            ) : (
+              <>
+                {upcomingTrips.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-medium text-foreground/50 mb-2">Upcoming</h3>
+                    <div className="space-y-3">
+                      {upcomingTrips.map((trip) => (
+                        <TripCard
+                          key={trip.id}
+                          trip={trip}
+                          savedPlaces={savedPlaces}
+                          onDelete={() => removeTrip(trip.id)}
+                          onAddTarget={(target) => addTarget(trip.id, target)}
+                          onRemoveTarget={(targetId) => removeTarget(trip.id, targetId)}
+                          onUpdateTarget={(targetId, updates) => updateTarget(trip.id, targetId, updates)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {pastTrips.length > 0 && (
+                  <div>
+                    <h3 className="text-sm font-medium text-foreground/50 mb-2">Past</h3>
+                    <div className="space-y-3">
+                      {pastTrips.map((trip) => (
+                        <TripCard
+                          key={trip.id}
+                          trip={trip}
+                          savedPlaces={savedPlaces}
+                          onDelete={() => removeTrip(trip.id)}
+                          onAddTarget={(target) => addTarget(trip.id, target)}
+                          onRemoveTarget={(targetId) => removeTarget(trip.id, targetId)}
+                          onUpdateTarget={(targetId, updates) => updateTarget(trip.id, targetId, updates)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </main>
