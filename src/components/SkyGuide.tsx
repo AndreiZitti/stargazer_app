@@ -239,6 +239,21 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
                     {dso.finding.naked_eye_guide && (
                       <p className="text-xs text-foreground/50 mt-2 italic">{dso.finding.naked_eye_guide}</p>
                     )}
+                    {dso.stellarium?.skysource_id && (
+                      <a
+                        href={`https://stellarium-web.org/skysource/${dso.stellarium.skysource_id}?fov=${dso.stellarium.default_fov || 5}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-3 flex items-center justify-center gap-2 w-full py-2 bg-accent/10 hover:bg-accent/20 text-accent rounded-lg transition-colors text-sm font-medium"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+                          <path strokeLinecap="round" strokeWidth={1.5} d="M2 12h20" />
+                        </svg>
+                        View in Sky
+                      </a>
+                    )}
                   </div>
                 )}
               </div>
