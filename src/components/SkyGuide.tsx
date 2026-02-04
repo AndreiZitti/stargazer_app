@@ -3,18 +3,7 @@
 import { useState } from "react";
 import { DeepSkyObject, MeteorShower } from "@/lib/types";
 import CelestialCalendar from "./CelestialCalendar";
-import FeaturedDSOCard from "./FeaturedDSOCard";
 import BottomTabBar from "./BottomTabBar";
-
-// Featured DSOs with local images
-const FEATURED_DSO_IMAGES: Record<string, string> = {
-  M31: "/data/Andromeda.jpg",
-  M1: "/data/Crab Nebula Mosaic.webp",
-  M42: "/data/OrionNebula.webp",
-  M45: "/data/Pleiades.jpg",
-  M78: "/data/M78.jpg",
-  B33: "/data/HorseHead.jpg",
-};
 
 interface SkyGuideProps {
   month: string;
@@ -41,265 +30,17 @@ const SHOWER_COLORS: Record<string, string> = {
   default: "#6366f1",
 };
 
-// Icons
-const Icons = {
-  nebula: (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <circle cx="12" cy="12" r="3" className="fill-purple-400/30" />
-      <ellipse cx="12" cy="12" rx="8" ry="5" className="stroke-purple-400/60" />
-      <ellipse cx="12" cy="12" rx="5" ry="8" className="stroke-blue-400/40" />
-    </svg>
-  ),
-  galaxy: (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <ellipse cx="12" cy="12" rx="9" ry="4" transform="rotate(-30 12 12)" className="stroke-amber-400/60" />
-      <ellipse cx="12" cy="12" rx="6" ry="2.5" transform="rotate(-30 12 12)" className="stroke-amber-300/80" />
-      <circle cx="12" cy="12" r="1.5" className="fill-amber-200" />
-    </svg>
-  ),
-  cluster: (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <circle cx="12" cy="8" r="1.5" className="fill-blue-300" />
-      <circle cx="9" cy="11" r="1" className="fill-blue-200" />
-      <circle cx="15" cy="11" r="1.2" className="fill-blue-300" />
-      <circle cx="10" cy="14" r="0.8" className="fill-blue-200" />
-      <circle cx="14" cy="15" r="1" className="fill-blue-300" />
-      <circle cx="12" cy="12" r="1.3" className="fill-blue-400" />
-    </svg>
-  ),
-  meteor: (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M4 4l16 16" className="stroke-yellow-400" />
-      <path d="M4 4l3 1" className="stroke-yellow-300/60" />
-      <path d="M4 4l1 3" className="stroke-yellow-300/60" />
-      <circle cx="18" cy="18" r="2" className="fill-orange-400 stroke-orange-300" />
-    </svg>
-  ),
-  moon: (
-    <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
-      <path
-        d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z"
-        className="fill-slate-300"
-      />
-    </svg>
-  ),
-  star: (
-    <svg className="w-6 h-6 text-yellow-400" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
-    </svg>
-  ),
-  eye: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  ),
-  binoculars: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="6" cy="16" r="4" />
-      <circle cx="18" cy="16" r="4" />
-      <path d="M6 12V4h4v8M18 12V4h-4v8M10 16h4" />
-    </svg>
-  ),
-  telescope: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M21 3L10 14M6 18l-4 4M14 10l4-4M10 14l-4 4M3 21l4-4" />
-    </svg>
-  ),
-  arrow: (
-    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M5 12h14M12 5l7 7-7 7" />
-    </svg>
-  ),
-  back: (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M19 12H5M12 19l-7-7 7-7" />
-    </svg>
-  ),
-};
-
-function getTypeIcon(typeShort: string) {
-  switch (typeShort) {
-    case 'EN':
-    case 'RN':
-    case 'DN':
-    case 'SNR':
-    case 'PN':
-      return Icons.nebula;
-    case 'Gal':
-      return Icons.galaxy;
-    case 'OC':
-    case 'OC+OC':
-      return Icons.cluster;
-    case '**':
-      return Icons.star;
-    default:
-      return Icons.star;
-  }
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function getEquipmentIcon(equipment: string) {
+function getEquipmentLabel(equipment: string): string {
   switch (equipment) {
-    case 'naked_eye':
-      return Icons.eye;
-    case 'binoculars':
-      return Icons.binoculars;
-    default:
-      return Icons.telescope;
+    case 'naked_eye': return 'Naked eye';
+    case 'binoculars': return 'Binoculars';
+    default: return 'Telescope';
   }
-}
-
-function getDifficultyStyle(difficulty: string) {
-  switch (difficulty) {
-    case 'easy':
-      return 'bg-success/20 text-success';
-    case 'moderate':
-      return 'bg-warning/20 text-warning';
-    case 'challenging':
-      return 'bg-error/20 text-error';
-    default:
-      return 'bg-foreground/10 text-foreground/60';
-  }
-}
-
-function DSOCard({ dso, month, year }: { dso: DeepSkyObject; month: string; year: number }) {
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [showSkyView, setShowSkyView] = useState(false);
-
-  // Build Stellarium URL for this DSO
-  const getStellariumUrl = () => {
-    const skysourceId = dso.stellarium?.skysource_id || dso.id;
-    const fov = dso.stellarium?.default_fov || 30;
-
-    // Set to 10 PM on the 15th of the month
-    const monthNum = month === "December" ? 12 : 1;
-    const dateStr = `${year}-${String(monthNum).padStart(2, '0')}-15T22:00`;
-
-    // Use production Stellarium (has proper CORS for API)
-    const url = new URL(`https://stellarium-web.org/skysource/${encodeURIComponent(skysourceId)}`);
-    url.searchParams.set("date", dateStr);
-    url.searchParams.set("lat", "48");
-    url.searchParams.set("lng", "11");
-    url.searchParams.set("fov", String(fov));
-
-    return url.toString();
-  };
-
-  return (
-    <div className="bg-card border border-card-border rounded-xl overflow-hidden hover:border-accent/50 transition-colors">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full p-5 text-left"
-      >
-        <div className="flex items-start gap-4">
-          <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400">
-            {getTypeIcon(dso.physical.type_short)}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap mb-1">
-              <h3 className="font-semibold text-lg">{dso.names.primary}</h3>
-              <span className="text-sm text-foreground/40">{dso.id}</span>
-            </div>
-            <p className="text-sm text-foreground/60">{dso.physical.type} in {dso.physical.constellation}</p>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            <span className={`text-xs px-2 py-1 rounded-full ${getDifficultyStyle(dso.visibility.difficulty)}`}>
-              {dso.visibility.difficulty}
-            </span>
-            <div className="text-foreground/40" title={dso.visibility.equipment_minimum.replace('_', ' ')}>
-              {getEquipmentIcon(dso.visibility.equipment_minimum)}
-            </div>
-          </div>
-        </div>
-      </button>
-
-      {isExpanded && (
-        <div className="px-5 pb-5 space-y-5 border-t border-card-border/50 pt-5">
-          <p className="text-foreground/80 leading-relaxed">{dso.science.short_description}</p>
-
-          {/* Sky View Button and Iframe */}
-          <div className="space-y-3">
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setShowSkyView(!showSkyView);
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-accent/10 hover:bg-accent/20 border border-accent/30 rounded-lg text-accent transition-colors"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 2a10 10 0 0 1 0 20" strokeDasharray="4 4" />
-                <circle cx="12" cy="12" r="3" fill="currentColor" />
-              </svg>
-              <span>{showSkyView ? "Hide Sky View" : "View in Night Sky"}</span>
-            </button>
-
-            {showSkyView && (
-              <div className="rounded-lg overflow-hidden border border-card-border">
-                <div className="bg-card-border/30 px-3 py-2 text-xs text-foreground/60 flex items-center justify-between">
-                  <span>{month} 15, {year} at 10:00 PM - Central Europe</span>
-                  <a
-                    href={getStellariumUrl()}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-accent hover:underline"
-                  >
-                    Open fullscreen
-                  </a>
-                </div>
-                <iframe
-                  src={getStellariumUrl()}
-                  className="w-full border-0"
-                  style={{ height: "400px" }}
-                  allow="fullscreen"
-                  title={`Sky view of ${dso.names.primary}`}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-5">
-            <div className="space-y-3">
-              <h4 className="text-xs uppercase tracking-wider text-foreground/40 font-medium">How to Find It</h4>
-              <p className="text-sm text-foreground/70 leading-relaxed">{dso.finding.naked_eye_guide}</p>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="text-xs uppercase tracking-wider text-foreground/40 font-medium">What You&apos;ll See</h4>
-              <div className="space-y-2">
-                {dso.observation.naked_eye !== "Not visible" && (
-                  <div className="flex gap-2 text-sm">
-                    <span className="text-foreground/40 shrink-0">{Icons.eye}</span>
-                    <span className="text-foreground/70">{dso.observation.naked_eye}</span>
-                  </div>
-                )}
-                <div className="flex gap-2 text-sm">
-                  <span className="text-foreground/40 shrink-0">{Icons.binoculars}</span>
-                  <span className="text-foreground/70">{dso.observation.binoculars}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {dso.science.interesting_facts.length > 0 && (
-            <div className="bg-accent/5 border border-accent/20 rounded-lg p-4">
-              <p className="text-sm text-foreground/80">
-                <span className="text-accent font-medium">Did you know?</span> {dso.science.interesting_facts[0]}
-              </p>
-            </div>
-          )}
-
-          {dso.physical.magnitude_visual && (
-            <div className="flex gap-6 text-sm text-foreground/50">
-              <span>Magnitude: {dso.physical.magnitude_visual}</span>
-              {dso.physical.size_arcmin && <span>Size: {dso.physical.size_arcmin}&apos;</span>}
-              <span>Distance: {dso.physical.distance_ly.toLocaleString()} ly</span>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
 }
 
 // Helper to get active period days for a month
@@ -321,7 +62,6 @@ function getActivePeriodForMonth(
   const startDay = parseInt(start.match(/(\d+)/)?.[1] || "1");
   const endDay = parseInt(end.match(/(\d+)/)?.[1] || String(daysInMonth));
 
-  // Check if target month is in range
   const isInRange =
     startMonth <= endMonth
       ? targetIdx >= startMonth && targetIdx <= endMonth
@@ -329,21 +69,18 @@ function getActivePeriodForMonth(
 
   if (!isInRange) return null;
 
-  // Calculate start/end days for this month
   let activeStart = 1;
   let activeEnd = daysInMonth;
 
-  if (targetIdx === startMonth) {
-    activeStart = startDay;
-  }
-  if (targetIdx === endMonth) {
-    activeEnd = endDay;
-  }
+  if (targetIdx === startMonth) activeStart = startDay;
+  if (targetIdx === endMonth) activeEnd = endDay;
 
   return { start: activeStart, end: activeEnd };
 }
 
 export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moonData }: SkyGuideProps) {
+  const [expandedDso, setExpandedDso] = useState<string | null>(null);
+
   // Format data for CelestialCalendar
   const calendarMoonPhases = {
     newMoon: new Date(moonData.newMoon).getDate(),
@@ -359,9 +96,7 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
         month,
         daysInMonth
       );
-
       if (!activePeriod) return null;
-
       return {
         id: shower.id,
         name: shower.name,
@@ -374,83 +109,175 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
     })
     .filter((s): s is NonNullable<typeof s> => s !== null);
 
-  // Calculate current day if viewing current month
+  // Current day calculation
   const today = new Date();
   const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const currentMonthIdx = monthNames.findIndex(m => m.toLowerCase() === month.toLowerCase());
   const isCurrentMonth = today.getMonth() === currentMonthIdx && today.getFullYear() === year;
   const currentDay = isCurrentMonth ? today.getDate() : undefined;
 
+  // Best window formatting
+  const bestWindow = moonData.darkSkyWindows[0];
+  const bestStart = bestWindow ? formatDate(bestWindow.start) : null;
+  const bestEnd = bestWindow ? formatDate(bestWindow.end) : null;
+
   return (
-    <main className="min-h-screen bg-background pb-16">
-
-      {/* Hero */}
-      <div className="bg-gradient-to-b from-card to-background border-b border-card-border">
-        <div className="max-w-4xl mx-auto px-6 py-16 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">{month} {year}</h1>
-          <p className="text-xl text-foreground/60">Night Sky Guide for Europe</p>
+    <main className="min-h-screen bg-background pb-20">
+      {/* Header with highlighted month */}
+      <header className="bg-gradient-to-b from-accent/20 to-background border-b border-card-border">
+        <div className="max-w-2xl mx-auto px-4 py-8 text-center">
+          <p className="text-sm text-foreground/50 uppercase tracking-wider mb-2">Night Sky Guide</p>
+          <h1 className="text-4xl md:text-5xl font-bold">
+            <span className="text-accent">{month}</span> {year}
+          </h1>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-4xl mx-auto px-6 py-12 space-y-16">
-        {/* Celestial Calendar */}
-        <section>
-          <CelestialCalendar
-            month={month}
-            year={year}
-            daysInMonth={daysInMonth}
-            moonPhases={calendarMoonPhases}
-            meteorShowers={calendarShowers}
-            currentDay={currentDay}
-          />
-        </section>
-
-
-        {/* Deep Sky Objects */}
-        <section>
-          <div className="flex items-center gap-3 mb-6">
-            <div className="p-2 bg-purple-500/10 rounded-lg">{Icons.nebula}</div>
-            <h2 className="text-2xl font-semibold">Deep Sky Objects</h2>
-          </div>
-
-          <p className="text-foreground/60 mb-6">
-            The best nebulae, galaxies, and star clusters visible this month. Click any object to learn how to find and observe it.
-          </p>
-
-          {/* Featured DSOs with images */}
-          {dsos.some((dso) => FEATURED_DSO_IMAGES[dso.id]) && (
-            <div className="mb-8">
-              <h4 className="text-sm uppercase tracking-wider text-foreground/40 font-medium mb-4">Featured This Month</h4>
-              <div className="grid md:grid-cols-2 gap-6">
-                {dsos
-                  .filter((dso) => FEATURED_DSO_IMAGES[dso.id])
-                  .map((dso) => (
-                    <FeaturedDSOCard
-                      key={dso.id}
-                      dso={dso}
-                      imagePath={FEATURED_DSO_IMAGES[dso.id]}
-                      month={month}
-                      year={year}
-                    />
-                  ))}
+      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+        {/* Quick Summary Card */}
+        <div className="bg-card border border-card-border rounded-xl p-4">
+          <div className="grid grid-cols-2 gap-4">
+            {/* Moon Phases */}
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">🌑</span>
+                <div>
+                  <p className="text-xs text-foreground/50">New Moon</p>
+                  <p className="font-medium">{formatDate(moonData.newMoon)}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-2xl">🌕</span>
+                <div>
+                  <p className="text-xs text-foreground/50">{moonData.fullMoon.name}</p>
+                  <p className="font-medium">{formatDate(moonData.fullMoon.date)}</p>
+                </div>
               </div>
             </div>
-          )}
 
-          {/* Other DSOs */}
-          <h4 className="text-sm uppercase tracking-wider text-foreground/40 font-medium mb-4">More Objects to Explore</h4>
-          <div className="space-y-4">
-            {dsos
-              .filter((dso) => !FEATURED_DSO_IMAGES[dso.id])
-              .map((dso) => (
-                <DSOCard key={dso.id} dso={dso} month={month} year={year} />
-              ))}
+            {/* Best Nights */}
+            <div className="border-l border-card-border pl-4">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xl">⭐</span>
+                <p className="text-xs text-foreground/50">Best Dark Sky Nights</p>
+              </div>
+              {bestStart && bestEnd ? (
+                <p className="font-medium text-accent">{bestStart} - {bestEnd}</p>
+              ) : (
+                <p className="text-foreground/50">No optimal window</p>
+              )}
+              {bestWindow?.quality && (
+                <p className="text-xs text-foreground/40 capitalize">{bestWindow.quality} conditions</p>
+              )}
+            </div>
           </div>
-        </section>
-
         </div>
 
-      {/* Bottom Tab Bar */}
+        {/* Calendar */}
+        <CelestialCalendar
+          month={month}
+          year={year}
+          daysInMonth={daysInMonth}
+          moonPhases={calendarMoonPhases}
+          meteorShowers={calendarShowers}
+          currentDay={currentDay}
+        />
+
+        {/* What to See */}
+        <section>
+          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+            <span>🔭</span> What to See
+          </h2>
+
+          <div className="space-y-2">
+            {dsos.slice(0, 8).map((dso) => (
+              <div
+                key={dso.id}
+                className="bg-card border border-card-border rounded-lg overflow-hidden"
+              >
+                <button
+                  onClick={() => setExpandedDso(expandedDso === dso.id ? null : dso.id)}
+                  className="w-full p-3 text-left flex items-center justify-between hover:bg-foreground/5 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span className="text-lg">
+                      {dso.physical.type_short === 'Gal' ? '🌀' :
+                       dso.physical.type_short.includes('N') ? '🌫️' : '✨'}
+                    </span>
+                    <div>
+                      <p className="font-medium">{dso.names.primary}</p>
+                      <p className="text-xs text-foreground/50">{dso.physical.type}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      dso.visibility.difficulty === 'easy' ? 'bg-green-500/20 text-green-400' :
+                      dso.visibility.difficulty === 'moderate' ? 'bg-yellow-500/20 text-yellow-400' :
+                      'bg-red-500/20 text-red-400'
+                    }`}>
+                      {dso.visibility.difficulty}
+                    </span>
+                    <svg
+                      className={`w-4 h-4 text-foreground/40 transition-transform ${expandedDso === dso.id ? 'rotate-180' : ''}`}
+                      fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                    >
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </button>
+
+                {expandedDso === dso.id && (
+                  <div className="px-3 pb-3 pt-0 border-t border-card-border/50">
+                    <p className="text-sm text-foreground/70 my-2">{dso.science.short_description}</p>
+                    <div className="flex flex-wrap gap-2 text-xs">
+                      <span className="bg-foreground/10 px-2 py-1 rounded">{dso.physical.constellation}</span>
+                      <span className="bg-foreground/10 px-2 py-1 rounded">{getEquipmentLabel(dso.visibility.equipment_minimum)}</span>
+                      {dso.physical.magnitude_visual && (
+                        <span className="bg-foreground/10 px-2 py-1 rounded">Mag {dso.physical.magnitude_visual}</span>
+                      )}
+                    </div>
+                    {dso.finding.naked_eye_guide && (
+                      <p className="text-xs text-foreground/50 mt-2 italic">{dso.finding.naked_eye_guide}</p>
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {dsos.length > 8 && (
+            <p className="text-center text-sm text-foreground/40 mt-3">
+              +{dsos.length - 8} more objects visible this month
+            </p>
+          )}
+        </section>
+
+        {/* Meteor Showers (if any) */}
+        {showers.length > 0 && (
+          <section>
+            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+              <span>☄️</span> Meteor Showers
+            </h2>
+            <div className="space-y-2">
+              {showers.map((shower) => (
+                <div key={shower.id} className="bg-card border border-card-border rounded-lg p-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium">{shower.name}</p>
+                      <p className="text-xs text-foreground/50">Peak: {shower.peak_date}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-accent">{shower.zhr}</p>
+                      <p className="text-xs text-foreground/50">meteors/hr</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+
       <BottomTabBar />
     </main>
   );

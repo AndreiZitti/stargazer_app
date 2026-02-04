@@ -398,10 +398,11 @@ export default function LightPollutionMap({
         url={baseConfig.url}
         maxZoom={baseConfig.maxZoom}
         className={baseLayer === 'dark' ? 'base-map-enhanced' : undefined}
+        zIndex={1}
       />
 
       {/* Light pollution overlays */}
-      {activeOverlays.map((overlayId) => {
+      {activeOverlays.map((overlayId, index) => {
         const overlay = POLLUTION_OVERLAYS[overlayId];
         const isLorenz = overlayId === '2024' || overlayId === '2022';
 
@@ -415,6 +416,7 @@ export default function LightPollutionMap({
             zoomOffset={isLorenz ? -2 : 0}
             maxNativeZoom={8}
             maxZoom={18}
+            zIndex={10 + index}
           />
         );
       })}

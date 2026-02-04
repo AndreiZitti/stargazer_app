@@ -13,9 +13,9 @@ const MONTH_DATA: Record<string, {
     days: 31,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-01-11",
-      fullMoon: { date: "2026-01-25", name: "Wolf Moon" },
-      darkSkyWindows: [{ start: "2026-01-07", end: "2026-01-15", quality: "excellent" }],
+      newMoon: "2026-01-18",
+      fullMoon: { date: "2026-01-03", name: "Wolf Moon" },
+      darkSkyWindows: [{ start: "2026-01-14", end: "2026-01-22", quality: "excellent" }],
     }
   },
   february: {
@@ -23,9 +23,9 @@ const MONTH_DATA: Record<string, {
     days: 28,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-02-09",
-      fullMoon: { date: "2026-02-23", name: "Snow Moon" },
-      darkSkyWindows: [{ start: "2026-02-05", end: "2026-02-13", quality: "excellent" }],
+      newMoon: "2026-02-17",
+      fullMoon: { date: "2026-02-01", name: "Snow Moon" },
+      darkSkyWindows: [{ start: "2026-02-13", end: "2026-02-21", quality: "excellent" }],
     }
   },
   march: {
@@ -33,9 +33,9 @@ const MONTH_DATA: Record<string, {
     days: 31,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-03-11",
-      fullMoon: { date: "2026-03-25", name: "Worm Moon" },
-      darkSkyWindows: [{ start: "2026-03-07", end: "2026-03-15", quality: "excellent" }],
+      newMoon: "2026-03-19",
+      fullMoon: { date: "2026-03-03", name: "Worm Moon" },
+      darkSkyWindows: [{ start: "2026-03-15", end: "2026-03-23", quality: "excellent" }],
     }
   },
   april: {
@@ -43,9 +43,9 @@ const MONTH_DATA: Record<string, {
     days: 30,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-04-10",
-      fullMoon: { date: "2026-04-24", name: "Pink Moon" },
-      darkSkyWindows: [{ start: "2026-04-06", end: "2026-04-14", quality: "excellent" }],
+      newMoon: "2026-04-17",
+      fullMoon: { date: "2026-04-02", name: "Pink Moon" },
+      darkSkyWindows: [{ start: "2026-04-13", end: "2026-04-21", quality: "excellent" }],
     }
   },
   may: {
@@ -53,9 +53,9 @@ const MONTH_DATA: Record<string, {
     days: 31,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-05-09",
-      fullMoon: { date: "2026-05-23", name: "Flower Moon" },
-      darkSkyWindows: [{ start: "2026-05-05", end: "2026-05-13", quality: "excellent" }],
+      newMoon: "2026-05-16",
+      fullMoon: { date: "2026-05-01", name: "Flower Moon" },
+      darkSkyWindows: [{ start: "2026-05-12", end: "2026-05-20", quality: "excellent" }],
     }
   },
   june: {
@@ -63,9 +63,9 @@ const MONTH_DATA: Record<string, {
     days: 30,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-06-08",
-      fullMoon: { date: "2026-06-22", name: "Strawberry Moon" },
-      darkSkyWindows: [{ start: "2026-06-04", end: "2026-06-12", quality: "good" }],
+      newMoon: "2026-06-15",
+      fullMoon: { date: "2026-06-30", name: "Strawberry Moon" },
+      darkSkyWindows: [{ start: "2026-06-11", end: "2026-06-19", quality: "excellent" }],
     }
   },
   july: {
@@ -73,9 +73,9 @@ const MONTH_DATA: Record<string, {
     days: 31,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-07-07",
-      fullMoon: { date: "2026-07-21", name: "Buck Moon" },
-      darkSkyWindows: [{ start: "2026-07-03", end: "2026-07-11", quality: "good" }],
+      newMoon: "2026-07-14",
+      fullMoon: { date: "2026-07-29", name: "Buck Moon" },
+      darkSkyWindows: [{ start: "2026-07-10", end: "2026-07-18", quality: "excellent" }],
     }
   },
   august: {
@@ -83,9 +83,9 @@ const MONTH_DATA: Record<string, {
     days: 31,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-08-06",
-      fullMoon: { date: "2026-08-20", name: "Sturgeon Moon" },
-      darkSkyWindows: [{ start: "2026-08-02", end: "2026-08-10", quality: "excellent" }],
+      newMoon: "2026-08-12",
+      fullMoon: { date: "2026-08-28", name: "Sturgeon Moon" },
+      darkSkyWindows: [{ start: "2026-08-08", end: "2026-08-16", quality: "excellent" }],
     }
   },
   september: {
@@ -93,9 +93,9 @@ const MONTH_DATA: Record<string, {
     days: 30,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-09-04",
-      fullMoon: { date: "2026-09-18", name: "Harvest Moon" },
-      darkSkyWindows: [{ start: "2026-08-31", end: "2026-09-08", quality: "excellent" }],
+      newMoon: "2026-09-11",
+      fullMoon: { date: "2026-09-26", name: "Harvest Moon" },
+      darkSkyWindows: [{ start: "2026-09-07", end: "2026-09-15", quality: "excellent" }],
     }
   },
   october: {
@@ -103,9 +103,9 @@ const MONTH_DATA: Record<string, {
     days: 31,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-10-03",
-      fullMoon: { date: "2026-10-18", name: "Hunter's Moon" },
-      darkSkyWindows: [{ start: "2026-09-29", end: "2026-10-07", quality: "excellent" }],
+      newMoon: "2026-10-10",
+      fullMoon: { date: "2026-10-26", name: "Hunter's Moon" },
+      darkSkyWindows: [{ start: "2026-10-06", end: "2026-10-14", quality: "excellent" }],
     }
   },
   november: {
@@ -113,19 +113,19 @@ const MONTH_DATA: Record<string, {
     days: 30,
     year: 2026,
     fallbackMoon: {
-      newMoon: "2026-11-02",
-      fullMoon: { date: "2026-11-16", name: "Beaver Moon" },
-      darkSkyWindows: [{ start: "2026-10-29", end: "2026-11-06", quality: "excellent" }],
+      newMoon: "2026-11-09",
+      fullMoon: { date: "2026-11-24", name: "Beaver Moon" },
+      darkSkyWindows: [{ start: "2026-11-05", end: "2026-11-13", quality: "excellent" }],
     }
   },
   december: {
     name: "December",
     days: 31,
-    year: 2025,
+    year: 2026,
     fallbackMoon: {
-      newMoon: "2025-12-20",
-      fullMoon: { date: "2025-12-04", name: "Cold Moon" },
-      darkSkyWindows: [{ start: "2025-12-16", end: "2025-12-24", quality: "excellent" }],
+      newMoon: "2026-12-09",
+      fullMoon: { date: "2026-12-24", name: "Cold Moon" },
+      darkSkyWindows: [{ start: "2026-12-05", end: "2026-12-13", quality: "excellent" }],
     }
   },
 };

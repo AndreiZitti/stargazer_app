@@ -34,49 +34,49 @@
   },
   "2026": {
     "january": {
-      "last_quarter": "2026-01-03",
-      "new_moon": "2026-01-11",
-      "first_quarter": "2026-01-18",
+      "new_moon": "2026-01-18",
+      "first_quarter": "2026-01-26",
       "full_moon": {
-        "date": "2026-01-25",
-        "name": "Wolf Moon"
+        "date": "2026-02-01",
+        "name": "Wolf Moon",
+        "notes": "First full moon visible in late January nights"
       },
       "dark_sky_windows": [
         {
-          "start": "2026-01-07",
-          "end": "2026-01-15",
+          "start": "2026-01-14",
+          "end": "2026-01-22",
           "quality": "excellent"
         }
       ]
     },
     "february": {
-      "last_quarter": "2026-02-01",
-      "new_moon": "2026-02-09",
-      "first_quarter": "2026-02-17",
       "full_moon": {
-        "date": "2026-02-24",
+        "date": "2026-02-01",
         "name": "Snow Moon"
       },
+      "last_quarter": "2026-02-09",
+      "new_moon": "2026-02-17",
+      "first_quarter": "2026-02-24",
       "dark_sky_windows": [
         {
-          "start": "2026-02-05",
-          "end": "2026-02-13",
+          "start": "2026-02-13",
+          "end": "2026-02-21",
           "quality": "excellent"
         }
       ]
     },
     "march": {
-      "last_quarter": "2026-03-03",
-      "new_moon": "2026-03-11",
-      "first_quarter": "2026-03-19",
       "full_moon": {
-        "date": "2026-03-25",
+        "date": "2026-03-03",
         "name": "Worm Moon"
       },
+      "last_quarter": "2026-03-11",
+      "new_moon": "2026-03-19",
+      "first_quarter": "2026-03-25",
       "dark_sky_windows": [
         {
-          "start": "2026-03-07",
-          "end": "2026-03-15",
+          "start": "2026-03-15",
+          "end": "2026-03-23",
           "quality": "excellent"
         }
       ],
@@ -89,96 +89,85 @@
       ]
     },
     "april": {
-      "last_quarter": "2026-04-01",
-      "new_moon": "2026-04-10",
-      "first_quarter": "2026-04-17",
       "full_moon": {
-        "date": "2026-04-24",
+        "date": "2026-04-02",
         "name": "Pink Moon"
       },
+      "last_quarter": "2026-04-10",
+      "new_moon": "2026-04-17",
+      "first_quarter": "2026-04-24",
       "dark_sky_windows": [
         {
-          "start": "2026-04-06",
-          "end": "2026-04-14",
+          "start": "2026-04-13",
+          "end": "2026-04-21",
           "quality": "excellent"
         }
       ]
     },
     "may": {
-      "last_quarter": "2026-05-01",
-      "new_moon": {
-        "date": "2026-05-10",
-        "notes": "Super New Moon"
-      },
-      "first_quarter": "2026-05-16",
       "full_moon": {
-        "date": "2026-05-24",
+        "date": "2026-05-01",
         "name": "Flower Moon"
       },
-      "last_quarter_2": "2026-05-31",
+      "last_quarter": "2026-05-09",
+      "new_moon": "2026-05-16",
+      "first_quarter": "2026-05-23",
+      "full_moon_2": {
+        "date": "2026-05-31",
+        "name": "Blue Moon",
+        "notes": "Second full moon in calendar month"
+      },
       "dark_sky_windows": [
         {
-          "start": "2026-05-06",
-          "end": "2026-05-14",
+          "start": "2026-05-12",
+          "end": "2026-05-20",
           "quality": "excellent"
-        }
-      ],
-      "special_events": [
-        {
-          "type": "Blue Moon",
-          "date": "2026-05-31",
-          "notes": "Second full moon in calendar month; also Micro Full Moon"
         }
       ]
     },
     "june": {
-      "new_moon": {
-        "date": "2026-06-08",
-        "notes": "Super New Moon"
-      },
-      "first_quarter": "2026-06-14",
+      "last_quarter": "2026-06-08",
+      "new_moon": "2026-06-15",
+      "first_quarter": "2026-06-21",
       "full_moon": {
-        "date": "2026-06-22",
-        "name": "Strawberry Moon",
-        "notes": "Micro Full Moon"
+        "date": "2026-06-30",
+        "name": "Strawberry Moon"
       },
-      "last_quarter": "2026-06-29",
       "dark_sky_windows": [
         {
-          "start": "2026-06-04",
-          "end": "2026-06-12",
-          "quality": "excellent"
+          "start": "2026-06-11",
+          "end": "2026-06-19",
+          "quality": "good"
         }
       ]
     },
     "july": {
-      "new_moon": "2026-07-07",
-      "first_quarter": "2026-07-14",
+      "new_moon": "2026-07-14",
+      "first_quarter": "2026-07-21",
       "full_moon": {
-        "date": "2026-07-21",
+        "date": "2026-07-29",
         "name": "Buck Moon"
       },
-      "last_quarter": "2026-07-29",
       "dark_sky_windows": [
         {
-          "start": "2026-07-03",
-          "end": "2026-07-11",
-          "quality": "excellent"
+          "start": "2026-07-10",
+          "end": "2026-07-18",
+          "quality": "good"
         }
       ]
     },
     "august": {
-      "new_moon": "2026-08-05",
-      "first_quarter": "2026-08-12",
+      "last_quarter": "2026-08-06",
+      "new_moon": "2026-08-12",
+      "first_quarter": "2026-08-20",
       "full_moon": {
-        "date": "2026-08-19",
+        "date": "2026-08-28",
         "name": "Sturgeon Moon"
       },
-      "last_quarter": "2026-08-28",
       "dark_sky_windows": [
         {
-          "start": "2026-08-01",
-          "end": "2026-08-09",
+          "start": "2026-08-08",
+          "end": "2026-08-16",
           "quality": "excellent"
         }
       ],
@@ -191,78 +180,66 @@
       ]
     },
     "september": {
-      "new_moon": "2026-09-04",
-      "first_quarter": "2026-09-10",
+      "last_quarter": "2026-09-04",
+      "new_moon": "2026-09-11",
+      "first_quarter": "2026-09-18",
       "full_moon": {
-        "date": "2026-09-18",
+        "date": "2026-09-26",
         "name": "Harvest Moon"
       },
-      "last_quarter": "2026-09-26",
       "dark_sky_windows": [
         {
-          "start": "2026-08-31",
-          "end": "2026-09-08",
+          "start": "2026-09-07",
+          "end": "2026-09-15",
           "quality": "excellent"
         }
       ]
     },
     "october": {
-      "new_moon": "2026-10-03",
-      "first_quarter": "2026-10-10",
+      "last_quarter": "2026-10-03",
+      "new_moon": "2026-10-10",
+      "first_quarter": "2026-10-18",
       "full_moon": {
-        "date": "2026-10-18",
+        "date": "2026-10-26",
         "name": "Hunter's Moon"
       },
-      "last_quarter": "2026-10-26",
       "dark_sky_windows": [
         {
-          "start": "2026-09-29",
-          "end": "2026-10-07",
+          "start": "2026-10-06",
+          "end": "2026-10-14",
           "quality": "excellent"
         }
       ]
     },
     "november": {
-      "new_moon": "2026-11-01",
-      "first_quarter": "2026-11-09",
+      "last_quarter": "2026-11-01",
+      "new_moon": "2026-11-09",
+      "first_quarter": "2026-11-17",
       "full_moon": {
-        "date": "2026-11-17",
+        "date": "2026-11-24",
         "name": "Beaver Moon"
       },
-      "last_quarter": "2026-11-24",
-      "new_moon_2": "2026-12-01",
       "dark_sky_windows": [
         {
-          "start": "2026-10-28",
-          "end": "2026-11-05",
-          "quality": "excellent"
-        },
-        {
-          "start": "2026-11-27",
-          "end": "2026-12-05",
+          "start": "2026-11-05",
+          "end": "2026-11-13",
           "quality": "excellent"
         }
       ]
     },
     "december": {
-      "new_moon": "2026-12-01",
-      "first_quarter": "2026-12-08",
+      "last_quarter": "2026-12-01",
+      "new_moon": "2026-12-09",
+      "first_quarter": "2026-12-17",
       "full_moon": {
-        "date": "2026-12-17",
-        "name": "Cold Moon",
-        "notes": "Super Full Moon"
+        "date": "2026-12-24",
+        "name": "Cold Moon"
       },
-      "last_quarter": "2026-12-23",
-      "new_moon_2": "2026-12-30",
+      "last_quarter_2": "2026-12-30",
       "dark_sky_windows": [
         {
-          "start": "2026-11-27",
-          "end": "2026-12-05",
-          "quality": "excellent"
-        },
-        {
-          "start": "2026-12-26",
-          "end": "2027-01-03",
+          "start": "2026-12-05",
+          "end": "2026-12-13",
           "quality": "excellent"
         }
       ]

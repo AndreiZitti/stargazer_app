@@ -10,11 +10,11 @@ import TutorialPrompt from "@/components/TutorialPrompt";
 import HelpButton from "@/components/HelpButton";
 import SpotSearchModal from "@/components/SpotSearchModal";
 import BottomTabBar from "@/components/BottomTabBar";
-import SavedPlacesWidget from "@/components/SavedPlacesWidget";
+
 import CloudForecastModal from "@/components/CloudForecastModal";
 import { LocationSheet, LocationData } from "@/components/LocationSheet";
 import DirectionsPanel from "@/components/DirectionsPanel";
-import { ScoredSpot, Coordinates, SavedPlace, SpotSearchResult } from "@/lib/types";
+import { ScoredSpot, Coordinates, SpotSearchResult } from "@/lib/types";
 
 // Tutorial steps configuration
 const TUTORIAL_STEPS: TutorialStep[] = [
@@ -93,6 +93,8 @@ export default function Home() {
     lat: number;
     lng: number;
   } | null>(null);
+
+
 
   // Spot search modal state
   const [showSearchModal, setShowSearchModal] = useState(false);
@@ -217,22 +219,6 @@ export default function Home() {
         loading: false,
       };
     }
-  };
-
-  const handleSavedPlaceClick = (place: SavedPlace) => {
-    // Center map on the saved place and open LocationSheet
-    setMapCenter([place.lat, place.lng]);
-    setMapZoom(12);
-    setSelectedLocation({
-      lat: place.lat,
-      lng: place.lng,
-      name: place.name,
-      type: "saved",
-      savedPlaceId: place.id,
-      bortle: place.bortle,
-      label: place.label,
-      address: place.address,
-    });
   };
 
   // Handler for map marker clicks - opens LocationSheet
@@ -484,91 +470,73 @@ export default function Home() {
       )}
 
       {/* Floating Search Bar - Bottom Center (above tab bar) */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[1000] flex flex-col items-center gap-2">
-        <div className="flex items-center gap-2">
-          <MapSearchBar onSearch={handleSearch} isLoading={false} />
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-[1000]">
+        <MapSearchBar onSearch={handleSearch} isLoading={false} />
+      </div>
+
+      {/* Map Layer Controls - Top Right */}
+      <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+        {/* Base Map Selector */}
+        <div className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg shadow-lg p-1.5 flex gap-1">
+          {[
+            { id: 'dark', label: 'Dark', icon: '🌙' },
+            { id: 'satellite', label: 'Sat', icon: '🛰️' },
+            { id: 'osm', label: 'Map', icon: '🗺️' },
+          ].map((layer) => (
+            <button
+              key={layer.id}
+              onClick={() => setBaseLayer(layer.id as BaseLayer)}
+              className={`px-2 py-1.5 text-xs rounded transition-all flex items-center gap-1 ${
+                baseLayer === layer.id
+                  ? 'bg-accent text-white shadow-sm'
+                  : 'hover:bg-foreground/10 text-foreground/70'
+              }`}
+              title={layer.label}
+            >
+              <span>{layer.icon}</span>
+              <span className="hidden sm:inline">{layer.label}</span>
+            </button>
+          ))}
         </div>
 
-        {/* Layer Controls - hover to reveal */}
-        <div className="group relative">
-          {/* Collapsed state - layers icon */}
-          <div className="flex items-center justify-center py-1.5 px-3 cursor-pointer opacity-50 group-hover:opacity-0 transition-opacity duration-200">
-            <svg className="w-5 h-5 text-foreground/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-            </svg>
+        {/* Light Pollution Toggle & Opacity */}
+        <div className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg shadow-lg p-2">
+          {/* Overlay toggles */}
+          <div className="flex gap-1 mb-2">
+            {[
+              { id: '2024', label: "'24" },
+              { id: '2022', label: "'22" },
+              { id: 'nasa', label: 'NASA' },
+            ].map((overlay) => (
+              <button
+                key={overlay.id}
+                onClick={() => toggleOverlay(overlay.id as PollutionOverlay)}
+                className={`px-2 py-1 text-xs rounded transition-all ${
+                  activeOverlays.includes(overlay.id as PollutionOverlay)
+                    ? 'bg-purple-500 text-white'
+                    : 'bg-foreground/10 hover:bg-foreground/20 text-foreground/60'
+                }`}
+              >
+                {overlay.label}
+              </button>
+            ))}
           </div>
 
-          {/* Expanded state - full controls */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none group-hover:pointer-events-auto">
-            <div className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg shadow-lg p-3 min-w-[280px]">
-
-              {/* Base Map Selection */}
-              <div className="mb-3">
-                <div className="text-xs text-foreground/50 mb-1.5 uppercase tracking-wide">Base Map</div>
-                <div className="flex gap-1">
-                  {[
-                    { id: 'dark', label: 'Dark' },
-                    { id: 'stadia', label: 'Stadia' },
-                    { id: 'satellite', label: 'Satellite' },
-                    { id: 'osm', label: 'OSM' },
-                  ].map((layer) => (
-                    <button
-                      key={layer.id}
-                      onClick={() => setBaseLayer(layer.id as BaseLayer)}
-                      className={`px-2.5 py-1 text-xs rounded transition-colors ${
-                        baseLayer === layer.id
-                          ? 'bg-accent text-white'
-                          : 'bg-foreground/10 hover:bg-foreground/20 text-foreground/70'
-                      }`}
-                    >
-                      {layer.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Light Pollution Overlays */}
-              <div className="mb-3">
-                <div className="text-xs text-foreground/50 mb-1.5 uppercase tracking-wide">Light Pollution</div>
-                <div className="flex gap-1">
-                  {[
-                    { id: '2024', label: '2024' },
-                    { id: '2022', label: '2022' },
-                    { id: 'nasa', label: 'NASA' },
-                  ].map((overlay) => (
-                    <button
-                      key={overlay.id}
-                      onClick={() => toggleOverlay(overlay.id as PollutionOverlay)}
-                      className={`px-2.5 py-1 text-xs rounded transition-colors ${
-                        activeOverlays.includes(overlay.id as PollutionOverlay)
-                          ? 'bg-purple-500 text-white'
-                          : 'bg-foreground/10 hover:bg-foreground/20 text-foreground/70'
-                      }`}
-                    >
-                      {overlay.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Opacity Slider */}
-              <div>
-                <div className="text-xs text-foreground/50 mb-1.5 uppercase tracking-wide">Overlay Opacity</div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.05"
-                    value={overlayOpacity}
-                    onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
-                    className="flex-1 accent-accent"
-                  />
-                  <span className="text-xs text-foreground/60 w-8">{Math.round(overlayOpacity * 100)}%</span>
-                </div>
-              </div>
-
-            </div>
+          {/* Opacity slider */}
+          <div className="flex items-center gap-2">
+            <svg className="w-3.5 h-3.5 text-foreground/40" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clipRule="evenodd" />
+            </svg>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={overlayOpacity}
+              onChange={(e) => setOverlayOpacity(parseFloat(e.target.value))}
+              className="w-20 accent-purple-500"
+            />
+            <span className="text-xs text-foreground/50 w-7">{Math.round(overlayOpacity * 100)}%</span>
           </div>
         </div>
       </div>
@@ -618,12 +586,6 @@ export default function Home() {
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
         onSearch={handleSpotSearch}
-      />
-
-      {/* Saved Places Widget */}
-      <SavedPlacesWidget
-        onPlaceClick={handleSavedPlaceClick}
-        userLocation={searchLocation}
       />
 
       {/* Bottom Tab Bar */}

@@ -16,14 +16,12 @@ const tabs = [
     ),
   },
   {
-    id: "sky",
-    label: "Sky",
-    href: "/sky-lab",
+    id: "saved",
+    label: "Saved",
+    href: "/saved",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
-        <path strokeLinecap="round" strokeWidth={1.5} d="M2 12h20" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
       </svg>
     ),
   },
@@ -37,6 +35,18 @@ const tabs = [
       </svg>
     ),
   },
+  {
+    id: "sky",
+    label: "Sky",
+    href: "/sky-lab",
+    icon: (
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z" />
+        <path strokeLinecap="round" strokeWidth={1.5} d="M2 12h20" />
+      </svg>
+    ),
+  },
 ];
 
 export default function BottomTabBar() {
@@ -44,6 +54,7 @@ export default function BottomTabBar() {
 
   const isActive = (tab: typeof tabs[0]) => {
     if (tab.id === "map") return pathname === "/";
+    if (tab.id === "saved") return pathname.startsWith("/saved");
     if (tab.id === "sky") return pathname.startsWith("/sky-lab");
     if (tab.id === "guide") return pathname.startsWith("/guide") || pathname === "/december" || pathname === "/january";
     return pathname === tab.href;
