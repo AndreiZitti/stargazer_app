@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useUser } from "@/contexts/UserContext";
 import { useTrips } from "@/hooks/useTrips";
 import { SavedPlace, Trip, TripTarget } from "@/lib/types";
@@ -498,6 +499,9 @@ export default function SavedPage() {
   const [loadingWeather, setLoadingWeather] = useState<Set<string>>(new Set());
   const [sortBy, setSortBy] = useState<"recent" | "distance" | "name">("recent");
   const [showAddTrip, setShowAddTrip] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+
+  const { signOut, isAuthenticated } = useUser();
 
   const isLoading = placesLoading || tripsLoading;
 
@@ -540,6 +544,53 @@ export default function SavedPage() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-sm border-b border-card-border">
+        {/* Top Bar with User */}
+        <div className="flex items-center justify-between px-4 py-2 border-b border-card-border/50">
+          <h1 className="text-lg font-semibold">Saved</h1>
+
+          {/* User Button */}
+          {isAuthenticated ? (
+            <div className="relative">
+              <button
+                onClick={() => setShowUserMenu(!showUserMenu)}
+                className="w-8 h-8 rounded-full bg-accent/20 text-accent flex items-center justify-center text-sm font-medium"
+              >
+                {user?.email?.charAt(0).toUpperCase() || "U"}
+              </button>
+
+              {showUserMenu && (
+                <>
+                  <div
+                    className="fixed inset-0 z-10"
+                    onClick={() => setShowUserMenu(false)}
+                  />
+                  <div className="absolute right-0 top-10 z-20 bg-card border border-card-border rounded-lg shadow-lg py-1 min-w-[160px]">
+                    <div className="px-3 py-2 text-xs text-foreground/50 border-b border-card-border">
+                      {user?.email}
+                    </div>
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setShowUserMenu(false);
+                      }}
+                      className="w-full px-3 py-2 text-left text-sm text-red-400 hover:bg-foreground/5"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm text-accent hover:text-accent/80 font-medium"
+            >
+              Sign In
+            </Link>
+          )}
+        </div>
+
         {/* Tabs */}
         <div className="flex border-b border-card-border">
           <button
