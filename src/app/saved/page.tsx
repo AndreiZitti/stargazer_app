@@ -174,24 +174,45 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
 // ============ Trip Card ============
 interface TripCardProps {
   trip: Trip;
-  savedPlaces: SavedPlace[];
-  onDelete: () => void;
-  onAddTarget: (target: Omit<TripTarget, "id">) => void;
-  onRemoveTarget: (targetId: string) => void;
-  onUpdateTarget: (targetId: string, updates: Partial<TripTarget>) => void;
+  readOnly?: boolean;
+  onUpdate?: (updates: Partial<Trip>) => void;
+  onDelete?: () => void;
+  onAddTarget?: (target: Omit<TripTarget, "id">) => void;
+  onRemoveTarget?: (targetId: string) => void;
+  onUpdateTarget?: (targetId: string, updates: Partial<TripTarget>) => void;
+  onToggleLive?: () => void;
 }
 
-function TripCard({ trip, savedPlaces, onDelete, onAddTarget, onRemoveTarget, onUpdateTarget }: TripCardProps) {
+function TripCard({ trip, readOnly, onUpdate, onDelete, onAddTarget, onRemoveTarget, onUpdateTarget, onToggleLive }: TripCardProps) {
   const [expanded, setExpanded] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [editDate, setEditDate] = useState(trip.date);
+  const [editNotes, setEditNotes] = useState(trip.notes || "");
   const [showAddTarget, setShowAddTarget] = useState(false);
   const [newTarget, setNewTarget] = useState({ name: "", collectionTime: "", notes: "" });
+  const [editingTargetId, setEditingTargetId] = useState<string | null>(null);
+  const [editTarget, setEditTarget] = useState({ name: "", collectionTime: "", notes: "" });
 
   const isPast = new Date(trip.date) < new Date(new Date().toDateString());
   const totalTime = trip.targets.reduce((sum, t) => sum + (t.collectionTime || 0), 0);
 
+  const handleSaveEdit = () => {
+    onUpdate?.({
+      date: editDate,
+      notes: editNotes.trim() || undefined,
+    });
+    setEditing(false);
+  };
+
+  const handleStartEdit = () => {
+    setEditDate(trip.date);
+    setEditNotes(trip.notes || "");
+    setEditing(true);
+  };
+
   const handleAddTarget = () => {
     if (!newTarget.name.trim()) return;
-    onAddTarget({
+    onAddTarget?.({
       name: newTarget.name.trim(),
       collectionTime: newTarget.collectionTime ? parseInt(newTarget.collectionTime) : undefined,
       notes: newTarget.notes.trim() || undefined,
@@ -200,8 +221,26 @@ function TripCard({ trip, savedPlaces, onDelete, onAddTarget, onRemoveTarget, on
     setShowAddTarget(false);
   };
 
+  const handleStartEditTarget = (target: TripTarget) => {
+    setEditingTargetId(target.id);
+    setEditTarget({
+      name: target.name,
+      collectionTime: target.collectionTime?.toString() || "",
+      notes: target.notes || "",
+    });
+  };
+
+  const handleSaveTarget = (targetId: string) => {
+    onUpdateTarget?.(targetId, {
+      name: editTarget.name.trim(),
+      collectionTime: editTarget.collectionTime ? parseInt(editTarget.collectionTime) : undefined,
+      notes: editTarget.notes.trim() || undefined,
+    });
+    setEditingTargetId(null);
+  };
+
   return (
-    <div className={`bg-card border border-card-border rounded-lg overflow-hidden ${isPast ? "opacity-60" : ""}`}>
+    <div className={`bg-card border rounded-lg overflow-hidden ${trip.live ? "border-green-500/50" : "border-card-border"} ${isPast ? "opacity-60" : ""}`}>
       <button
         onClick={() => setExpanded(!expanded)}
         className="w-full p-4 text-left hover:bg-foreground/5 transition-colors"
@@ -209,8 +248,11 @@ function TripCard({ trip, savedPlaces, onDelete, onAddTarget, onRemoveTarget, on
         <div className="flex items-start justify-between gap-3">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <span className="text-lg">🗓️</span>
+              <span className="text-lg">{trip.live ? "📡" : "🗓️"}</span>
               <h3 className="font-medium truncate">{trip.location.name}</h3>
+              {trip.live && (
+                <span className="text-[10px] px-1.5 py-0.5 bg-green-500/20 text-green-400 rounded-full">LIVE</span>
+              )}
             </div>
             <p className="text-sm text-foreground/60 mt-1">{formatDate(trip.date)}</p>
             <div className="flex items-center gap-3 mt-2 text-xs text-foreground/50">
@@ -229,22 +271,70 @@ function TripCard({ trip, savedPlaces, onDelete, onAddTarget, onRemoveTarget, on
 
       {expanded && (
         <div className="border-t border-card-border">
-          {trip.notes && (
-            <div className="p-4 border-b border-card-border/50">
-              <p className="text-sm text-foreground/60">{trip.notes}</p>
-            </div>
-          )}
+          {/* Trip details - view or edit */}
+          <div className="p-4 border-b border-card-border/50">
+            {editing ? (
+              <div className="space-y-2">
+                <input
+                  type="date"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                  className="w-full px-3 py-2 text-sm bg-background border border-card-border rounded-lg"
+                />
+                <textarea
+                  placeholder="Notes (optional)"
+                  value={editNotes}
+                  onChange={(e) => setEditNotes(e.target.value)}
+                  rows={2}
+                  className="w-full px-3 py-2 text-sm bg-background border border-card-border rounded-lg resize-none"
+                />
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setEditing(false)}
+                    className="flex-1 py-1.5 text-xs bg-foreground/10 rounded-lg"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    className="flex-1 py-1.5 text-xs bg-accent text-white rounded-lg"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-start justify-between">
+                <div>
+                  {trip.notes && <p className="text-sm text-foreground/60">{trip.notes}</p>}
+                  {!trip.notes && <p className="text-sm text-foreground/40 italic">No notes</p>}
+                </div>
+                {!readOnly && (
+                  <button
+                    onClick={handleStartEdit}
+                    className="p-1.5 text-foreground/40 hover:text-foreground/70 hover:bg-foreground/5 rounded"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Targets */}
           <div className="p-4 border-b border-card-border/50">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-sm font-medium text-foreground/70">Targets</h4>
-              <button
-                onClick={() => setShowAddTarget(!showAddTarget)}
-                className="text-xs text-accent hover:text-accent/80"
-              >
-                {showAddTarget ? "Cancel" : "+ Add"}
-              </button>
+              {!readOnly && (
+                <button
+                  onClick={() => setShowAddTarget(!showAddTarget)}
+                  className="text-xs text-accent hover:text-accent/80"
+                >
+                  {showAddTarget ? "Cancel" : "+ Add"}
+                </button>
+              )}
             </div>
 
             {showAddTarget && (
@@ -287,36 +377,66 @@ function TripCard({ trip, savedPlaces, onDelete, onAddTarget, onRemoveTarget, on
             ) : (
               <div className="space-y-2">
                 {trip.targets.map((target) => (
-                  <div key={target.id} className="flex items-center gap-3 p-2 bg-foreground/5 rounded-lg">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{target.name}</p>
-                      <div className="flex items-center gap-2 text-xs text-foreground/50">
-                        {target.collectionTime && <span>{target.collectionTime} min</span>}
-                        {target.notes && <span className="truncate">• {target.notes}</span>}
+                  editingTargetId === target.id ? (
+                    <div key={target.id} className="p-2 bg-foreground/5 rounded-lg space-y-2">
+                      <input
+                        type="text"
+                        value={editTarget.name}
+                        onChange={(e) => setEditTarget({ ...editTarget, name: e.target.value })}
+                        className="w-full px-2 py-1.5 text-sm bg-background border border-card-border rounded"
+                      />
+                      <div className="flex gap-2">
+                        <input
+                          type="number"
+                          placeholder="Min"
+                          value={editTarget.collectionTime}
+                          onChange={(e) => setEditTarget({ ...editTarget, collectionTime: e.target.value })}
+                          className="w-20 px-2 py-1.5 text-sm bg-background border border-card-border rounded"
+                        />
+                        <input
+                          type="text"
+                          placeholder="Notes"
+                          value={editTarget.notes}
+                          onChange={(e) => setEditTarget({ ...editTarget, notes: e.target.value })}
+                          className="flex-1 px-2 py-1.5 text-sm bg-background border border-card-border rounded"
+                        />
+                      </div>
+                      <div className="flex gap-2">
+                        <button onClick={() => setEditingTargetId(null)} className="flex-1 py-1 text-xs bg-foreground/10 rounded">Cancel</button>
+                        <button onClick={() => handleSaveTarget(target.id)} className="flex-1 py-1 text-xs bg-accent text-white rounded">Save</button>
                       </div>
                     </div>
-                    {target.stellariumId && (
-                      <a
-                        href={`https://stellarium-web.org/skysource/${target.stellariumId}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="p-1.5 text-accent hover:bg-accent/10 rounded"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <circle cx="12" cy="12" r="10" strokeWidth={1.5} />
-                          <path strokeWidth={1.5} d="M2 12h20" />
-                        </svg>
-                      </a>
-                    )}
-                    <button
-                      onClick={() => onRemoveTarget(target.id)}
-                      className="p-1.5 text-red-400 hover:bg-red-500/10 rounded"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
+                  ) : (
+                    <div key={target.id} className="flex items-center gap-3 p-2 bg-foreground/5 rounded-lg">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">{target.name}</p>
+                        <div className="flex items-center gap-2 text-xs text-foreground/50">
+                          {target.collectionTime && <span>{target.collectionTime} min</span>}
+                          {target.notes && <span className="truncate">- {target.notes}</span>}
+                        </div>
+                      </div>
+                      {!readOnly && (
+                        <button
+                          onClick={() => handleStartEditTarget(target)}
+                          className="p-1.5 text-foreground/40 hover:text-foreground/70 rounded"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                        </button>
+                      )}
+                      {!readOnly && (
+                        <button
+                          onClick={() => onRemoveTarget?.(target.id)}
+                          className="p-1.5 text-red-400 hover:bg-red-500/10 rounded"
+                        >
+                          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  )
                 ))}
               </div>
             )}
@@ -335,11 +455,26 @@ function TripCard({ trip, savedPlaces, onDelete, onAddTarget, onRemoveTarget, on
               </svg>
               Directions
             </a>
-            <button onClick={onDelete} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-              </svg>
-            </button>
+            {!readOnly && onToggleLive && (
+              <button
+                onClick={onToggleLive}
+                className={`p-2 rounded-lg transition-colors ${
+                  trip.live ? "text-green-400 bg-green-500/10" : "text-foreground/40 hover:bg-foreground/10"
+                }`}
+                title={trip.live ? "Disable live sharing" : "Share trip publicly"}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.858 15.355-5.858 21.213 0" />
+                </svg>
+              </button>
+            )}
+            {!readOnly && (
+              <button onClick={onDelete} className="p-2 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -492,7 +627,7 @@ function AddTripForm({ savedPlaces, onAdd, onCancel }: AddTripFormProps) {
 export default function SavedPage() {
   const router = useRouter();
   const { savedPlaces, isLoading: placesLoading, removeSavedPlace, fetchWeather, user } = useUser();
-  const { trips, upcomingTrips, pastTrips, isLoading: tripsLoading, addTrip, removeTrip, addTarget, removeTarget, updateTarget } = useTrips(user);
+  const { trips, upcomingTrips, pastTrips, publicTrips, isLoading: tripsLoading, addTrip, removeTrip, updateTrip, addTarget, removeTarget, updateTarget, toggleLive } = useTrips(user);
 
   const [activeTab, setActiveTab] = useState<"places" | "trips">("places");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
@@ -632,13 +767,17 @@ export default function SavedPage() {
             </>
           ) : (
             <>
-              <span className="text-sm text-foreground/50">{trips.length} trips</span>
-              <button
-                onClick={() => setShowAddTrip(true)}
-                className="text-sm text-accent hover:text-accent/80 font-medium"
-              >
-                + New Trip
-              </button>
+              <span className="text-sm text-foreground/50">
+                {isAuthenticated ? `${trips.length} trips` : `${publicTrips.length} community trips`}
+              </span>
+              {isAuthenticated && (
+                <button
+                  onClick={() => setShowAddTrip(true)}
+                  className="text-sm text-accent hover:text-accent/80 font-medium"
+                >
+                  + New Trip
+                </button>
+              )}
             </>
           )}
         </div>
@@ -694,7 +833,40 @@ export default function SavedPage() {
               />
             )}
 
-            {trips.length === 0 && !showAddTrip ? (
+            {/* Public / Community trips for non-authenticated users */}
+            {!isAuthenticated && publicTrips.length > 0 && (
+              <div>
+                <h3 className="text-sm font-medium text-foreground/50 mb-2">Community Trips</h3>
+                <div className="space-y-3">
+                  {publicTrips.map((trip) => (
+                    <TripCard
+                      key={trip.id}
+                      trip={trip}
+                      readOnly
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {!isAuthenticated && publicTrips.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <span className="text-5xl mb-4">🗓️</span>
+                <h2 className="text-lg font-medium text-foreground/70 mb-2">No community trips</h2>
+                <p className="text-sm text-foreground/50 max-w-xs">
+                  Sign in to plan your own stargazing sessions.
+                </p>
+                <Link
+                  href="/login"
+                  className="mt-4 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors text-sm"
+                >
+                  Sign In
+                </Link>
+              </div>
+            )}
+
+            {/* Authenticated user trips */}
+            {isAuthenticated && trips.length === 0 && !showAddTrip ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <span className="text-5xl mb-4">🗓️</span>
                 <h2 className="text-lg font-medium text-foreground/70 mb-2">No trips planned</h2>
@@ -708,7 +880,7 @@ export default function SavedPage() {
                   Plan a Trip
                 </button>
               </div>
-            ) : (
+            ) : isAuthenticated && (
               <>
                 {upcomingTrips.length > 0 && (
                   <div>
@@ -718,11 +890,12 @@ export default function SavedPage() {
                         <TripCard
                           key={trip.id}
                           trip={trip}
-                          savedPlaces={savedPlaces}
+                          onUpdate={(updates) => updateTrip(trip.id, updates)}
                           onDelete={() => removeTrip(trip.id)}
                           onAddTarget={(target) => addTarget(trip.id, target)}
                           onRemoveTarget={(targetId) => removeTarget(trip.id, targetId)}
                           onUpdateTarget={(targetId, updates) => updateTarget(trip.id, targetId, updates)}
+                          onToggleLive={() => toggleLive(trip.id)}
                         />
                       ))}
                     </div>
@@ -737,11 +910,12 @@ export default function SavedPage() {
                         <TripCard
                           key={trip.id}
                           trip={trip}
-                          savedPlaces={savedPlaces}
+                          onUpdate={(updates) => updateTrip(trip.id, updates)}
                           onDelete={() => removeTrip(trip.id)}
                           onAddTarget={(target) => addTarget(trip.id, target)}
                           onRemoveTarget={(targetId) => removeTarget(trip.id, targetId)}
                           onUpdateTarget={(targetId, updates) => updateTarget(trip.id, targetId, updates)}
+                          onToggleLive={() => toggleLive(trip.id)}
                         />
                       ))}
                     </div>

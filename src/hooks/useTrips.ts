@@ -213,6 +213,67 @@ export function useTrips(user: User | null) {
     updateTrips(newTrips);
   }, [trips, updateTrips]);
 
+  // Toggle a trip as live (public). Only one trip can be live at a time.
+  const toggleLive = useCallback(async (tripId: string) => {
+    const trip = trips.find((t) => t.id === tripId);
+    if (!trip) return;
+
+    const wasLive = trip.live;
+
+    // Turn off any currently live trip, then toggle this one
+    const newTrips = trips.map((t) => ({
+      ...t,
+      live: t.id === tripId ? !wasLive : false,
+    }));
+    updateTrips(newTrips);
+
+    // Sync to public_trips table
+    if (!user) return;
+    try {
+      if (wasLive) {
+        // Remove from public
+        await supabase
+          .schema("astro")
+          .from("public_trips")
+          .delete()
+          .eq("user_id", user.id);
+      } else {
+        // Upsert to public
+        const publicTrip = { ...trip, live: true };
+        await supabase
+          .schema("astro")
+          .from("public_trips")
+          .upsert(
+            { user_id: user.id, trip: publicTrip },
+            { onConflict: "user_id" }
+          );
+      }
+    } catch (err) {
+      console.error("Failed to toggle live trip:", err);
+    }
+  }, [trips, updateTrips, user, supabase]);
+
+  // Fetch public/live trips (for unauthenticated users)
+  const [publicTrips, setPublicTrips] = useState<Trip[]>([]);
+
+  useEffect(() => {
+    const fetchPublic = async () => {
+      try {
+        const { data, error } = await supabase
+          .schema("astro")
+          .from("public_trips")
+          .select("trip");
+
+        if (!error && data) {
+          setPublicTrips(data.map((d) => d.trip as Trip));
+        }
+      } catch {
+        // Ignore
+      }
+    };
+    fetchPublic();
+  }, [supabase]);
+
   // Get upcoming trips (sorted by date)
   const upcomingTrips = trips
     .filter((t) => new Date(t.date) >= new Date(new Date().toDateString()))
@@ -227,6 +288,7 @@ export function useTrips(user: User | null) {
     trips,
     upcomingTrips,
     pastTrips,
+    publicTrips,
     isLoading,
     addTrip,
     removeTrip,
@@ -234,6 +296,7 @@ export function useTrips(user: User | null) {
     addTarget,
     removeTarget,
     updateTarget,
+    toggleLive,
     flushSync,
   };
 }

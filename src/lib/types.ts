@@ -127,6 +127,7 @@ export interface Trip {
   notes?: string;
   targets: TripTarget[];
   createdAt: string;
+  live?: boolean;
 }
 
 // Deep Sky Object types
