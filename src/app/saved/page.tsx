@@ -846,6 +846,10 @@ export default function SavedPage() {
                     />
                   ))}
                 </div>
+                <p className="text-sm text-foreground/50 mt-4 text-center">
+                  Thinking about joining? Drop me a message on{" "}
+                  <a href="https://t.me/Zitti123" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent/80">Telegram @Zitti123</a>
+                </p>
               </div>
             )}
 
