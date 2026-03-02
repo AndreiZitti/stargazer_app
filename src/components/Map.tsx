@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useMemo } from "react";
 import { LatLngExpression } from "leaflet";
-import { ScoredSpot, Coordinates, AccessibilityFeature, SpotSearchResult } from "@/lib/types";
+import { ScoredSpot, Coordinates, AccessibilityFeature } from "@/lib/types";
 import { LocationData } from "./LocationSheet";
 
 interface ContextMenuSpot {
@@ -31,13 +31,8 @@ interface MapProps {
   onSpotClick?: (spot: ScoredSpot) => void;
   isLoadingSpots?: boolean;
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
-  onFindSpots?: (coords: Coordinates) => void;
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
-  searchResults?: SpotSearchResult[];
-  searchOrigin?: Coordinates | null;
-  isSearching?: boolean;
-  searchRadius?: number;
   onLocationSelect?: (location: LocationData) => void;
   routeCoordinates?: [number, number][];
 }
@@ -54,13 +49,8 @@ export default function Map({
   onSpotClick,
   isLoadingSpots,
   onRightClick,
-  onFindSpots,
   animatePin,
   showDarkSkyPlaces = true,
-  searchResults,
-  searchOrigin,
-  isSearching,
-  searchRadius,
   onLocationSelect,
   routeCoordinates,
 }: MapProps) {
@@ -92,13 +82,8 @@ export default function Map({
       onSpotClick={onSpotClick}
       isLoadingSpots={isLoadingSpots}
       onRightClick={onRightClick}
-      onFindSpots={onFindSpots}
       animatePin={animatePin}
       showDarkSkyPlaces={showDarkSkyPlaces}
-      searchResults={searchResults}
-      searchOrigin={searchOrigin}
-      isSearching={isSearching}
-      searchRadius={searchRadius}
       onLocationSelect={onLocationSelect}
       routeCoordinates={routeCoordinates}
     />

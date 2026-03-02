@@ -267,12 +267,12 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
           )}
         </section>
 
-        {/* Meteor Showers (if any) */}
-        {showers.length > 0 && (
-          <section>
-            <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-              <span>☄️</span> Meteor Showers
-            </h2>
+        {/* Meteor Showers */}
+        <section>
+          <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
+            <span>☄️</span> Meteor Showers
+          </h2>
+          {showers.length > 0 ? (
             <div className="space-y-2">
               {showers.map((shower) => (
                 <div key={shower.id} className="bg-card border border-card-border rounded-lg p-3">
@@ -289,8 +289,30 @@ export default function SkyGuide({ month, year, daysInMonth, dsos, showers, moon
                 </div>
               ))}
             </div>
-          </section>
-        )}
+          ) : (
+            <div className="bg-card border border-card-border rounded-lg p-4">
+              <p className="text-foreground/60 text-sm mb-3">
+                No major meteor showers peak this month. March is the quietest month for meteor activity in the Northern Hemisphere.
+              </p>
+              <div className="border-t border-card-border/50 pt-3">
+                <p className="text-xs text-foreground/40 uppercase tracking-wider mb-2">Coming up next</p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium text-accent">Lyrids</p>
+                    <p className="text-xs text-foreground/50">Peak: April 22-23</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-lg font-bold text-foreground/70">18</p>
+                    <p className="text-xs text-foreground/50">meteors/hr</p>
+                  </div>
+                </div>
+                <p className="text-xs text-foreground/40 mt-2">
+                  Near Vega • Best after midnight • Occasional outbursts to 100+
+                </p>
+              </div>
+            </div>
+          )}
+        </section>
       </div>
 
       <BottomTabBar />

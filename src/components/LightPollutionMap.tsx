@@ -1,11 +1,11 @@
 "use client";
 
-import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl, Circle } from "react-leaflet";
+import { MapContainer, TileLayer, useMap, Marker, Popup, useMapEvents, ZoomControl } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import L, { LatLngExpression, DivIcon } from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
-import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType, SpotSearchResult } from "@/lib/types";
+import { ScoredSpot, Coordinates, AccessibilityFeature, DarkSkyPlace, DarkSkyPlaceType } from "@/lib/types";
 import { LocationData } from "./LocationSheet";
 import { useUser } from "@/contexts/UserContext";
 import { createLocationPinIcon } from "./LocationPin";
@@ -45,13 +45,8 @@ interface LightPollutionMapProps {
   onSpotClick?: (spot: ScoredSpot) => void;
   isLoadingSpots?: boolean;
   onRightClick?: (coords: Coordinates) => Promise<ContextMenuSpot | null>;
-  onFindSpots?: (coords: Coordinates) => void;
   animatePin?: boolean;
   showDarkSkyPlaces?: boolean;
-  searchResults?: SpotSearchResult[];
-  searchOrigin?: Coordinates | null;
-  isSearching?: boolean;
-  searchRadius?: number; // in km
   onLocationSelect?: (location: LocationData) => void;
   routeCoordinates?: [number, number][];
 }
@@ -240,33 +235,6 @@ function getSpotIcon(radius: number): DivIcon {
   });
 }
 
-// Custom icons for search result markers (numbered)
-function getSearchResultIcon(number: number): DivIcon {
-  return getCachedIcon(`searchresult-${number}`, () => {
-    return new DivIcon({
-      className: 'search-result-marker',
-      html: `
-        <div style="
-          width: 36px;
-          height: 36px;
-          background: #6366f1;
-          border: 3px solid white;
-          border-radius: 50%;
-          box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: white;
-          font-weight: bold;
-          font-size: 16px;
-        ">${number}</div>
-      `,
-      iconSize: [36, 36],
-      iconAnchor: [18, 18],
-    });
-  });
-}
-
 // Custom icon for saved places
 function getSavedPlaceIcon(label?: string): DivIcon {
   const cacheKey = `saved-${label || 'default'}`;
@@ -325,13 +293,8 @@ export default function LightPollutionMap({
   onSpotClick,
   isLoadingSpots = false,
   onRightClick,
-  onFindSpots,
   animatePin = false,
   showDarkSkyPlaces = true,
-  searchResults = [],
-  searchOrigin,
-  isSearching = false,
-  searchRadius = 40,
   onLocationSelect,
   routeCoordinates = [],
 }: LightPollutionMapProps) {
@@ -430,45 +393,6 @@ export default function LightPollutionMap({
           <Popup>
             <div style={{ fontSize: '14px', minWidth: '180px', color: '#e5e5e5' }}>
               <div style={{ fontWeight: 'bold', marginBottom: '8px' }}>Your location</div>
-              {onFindSpots && (
-                <button
-                  onClick={() => onFindSpots(searchLocation)}
-                  disabled={isLoadingSpots}
-                  style={{
-                    width: '100%',
-                    background: '#6366f1',
-                    color: 'white',
-                    fontSize: '12px',
-                    fontWeight: 500,
-                    padding: '8px 12px',
-                    borderRadius: '4px',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px',
-                    marginBottom: '8px',
-                  }}
-                >
-                  {isLoadingSpots ? (
-                    <>
-                      <svg className="w-3 h-3 animate-spin" viewBox="0 0 24 24" fill="none">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                      </svg>
-                      Searching...
-                    </>
-                  ) : (
-                    <>
-                      <svg style={{ width: '12px', height: '12px' }} fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                      </svg>
-                      Find Dark Skies
-                    </>
-                  )}
-                </button>
-              )}
               <div style={{ fontSize: '12px', color: 'rgba(229, 229, 229, 0.5)', textAlign: 'center' }}>
                 Right-click map for more options
               </div>
@@ -502,38 +426,12 @@ export default function LightPollutionMap({
           <Popup>
             <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
               {contextSpot.loading ? (
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)', marginBottom: '12px' }}>
-                    <svg style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
-                      <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                      <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                    </svg>
-                    Loading spot info...
-                  </div>
-                  {/* Find dark spots button - available while loading */}
-                  <button
-                    onClick={() => onFindSpots?.({ lat: contextSpot.lat, lng: contextSpot.lng })}
-                    style={{
-                      width: '100%',
-                      padding: '10px 12px',
-                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      fontSize: '13px',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '8px'
-                    }}
-                  >
-                    <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                    Find dark spots nearby
-                  </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(229,229,229,0.6)' }}>
+                  <svg style={{ width: '16px', height: '16px', animation: 'spin 1s linear infinite' }} viewBox="0 0 24 24" fill="none">
+                    <circle style={{ opacity: 0.25 }} cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                    <path style={{ opacity: 0.75 }} fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                  </svg>
+                  Loading spot info...
                 </div>
               ) : (
                 <>
@@ -653,32 +551,6 @@ export default function LightPollutionMap({
                         </svg>
                       </button>
                     </div>
-
-                    {/* Find dark spots nearby button */}
-                    <button
-                      onClick={() => onFindSpots?.({ lat: contextSpot.lat, lng: contextSpot.lng })}
-                      style={{
-                        width: '100%',
-                        marginTop: '12px',
-                        padding: '10px 12px',
-                        background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        fontSize: '13px',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '8px'
-                      }}
-                    >
-                      <svg style={{ width: '16px', height: '16px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                      Find dark spots nearby
-                    </button>
                   </>
                 )}
               </div>
@@ -904,75 +776,6 @@ export default function LightPollutionMap({
         </MarkerClusterGroup>
       )}
 
-      {/* Search origin radar (shows only during active search) */}
-      {searchOrigin && isSearching && (
-        <>
-          {/* Animated pulse circles */}
-          <Circle
-            center={[searchOrigin.lat, searchOrigin.lng]}
-            radius={searchRadius * 1000} // convert km to meters
-            pathOptions={{
-              color: '#6366f1',
-              fillColor: '#6366f1',
-              fillOpacity: 0.1,
-              weight: 2,
-              opacity: 0.6,
-            }}
-            className="radar-circle"
-          />
-          <Circle
-            center={[searchOrigin.lat, searchOrigin.lng]}
-            radius={searchRadius * 1000 * 0.66}
-            pathOptions={{
-              color: '#6366f1',
-              fillColor: '#6366f1',
-              fillOpacity: 0.15,
-              weight: 1,
-              opacity: 0.4,
-              dashArray: '5, 5',
-            }}
-          />
-          <Circle
-            center={[searchOrigin.lat, searchOrigin.lng]}
-            radius={searchRadius * 1000 * 0.33}
-            pathOptions={{
-              color: '#6366f1',
-              fillColor: '#6366f1',
-              fillOpacity: 0.2,
-              weight: 1,
-              opacity: 0.3,
-              dashArray: '3, 3',
-            }}
-          />
-          {/* Center marker */}
-          <Marker
-            position={[searchOrigin.lat, searchOrigin.lng]}
-            icon={new DivIcon({
-              className: 'search-origin-center',
-              html: `
-                <div style="
-                  width: 20px;
-                  height: 20px;
-                  background: #6366f1;
-                  border: 3px solid white;
-                  border-radius: 50%;
-                  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-                  animation: pulse-center 1.5s ease-in-out infinite;
-                "></div>
-                <style>
-                  @keyframes pulse-center {
-                    0%, 100% { transform: scale(1); }
-                    50% { transform: scale(1.2); }
-                  }
-                </style>
-              `,
-              iconSize: [20, 20],
-              iconAnchor: [10, 10],
-            })}
-          />
-        </>
-      )}
-
       {/* Saved Places markers */}
       {savedPlaces.map((place) => (
         <Marker
@@ -1043,127 +846,6 @@ export default function LightPollutionMap({
                   title="Remove from saved"
                 >
                   Remove
-                </button>
-              </div>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
-
-      {/* Search Result markers (numbered pins) */}
-      {searchResults.map((result, index) => (
-        <Marker
-          key={`search-result-${index}-${result.lat}-${result.lng}`}
-          position={[result.lat, result.lng]}
-          icon={getSearchResultIcon(index + 1)}
-        >
-          <Popup>
-            <div style={{ fontSize: '14px', minWidth: '200px', color: '#e5e5e5' }}>
-              {/* Ranking */}
-              <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '8px', textAlign: 'center' }}>
-                Result #{index + 1}
-              </div>
-
-              {/* Score display */}
-              <div style={{ marginBottom: '8px', textAlign: 'center' }}>
-                <div style={{ fontSize: '32px', fontWeight: 'bold', lineHeight: '1', marginBottom: '4px' }}>
-                  {result.score.toFixed(1)}<span style={{ fontSize: '16px', color: 'rgba(229,229,229,0.5)' }}> / 10</span>
-                </div>
-                <div style={{ fontSize: '13px', color: 'rgba(229,229,229,0.7)' }}>
-                  {result.label}
-                </div>
-              </div>
-
-              {/* Distance */}
-              <div style={{ marginBottom: '12px', textAlign: 'center' }}>
-                <span style={{
-                  fontSize: '12px',
-                  padding: '4px 10px',
-                  borderRadius: '9999px',
-                  background: 'rgba(99,102,241,0.2)',
-                  color: '#6366f1'
-                }}>
-                  {result.distanceKm}km away
-                </span>
-              </div>
-
-              {/* Road access */}
-              <div style={{ marginBottom: '12px' }}>
-                <div style={{
-                  fontSize: '12px',
-                  padding: '6px 10px',
-                  borderRadius: '6px',
-                  background: result.hasRoadAccess ? 'rgba(34,197,94,0.15)' : 'rgba(234,179,8,0.15)',
-                  color: result.hasRoadAccess ? '#22c55e' : '#eab308',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px'
-                }}>
-                  <span>{result.hasRoadAccess ? '✓' : '⚠️'}</span>
-                  <span>
-                    {result.hasRoadAccess ? 'Road access nearby' : 'Remote - no road access'}
-                  </span>
-                </div>
-              </div>
-
-              {/* Coordinates */}
-              <div style={{ fontSize: '12px', color: 'rgba(229,229,229,0.5)', marginBottom: '12px', textAlign: 'center' }}>
-                {result.lat.toFixed(4)}°, {result.lng.toFixed(4)}°
-              </div>
-
-              {/* Action buttons */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #2a2a3a' }}>
-                <a
-                  href={`https://www.google.com/maps/dir/?api=1&destination=${result.lat},${result.lng}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: '#6366f1', fontSize: '12px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '4px' }}
-                >
-                  🧭 Directions
-                </a>
-                <button
-                  onClick={() => setCloudForecast({
-                    lat: result.lat,
-                    lng: result.lng,
-                    name: `${result.label} (${result.score.toFixed(1)}/10)`,
-                  })}
-                  style={{
-                    color: '#6366f1',
-                    fontSize: '12px',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px'
-                  }}
-                >
-                  <svg style={{ width: '14px', height: '14px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
-                  </svg>
-                  Forecast
-                </button>
-                <button
-                  onClick={() => handleToggleSave(
-                    result.lat,
-                    result.lng,
-                    `${result.label} (${result.score.toFixed(1)}/10)`,
-                    undefined,
-                    result.label
-                  )}
-                  style={{
-                    padding: '4px',
-                    borderRadius: '4px',
-                    background: 'none',
-                    border: 'none',
-                    cursor: 'pointer',
-                    color: isPlaceSaved(result.lat, result.lng) ? '#eab308' : 'rgba(229,229,229,0.4)'
-                  }}
-                  title={isPlaceSaved(result.lat, result.lng) ? "Remove from saved" : "Save place"}
-                >
-                  <svg style={{ width: '20px', height: '20px' }} fill={isPlaceSaved(result.lat, result.lng) ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                  </svg>
                 </button>
               </div>
             </div>

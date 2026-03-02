@@ -1,10 +1,11 @@
 {
   "metadata": {
-    "version": "1.0",
+    "version": "1.1",
     "created": "2025-12-04",
-    "coverage": ["December", "January"],
-    "total_objects": 12,
-    "notes": "Master DSO data for December-January stargazing guide"
+    "updated": "2026-03-02",
+    "coverage": ["December", "January", "February", "March", "April"],
+    "total_objects": 17,
+    "notes": "Master DSO data for winter-spring stargazing guide"
   },
   "objects": [
     {
@@ -969,6 +970,411 @@
         }
       },
       "related_objects": ["Pollux", "Wasat (δ Gem)"]
+    },
+    {
+      "id": "M81",
+      "names": {
+        "primary": "Bode's Galaxy",
+        "catalog": ["NGC 3031"],
+        "other": ["Bode's Nebula"]
+      },
+      "coordinates": {
+        "ra": "09h 55m 33s",
+        "ra_decimal": 9.926,
+        "dec": "+69° 03′ 55″",
+        "dec_decimal": 69.065
+      },
+      "physical": {
+        "type": "Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Ursa Major",
+        "magnitude_visual": 6.9,
+        "surface_brightness": 13.0,
+        "size_arcmin": "27 × 14",
+        "distance_ly": 11800000
+      },
+      "visibility": {
+        "best_months": ["March", "April", "May"],
+        "peak_month": "April",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "M81 is not visible to the naked eye. Find it by drawing a diagonal line across the bowl of the Big Dipper from Phecda (γ UMa) through Dubhe (α UMa), then continue the same distance beyond Dubhe.",
+        "constellation_context": "Northwest of the Big Dipper's bowl in Ursa Major",
+        "star_hop": [
+          {"step": 1, "instruction": "Locate the Big Dipper asterism in Ursa Major"},
+          {"step": 2, "instruction": "Draw a line from Phecda (lower-left bowl star) through Dubhe (upper-right bowl star)"},
+          {"step": 3, "instruction": "Continue this line about 10° beyond Dubhe to find M81 and M82"}
+        ],
+        "nearby_bright_stars": ["Dubhe (α UMa)", "23 UMa"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as an elongated glow. M82 visible in the same field about 0.5° north.",
+        "small_telescope": "Bright oval core with fainter outer halo. The pairing with M82 is spectacular.",
+        "large_telescope": "Spiral arms become visible with good conditions. Dark dust lanes may be glimpsed.",
+        "best_magnification": "Low to medium (40-100×) to see both galaxies together"
+      },
+      "science": {
+        "short_description": "A grand design spiral galaxy interacting with its neighbor M82 — one of the nearest and brightest galaxies beyond our Local Group.",
+        "full_description": "M81 is a magnificent spiral galaxy about 12 million light-years away. It's gravitationally interacting with its neighbor M82, and this interaction has triggered intense star formation in M82. M81 hosts a supermassive black hole of about 70 million solar masses at its center. The galaxy was home to supernova SN 1993J, one of the brightest and best-studied supernovae of the modern era.",
+        "interesting_facts": [
+          "Discovered by Johann Elert Bode in 1774",
+          "The gravitational interaction with M82 has created a bridge of hydrogen gas between them",
+          "Contains about 250 billion stars",
+          "Part of the M81 Group, the nearest galaxy group to our Local Group"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner-intermediate",
+        "min_focal_length_mm": 300,
+        "ideal_focal_length_mm": "500-800",
+        "notes": "Frame to include M82 for a spectacular pair. Long exposures reveal faint outer arms."
+      },
+      "stellarium": {
+        "skysource_id": "M81",
+        "default_fov": 3,
+        "views": {
+          "context": {"description": "Ursa Major region", "fov": 30, "center": "Ursa Major"},
+          "medium": {"description": "M81/M82 pair", "fov": 3, "center": "M81"},
+          "detail": {"description": "M81 close-up", "fov": 1, "center": "M81"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2007/19/2132-Image.html",
+          "credit": "NASA, ESA, and The Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M82", "NGC 3077", "Holmberg IX"]
+    },
+    {
+      "id": "M82",
+      "names": {
+        "primary": "Cigar Galaxy",
+        "catalog": ["NGC 3034"],
+        "other": ["Starburst Galaxy"]
+      },
+      "coordinates": {
+        "ra": "09h 55m 52s",
+        "ra_decimal": 9.931,
+        "dec": "+69° 40′ 47″",
+        "dec_decimal": 69.680
+      },
+      "physical": {
+        "type": "Starburst Galaxy",
+        "type_short": "Gal",
+        "constellation": "Ursa Major",
+        "magnitude_visual": 8.4,
+        "surface_brightness": 12.8,
+        "size_arcmin": "11 × 5",
+        "distance_ly": 11500000
+      },
+      "visibility": {
+        "best_months": ["March", "April", "May"],
+        "peak_month": "April",
+        "difficulty": "easy",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to the naked eye. Found in the same field as M81, about 0.5° to the north.",
+        "constellation_context": "Northwest of the Big Dipper's bowl, paired with M81",
+        "star_hop": [
+          {"step": 1, "instruction": "Find M81 using the Big Dipper star-hop method"},
+          {"step": 2, "instruction": "Look about 0.5° north to find M82's elongated form"},
+          {"step": 3, "instruction": "Both galaxies fit easily in the same low-power field"}
+        ],
+        "nearby_bright_stars": ["Dubhe (α UMa)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as an elongated streak of light, clearly different from round M81 nearby.",
+        "small_telescope": "The cigar shape is obvious. A dark lane may be glimpsed crossing the galaxy's center.",
+        "large_telescope": "Complex mottled structure visible. Red hydrogen filaments may be glimpsed extending from the core.",
+        "best_magnification": "Medium (75-150×) to see internal structure"
+      },
+      "science": {
+        "short_description": "A starburst galaxy violently forming new stars at 10× the rate of normal galaxies — triggered by its interaction with M81.",
+        "full_description": "M82 is undergoing a dramatic episode of star formation triggered by its close encounter with M81 about 300 million years ago. Stars are being born at a rate 10 times higher than in normal galaxies. This starburst activity is concentrated in the galaxy's core and is driving enormous outflows of gas and dust perpendicular to the disk — visible in photographs as red hydrogen streamers.",
+        "interesting_facts": [
+          "Forming stars 10× faster than the Milky Way",
+          "Hosted supernova SN 2014J, the closest Type Ia supernova in decades",
+          "The red filaments extend 10,000 light-years above and below the disk",
+          "The starburst phase will exhaust the gas supply in about 100 million years"
+        ]
+      },
+      "photography": {
+        "difficulty": "beginner-intermediate",
+        "min_focal_length_mm": 400,
+        "ideal_focal_length_mm": "800-1500",
+        "notes": "H-alpha data reveals the spectacular red outflow jets. Often photographed with M81."
+      },
+      "stellarium": {
+        "skysource_id": "M82",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "M81/M82 pair", "fov": 3, "center": "M81"},
+          "medium": {"description": "M82", "fov": 1, "center": "M82"},
+          "detail": {"description": "M82 close-up", "fov": 0.3, "center": "M82"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA/Hubble Heritage Team",
+          "search_url": "https://hubblesite.org/contents/media/images/2006/14/1889-Image.html",
+          "credit": "NASA, ESA, and The Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["M81", "NGC 3077"]
+    },
+    {
+      "id": "LeoTriplet",
+      "names": {
+        "primary": "Leo Triplet",
+        "catalog": ["M65", "M66", "NGC 3628"],
+        "other": ["Leo Trio"]
+      },
+      "coordinates": {
+        "ra": "11h 18m 56s",
+        "ra_decimal": 11.316,
+        "dec": "+13° 05′ 32″",
+        "dec_decimal": 13.092
+      },
+      "physical": {
+        "type": "Galaxy Group",
+        "type_short": "Gal",
+        "constellation": "Leo",
+        "magnitude_visual": 9.0,
+        "surface_brightness": 13.5,
+        "size_arcmin": "50 (group)",
+        "distance_ly": 35000000
+      },
+      "visibility": {
+        "best_months": ["March", "April", "May"],
+        "peak_month": "April",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located between the bright stars Regulus and Denebola in Leo. Find the star Chertan (θ Leo), then look about 2.5° south.",
+        "constellation_context": "Under the hindquarters of Leo the Lion",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Leo's distinctive sickle shape (reversed question mark)"},
+          {"step": 2, "instruction": "Locate Chertan (θ Leo) between Regulus and Denebola"},
+          {"step": 3, "instruction": "Move about 2.5° south to find the galaxy trio"}
+        ],
+        "nearby_bright_stars": ["Chertan (θ Leo)", "Denebola (β Leo)", "Regulus (α Leo)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "M65 and M66 may be glimpsed as faint smudges. NGC 3628 is more challenging.",
+        "small_telescope": "All three galaxies visible in the same low-power field — a stunning sight. M65 and M66 appear as elongated ovals; NGC 3628 is edge-on with a dust lane.",
+        "large_telescope": "Spiral structure visible in M65/M66. NGC 3628's prominent dust lane and 'hamburger' shape become apparent.",
+        "best_magnification": "Low (25-50×) to see all three together, higher for individual detail"
+      },
+      "science": {
+        "short_description": "Three interacting spiral galaxies visible in a single telescope field — a gravitationally bound group 35 million light-years away.",
+        "full_description": "The Leo Triplet consists of three large spiral galaxies gravitationally interacting with each other. M65 appears relatively undisturbed, while M66 shows asymmetric spiral arms from tidal interactions. NGC 3628, seen edge-on, displays a warped disk and a spectacular tidal tail extending 300,000 light-years — evidence of past close encounters. The group lies about 35 million light-years away.",
+        "interesting_facts": [
+          "NGC 3628's tidal tail is 300,000 light-years long",
+          "All three galaxies fit within a 1° field of view",
+          "M66 has hosted four observed supernovae since 1973",
+          "The galaxies are gravitationally bound and orbiting their common center of mass"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 400,
+        "ideal_focal_length_mm": "600-1000",
+        "notes": "Frame carefully to include all three galaxies. Deep exposures reveal NGC 3628's tidal tail."
+      },
+      "stellarium": {
+        "skysource_id": "M66",
+        "default_fov": 2,
+        "views": {
+          "context": {"description": "Leo constellation", "fov": 30, "center": "Leo"},
+          "medium": {"description": "Leo Triplet", "fov": 2, "center": "M66"},
+          "detail": {"description": "M66 close-up", "fov": 0.5, "center": "M66"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO",
+          "search_url": "https://www.eso.org/public/images/?search=leo+triplet",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["M95", "M96", "NGC 2903"]
+    },
+    {
+      "id": "M51",
+      "names": {
+        "primary": "Whirlpool Galaxy",
+        "catalog": ["NGC 5194", "NGC 5195"],
+        "other": ["Question Mark Galaxy", "Lord Rosse's Galaxy"]
+      },
+      "coordinates": {
+        "ra": "13h 29m 52s",
+        "ra_decimal": 13.498,
+        "dec": "+47° 11′ 43″",
+        "dec_decimal": 47.195
+      },
+      "physical": {
+        "type": "Spiral Galaxy (interacting)",
+        "type_short": "Gal",
+        "constellation": "Canes Venatici",
+        "magnitude_visual": 8.4,
+        "surface_brightness": 13.0,
+        "size_arcmin": "11 × 8",
+        "distance_ly": 23000000
+      },
+      "visibility": {
+        "best_months": ["April", "May", "June"],
+        "peak_month": "May",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Find it by locating Alkaid, the end star of the Big Dipper's handle, then move about 3.5° southwest.",
+        "constellation_context": "In Canes Venatici, near the end of the Big Dipper's handle",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Alkaid (η UMa), the star at the end of the Big Dipper's handle"},
+          {"step": 2, "instruction": "Move about 3.5° southwest (toward Leo)"},
+          {"step": 3, "instruction": "Look for a fuzzy patch with a smaller companion (NGC 5195)"}
+        ],
+        "nearby_bright_stars": ["Alkaid (η UMa)", "Cor Caroli (α CVn)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as a round glow with a brighter core. The companion NGC 5195 may be glimpsed.",
+        "small_telescope": "The companion galaxy is clearly visible. Under good conditions, hints of the spiral arms may be seen.",
+        "large_telescope": "Spectacular face-on spiral structure visible. One of the finest galaxies for visual observation.",
+        "best_magnification": "Medium (50-100×) for best spiral arm visibility"
+      },
+      "science": {
+        "short_description": "The first galaxy recognized to have spiral structure — a stunning face-on spiral being disrupted by its smaller companion.",
+        "full_description": "M51 was the first galaxy in which spiral structure was detected, observed by Lord Rosse in 1845 using his 72-inch telescope. The smaller companion NGC 5195 is passing behind M51 and has triggered enhanced star formation in the spiral arms. The interaction creates a bridge of stars and gas between the two galaxies. M51 has hosted three supernovae in the modern era (1994, 2005, 2011).",
+        "interesting_facts": [
+          "First galaxy where spiral arms were observed (1845)",
+          "The companion NGC 5195 is connected by a tidal bridge",
+          "Hosted supernovae in 1994, 2005, and 2011",
+          "Contains about 100 billion stars"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-2000",
+        "notes": "Long exposures reveal the beautiful spiral structure and connection to NGC 5195."
+      },
+      "stellarium": {
+        "skysource_id": "M51",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Canes Venatici region", "fov": 20, "center": "Canes Venatici"},
+          "medium": {"description": "M51 with companion", "fov": 1, "center": "M51"},
+          "detail": {"description": "M51 close-up", "fov": 0.3, "center": "M51"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "NASA/ESA Hubble",
+          "search_url": "https://hubblesite.org/contents/media/images/2005/12/1677-Image.html",
+          "credit": "NASA, ESA, S. Beckwith (STScI), and The Hubble Heritage Team (STScI/AURA)",
+          "license": "Public Domain"
+        }
+      },
+      "related_objects": ["NGC 5195", "M63 (Sunflower Galaxy)", "M106"]
+    },
+    {
+      "id": "NGC2903",
+      "names": {
+        "primary": "NGC 2903",
+        "catalog": ["NGC 2903"],
+        "other": []
+      },
+      "coordinates": {
+        "ra": "09h 32m 10s",
+        "ra_decimal": 9.536,
+        "dec": "+21° 30′ 03″",
+        "dec_decimal": 21.501
+      },
+      "physical": {
+        "type": "Barred Spiral Galaxy",
+        "type_short": "Gal",
+        "constellation": "Leo",
+        "magnitude_visual": 9.0,
+        "surface_brightness": 13.5,
+        "size_arcmin": "13 × 6",
+        "distance_ly": 30000000
+      },
+      "visibility": {
+        "best_months": ["February", "March", "April"],
+        "peak_month": "March",
+        "difficulty": "moderate",
+        "equipment_minimum": "binoculars",
+        "equipment_recommended": "small_telescope"
+      },
+      "finding": {
+        "naked_eye_guide": "Not visible to naked eye. Located about 1.5° south of the star Lambda Leonis (Alterf), which marks the nose of Leo the Lion.",
+        "constellation_context": "In the head of Leo, south of the Sickle asterism",
+        "star_hop": [
+          {"step": 1, "instruction": "Find Regulus at the base of Leo's Sickle"},
+          {"step": 2, "instruction": "Move to Lambda Leonis (Alterf), about 8° north of Regulus"},
+          {"step": 3, "instruction": "NGC 2903 is about 1.5° due south of Lambda Leonis"}
+        ],
+        "nearby_bright_stars": ["Lambda Leonis (Alterf)", "Regulus (α Leo)"]
+      },
+      "observation": {
+        "naked_eye": "Not visible",
+        "binoculars": "Appears as an elongated hazy patch under dark skies.",
+        "small_telescope": "Bright elongated core with fainter outer regions. One of the brightest galaxies Messier missed!",
+        "large_telescope": "Bar structure and spiral arms become visible. Mottled appearance with star-forming regions.",
+        "best_magnification": "Medium (75-150×) for best detail"
+      },
+      "science": {
+        "short_description": "A beautiful barred spiral galaxy similar to our Milky Way — one of the brightest galaxies that Messier missed.",
+        "full_description": "NGC 2903 is a barred spiral galaxy remarkably similar to our own Milky Way. It's one of the brightest galaxies in the northern sky that Charles Messier somehow overlooked when compiling his famous catalog. The galaxy has an active central region with intense star formation, and its bar structure funnels gas toward the nucleus. At about 30 million light-years away, it's a prime target for galaxy hunters.",
+        "interesting_facts": [
+          "Surprisingly not included in the Messier catalog despite its brightness",
+          "Very similar to our Milky Way in size and structure",
+          "Contains giant star-forming regions visible in long-exposure photos",
+          "William Herschel discovered it in 1784"
+        ]
+      },
+      "photography": {
+        "difficulty": "intermediate",
+        "min_focal_length_mm": 500,
+        "ideal_focal_length_mm": "1000-1500",
+        "notes": "Good target for showing bar structure. H-alpha reveals star-forming regions."
+      },
+      "stellarium": {
+        "skysource_id": "NGC2903",
+        "default_fov": 1,
+        "views": {
+          "context": {"description": "Leo head region", "fov": 15, "center": "Leo"},
+          "medium": {"description": "NGC 2903 area", "fov": 2, "center": "NGC2903"},
+          "detail": {"description": "NGC 2903 close-up", "fov": 0.5, "center": "NGC2903"}
+        }
+      },
+      "assets": {
+        "hero": {
+          "source": "ESO/VLT",
+          "search_url": "https://www.eso.org/public/images/?search=NGC+2903",
+          "credit": "ESO",
+          "license": "CC BY 4.0"
+        }
+      },
+      "related_objects": ["Leo Triplet", "M95", "M96"]
     }
   ]
 }

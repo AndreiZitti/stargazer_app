@@ -8,13 +8,13 @@ import SaveToast from "@/components/SaveToast";
 import TutorialOverlay, { TutorialStep } from "@/components/TutorialOverlay";
 import TutorialPrompt from "@/components/TutorialPrompt";
 import HelpButton from "@/components/HelpButton";
-import SpotSearchModal from "@/components/SpotSearchModal";
+
 import BottomTabBar from "@/components/BottomTabBar";
 
 import CloudForecastModal from "@/components/CloudForecastModal";
 import { LocationSheet, LocationData } from "@/components/LocationSheet";
 import DirectionsPanel from "@/components/DirectionsPanel";
-import { ScoredSpot, Coordinates, SpotSearchResult } from "@/lib/types";
+import { ScoredSpot, Coordinates } from "@/lib/types";
 
 // Tutorial steps configuration
 const TUTORIAL_STEPS: TutorialStep[] = [
@@ -22,11 +22,6 @@ const TUTORIAL_STEPS: TutorialStep[] = [
     target: "search",
     title: "Search",
     description: "Find any location on the map.",
-  },
-  {
-    target: "find-spots",
-    title: "Find Dark Skies",
-    description: "Discover stargazing spots nearby.",
   },
   {
     target: "bottom-tabs",
@@ -95,14 +90,6 @@ export default function Home() {
   } | null>(null);
 
 
-
-  // Spot search modal state
-  const [showSearchModal, setShowSearchModal] = useState(false);
-  const [searchOrigin, setSearchOrigin] = useState<Coordinates | null>(null);
-  const [searchResults, setSearchResults] = useState<SpotSearchResult[]>([]);
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchRadius, setSearchRadius] = useState<number>(40); // km
-  const [hasSearched, setHasSearched] = useState(false); // Track if a search was performed
 
   // LocationSheet state
   const [selectedLocation, setSelectedLocation] = useState<LocationData | null>(null);
@@ -186,11 +173,6 @@ export default function Home() {
     setSpots([]);
   };
 
-  const handleFindSpots = (coords: Coordinates) => {
-    setSearchOrigin(coords);
-    setShowSearchModal(true);
-  };
-
   const handleSpotClick = (spot: ScoredSpot) => {
     setMapCenter([spot.lat, spot.lng]);
     setMapZoom(12);
@@ -231,12 +213,6 @@ export default function Home() {
     setForecastLocation({ lat, lng });
   };
 
-  // Handler for find spots from LocationSheet
-  const handleFindSpotsFromSheet = (lat: number, lng: number) => {
-    setSearchOrigin({ lat, lng });
-    setShowSearchModal(true);
-  };
-
   // Handler for get directions from LocationSheet
   const handleGetDirections = (lat: number, lng: number, name?: string) => {
     setDirectionsDestination({ lat, lng, name });
@@ -267,30 +243,6 @@ export default function Home() {
     setTimeout(() => setAnimatePin(false), 4000);
   };
 
-  const handleSpotSearch = async (maxDistanceKm: number, hasCar: boolean) => {
-    if (!searchOrigin) return;
-
-    setSearchRadius(maxDistanceKm);
-    setIsSearching(true);
-    setHasSearched(true);
-    try {
-      const response = await fetch(
-        `/api/find-spots?lat=${searchOrigin.lat}&lng=${searchOrigin.lng}&maxDistance=${maxDistanceKm}&hasCar=${hasCar}`
-      );
-      const data = await response.json();
-      setSearchResults(data.spots || []);
-
-      // Center map on search origin
-      setMapCenter([searchOrigin.lat, searchOrigin.lng]);
-      setMapZoom(9);
-    } catch (err) {
-      console.error("Failed to search for spots:", err);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  };
-
   return (
     <main className="h-screen w-screen relative overflow-hidden pb-14">
       
@@ -307,12 +259,7 @@ export default function Home() {
         onSpotClick={handleSpotClick}
         isLoadingSpots={isLoadingSpots}
         onRightClick={handleRightClick}
-        onFindSpots={handleFindSpots}
         animatePin={animatePin}
-        searchResults={searchResults}
-        searchOrigin={searchOrigin}
-        isSearching={isSearching}
-        searchRadius={searchRadius}
         onLocationSelect={handleMarkerClick}
         routeCoordinates={routeCoordinates}
       />
@@ -374,88 +321,6 @@ export default function Home() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Search Results Panel */}
-      {(isSearching || (hasSearched && searchResults.length >= 0)) && (
-        <div className="absolute top-16 right-4 z-[1000] w-80">
-          <div className="bg-card/95 backdrop-blur-sm border border-card-border rounded-lg shadow-lg overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-card-border">
-              <h3 className="font-medium text-sm">Best Stargazing Spots</h3>
-              {!isSearching && (
-                <button
-                  onClick={() => {
-                    setSearchResults([]);
-                    setHasSearched(false);
-                  }}
-                  className="text-foreground/60 hover:text-foreground"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              )}
-            </div>
-
-            {isSearching ? (
-              <div className="p-6 flex flex-col items-center gap-3">
-                <svg className="w-8 h-8 text-accent animate-spin" viewBox="0 0 24 24" fill="none">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-                </svg>
-                <span className="text-sm text-foreground/60">Searching for dark skies...</span>
-              </div>
-            ) : searchResults.length === 0 ? (
-              <div className="p-6 text-center">
-                <div className="text-foreground/40 mb-2">
-                  <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="text-sm font-medium text-foreground/70 mb-1">No accessible spots found</div>
-                <div className="text-xs text-foreground/50">Try increasing the search distance or exploring a different area</div>
-              </div>
-            ) : (
-              <div className="divide-y divide-card-border">
-                {searchResults.map((result, index) => (
-                  <div
-                    key={`${result.lat}-${result.lng}`}
-                    onClick={() => {
-                      setMapCenter([result.lat, result.lng]);
-                      setMapZoom(12);
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-foreground/5 transition-colors cursor-pointer"
-                  >
-                    <div className="flex items-center gap-3">
-                      {/* Rank badge */}
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-500 text-white flex items-center justify-center font-bold text-sm">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-lg font-bold">{result.score.toFixed(1)}<span className="text-xs text-foreground/50 font-normal"> / 10</span></span>
-                          <span className="text-xs text-foreground/60">{result.distanceKm} km away</span>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-foreground/60">{result.label}</span>
-                          <a
-                            href={`https://www.google.com/maps/dir/?api=1&destination=${result.lat},${result.lng}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="text-xs text-accent hover:underline"
-                          >
-                            Directions
-                          </a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         </div>
       )}
@@ -581,13 +446,6 @@ export default function Home() {
         onSkip={handleTutorialSkip}
       />
 
-      {/* Spot Search Modal */}
-      <SpotSearchModal
-        isOpen={showSearchModal}
-        onClose={() => setShowSearchModal(false)}
-        onSearch={handleSpotSearch}
-      />
-
       {/* Bottom Tab Bar */}
       <div data-tutorial="bottom-tabs">
         <BottomTabBar />
@@ -597,7 +455,6 @@ export default function Home() {
       <LocationSheet
         location={selectedLocation}
         onClose={() => setSelectedLocation(null)}
-        onFindSpots={handleFindSpotsFromSheet}
         onOpenForecast={handleOpenForecast}
         onGetDirections={handleGetDirections}
         userLocation={searchLocation}

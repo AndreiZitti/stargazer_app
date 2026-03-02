@@ -31,6 +31,129 @@ function getWeatherIcon(cloudCover: number) {
   return { icon: "☁️", label: "Cloudy" };
 }
 
+const RATING_COLORS: Record<string, string> = {
+  excellent: "#22c55e",
+  great: "#84cc16",
+  good: "#eab308",
+  poor: "#f97316",
+  bad: "#ef4444",
+};
+
+// Weather Timeline with tap-to-reveal
+function WeatherTimeline({ hours }: { hours: { time: string; cloudTotal: number; rating: string; isNight?: boolean }[] }) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const handleClick = (i: number) => {
+    setSelectedIndex(selectedIndex === i ? null : i);
+  };
+
+  const selectedHour = selectedIndex !== null ? hours[selectedIndex] : null;
+
+  return (
+    <div className="space-y-1">
+      {/* Selected hour info */}
+      <div className="h-5 flex items-center justify-between">
+        {selectedHour ? (
+          <>
+            <span className="text-[10px] text-foreground/60">
+              {new Date(selectedHour.time).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            </span>
+            <span className="text-[11px] font-medium" style={{ color: RATING_COLORS[selectedHour.rating] }}>
+              {selectedHour.cloudTotal}% clouds
+            </span>
+          </>
+        ) : (
+          <span className="text-[10px] text-foreground/30">Tap bar to see details</span>
+        )}
+      </div>
+      
+      {/* Timeline */}
+      <div 
+        className="overflow-x-auto" 
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        <div className="flex" style={{ width: "max-content", minWidth: "100%" }}>
+          {hours.map((hour, i) => {
+            const h = new Date(hour.time).getHours();
+            const showLabel = h % 4 === 0;
+            const isSelected = selectedIndex === i;
+            return (
+              <div 
+                key={i} 
+                className="flex-1 flex flex-col cursor-pointer"
+                style={{ minWidth: "7px" }}
+                onClick={() => handleClick(i)}
+              >
+                {/* Hour label */}
+                <div className="text-center h-4 flex items-end justify-center">
+                  {showLabel && (
+                    <span className="text-[9px] text-foreground/60 font-medium">{h}</span>
+                  )}
+                </div>
+                {/* Cloud bar */}
+                <div
+                  className="w-full transition-all"
+                  style={{
+                    height: isSelected ? "24px" : "18px",
+                    backgroundColor: RATING_COLORS[hour.rating] || "#6b7280",
+                    opacity: isSelected ? 1 : 0.75,
+                    outline: isSelected ? "2px solid white" : "none",
+                    outlineOffset: "-1px",
+                  }}
+                />
+                {/* Day/Night indicator */}
+                <div
+                  className="w-full"
+                  style={{
+                    height: "6px",
+                    backgroundColor: hour.isNight ? "#1e293b" : "#facc15",
+                  }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Get tonight's stargazing window: next 5PM → following 5AM
+function getTonightHours(hours: { time: string; cloudTotal: number; rating: string }[]) {
+  const now = new Date();
+  const currentHour = now.getHours();
+
+  // Find today's 5PM. If it's past 5PM, use today; otherwise also today.
+  const startDate = new Date(now);
+  startDate.setMinutes(0, 0, 0);
+  if (currentHour >= 5) {
+    startDate.setHours(17);
+  } else {
+    // It's between midnight and 5AM — we're in the window, start from yesterday 5PM
+    startDate.setDate(startDate.getDate() - 1);
+    startDate.setHours(17);
+  }
+
+  const endDate = new Date(startDate);
+  endDate.setDate(endDate.getDate() + 1);
+  endDate.setHours(5);
+
+  return hours.filter((h) => {
+    const t = new Date(h.time);
+    return t >= startDate && t < endDate;
+  });
+}
+
+function getTonightSummary(hours: { cloudTotal: number; rating: string }[]) {
+  if (hours.length === 0) return { label: "No data", color: "#6b7280" };
+  const avg = Math.round(hours.reduce((s, h) => s + h.cloudTotal, 0) / hours.length);
+  if (avg <= 10) return { label: "Clear skies", color: RATING_COLORS.excellent };
+  if (avg <= 25) return { label: "Mostly clear", color: RATING_COLORS.great };
+  if (avg <= 40) return { label: "Partly cloudy", color: RATING_COLORS.good };
+  if (avg <= 70) return { label: "Mostly cloudy", color: RATING_COLORS.poor };
+  return { label: "Overcast", color: RATING_COLORS.bad };
+}
+
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
   return date.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
@@ -56,6 +179,8 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
   const weatherAge = place.lastWeather
     ? Math.round((Date.now() - new Date(place.lastWeather.fetchedAt).getTime()) / (1000 * 60))
     : null;
+  const tonight = weather ? getTonightHours(weather.hours) : [];
+  const tonightSummary = getTonightSummary(tonight);
 
   return (
     <div className="bg-card border border-card-border rounded-lg overflow-hidden">
@@ -86,8 +211,8 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
           </div>
           {weather && (
             <div className="text-right flex-shrink-0">
-              <div className="text-2xl">{getWeatherIcon(weather.hours[0]?.cloudTotal ?? 100).icon}</div>
-              <div className="text-xs text-foreground/50 mt-1">
+              <div className="text-xs font-medium" style={{ color: tonightSummary.color }}>{tonightSummary.label}</div>
+              <div className="text-[10px] text-foreground/40 mt-0.5">
                 {weatherAge !== null && weatherAge < 60
                   ? `${weatherAge}m ago`
                   : weatherAge !== null
@@ -119,19 +244,50 @@ function PlaceCard({ place, userLocation, onNavigate, onDelete, onFetchWeather, 
               </button>
             </div>
             {weather ? (
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {weather.hours.slice(0, 12).map((hour, i) => {
-                  const hourDate = new Date(hour.time);
-                  const { icon } = getWeatherIcon(hour.cloudTotal);
-                  return (
-                    <div key={i} className="flex-shrink-0 text-center px-2 py-1 rounded bg-foreground/5">
-                      <div className="text-xs text-foreground/50">{hourDate.getHours()}:00</div>
-                      <div className="text-lg my-1">{icon}</div>
-                      <div className="text-xs text-foreground/70">{hour.cloudTotal}%</div>
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-medium" style={{ color: tonightSummary.color }}>
+                      Tonight: {tonightSummary.label}
+                    </span>
+                    <span className="text-[10px] text-foreground/40">48h forecast</span>
+                  </div>
+                  {weather.hours.length > 0 ? (
+                    <WeatherTimeline hours={weather.hours} />
+                  ) : (
+                    <p className="text-xs text-foreground/40 text-center py-2">No forecast data</p>
+                  )}
+                  <div className="flex items-center justify-between mt-1.5 text-[8px] text-foreground/30">
+                    <div className="flex items-center gap-2">
+                      <span className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500" /> Clear
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-yellow-500" /> OK
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-red-500" /> Cloudy
+                      </span>
+                      <span className="text-foreground/20">|</span>
+                      <span className="flex items-center gap-1">
+                        <span className="w-2.5 h-1.5 rounded-sm" style={{ backgroundColor: "#facc15" }} /> Day
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span className="w-2.5 h-1.5 rounded-sm" style={{ backgroundColor: "#1e293b" }} /> Night
+                      </span>
                     </div>
-                  );
-                })}
-              </div>
+                  </div>
+                  <a
+                    href={`https://open-meteo.com/en/docs#latitude=${place.lat}&longitude=${place.lng}&hourly=cloud_cover,cloud_cover_low,cloud_cover_mid,cloud_cover_high,precipitation_probability`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 flex items-center justify-center gap-2 w-full py-2 bg-foreground/5 hover:bg-foreground/10 rounded-lg transition-colors text-xs text-foreground/60"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    Full 7-day forecast on Open-Meteo
+                  </a>
+                </div>
             ) : (
               <button
                 onClick={onFetchWeather}
@@ -632,7 +788,7 @@ export default function SavedPage() {
   const [activeTab, setActiveTab] = useState<"places" | "trips">("places");
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [loadingWeather, setLoadingWeather] = useState<Set<string>>(new Set());
-  const [sortBy, setSortBy] = useState<"recent" | "distance" | "name">("recent");
+  const [sortBy, setSortBy] = useState<"recent" | "distance" | "name">("distance");
   const [showAddTrip, setShowAddTrip] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 

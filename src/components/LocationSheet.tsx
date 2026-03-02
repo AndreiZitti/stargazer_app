@@ -23,7 +23,6 @@ export interface LocationData {
 interface LocationSheetProps {
   location: LocationData | null;
   onClose: () => void;
-  onFindSpots?: (lat: number, lng: number) => void;
   onOpenForecast?: (lat: number, lng: number) => void;
   onGetDirections?: (lat: number, lng: number, name?: string) => void;
   userLocation?: { lat: number; lng: number } | null;
@@ -95,7 +94,6 @@ function haversineDistance(
 export function LocationSheet({
   location,
   onClose,
-  onFindSpots,
   onOpenForecast,
   onGetDirections,
   userLocation,
@@ -395,14 +393,6 @@ export function LocationSheet({
                   className="flex-1 py-2.5 px-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-medium transition-colors"
                 >
                   View Forecast
-                </button>
-              )}
-              {onFindSpots && (
-                <button
-                  onClick={() => onFindSpots(location.lat, location.lng)}
-                  className="flex-1 py-2.5 px-4 bg-gray-700 hover:bg-gray-600 text-white rounded-xl font-medium transition-colors"
-                >
-                  Find Dark Spots
                 </button>
               )}
               {onGetDirections && (
